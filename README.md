@@ -48,3 +48,20 @@ Point value is as follows:
 (5 points)-K
 (8 points)- J, X
 (10 points)-Q, Z
+
+-----------
+## Word Lists   
+### Verifying words   
+
+just for reference:   
+[Official Scrabble Word Checker](https://scrabble.merriam.com/)   
+
+I have downloaded .json files of each #-of-letters 2-15 possible words.   
+
+These can be imported to arrays or maybe accessed directly(?).   
+
+JSON.parse()
+
+
+
+
