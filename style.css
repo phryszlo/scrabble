@@ -1,0 +1,11 @@
+body {
+  margin: 0;
+}
+
+.console {
+  width: 50vw;
+  height: 50vh;
+  margin: auto;
+  background-color: #333;
+  color: white;
+}

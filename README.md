@@ -62,6 +62,12 @@ These can be imported to arrays or maybe accessed directly(?).
 
 JSON.parse()
 
+-----------   
+## Expansion ideas   
+
+Make legit 2-player (keep tiles secret) on multiple browsers with socket.io or similar   
+
+
 
 
 
