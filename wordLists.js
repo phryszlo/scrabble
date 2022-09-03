@@ -1,4 +1,4 @@
-import spacelog from "./spaceLog.js";
+import spacelog from "../spaceLog.js";
 
 const allWordLists = []
 const wordLists = async () => {

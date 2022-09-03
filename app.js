@@ -1,48 +1,15 @@
 
-import spacelog from "./spaceLog.js";
-import wordLists from "./wordLists.js"
+import spacelog from "./spaceLog.js"
+import navbar from "./navbar.js"
 
-const fullWordList = [];
 
 window.addEventListener('load', async () => {
-  await wordLists()
-    .then(arrWordLists => {
+  spacelog(`<p style='color: fuchsia; margin: 0; padding: 0;'>
+  welcome to the dtp.gamebox which needs a better name</p>
+  login: (there is no login)`)
 
-      // #region .... some historical notes ....
+  document.querySelector('.navbar-placeholder').innerHTML = navbar
 
-      // spacelog(Object.keys(arrWordLists[1])[0])
-      // // so that's the keyname of the array in the json
-      // // e.g. "threeLetterWords"
-
-      // // spacelog(Object.values(arrWordLists[1])[0])
-      // // and that's the whole array of objects under key "threeLetterWords"
-
-      // spacelog(Object.values(arrWordLists[1])[0][47].word)
-      // // and that's the value with key "word" for index 47 
-      // // of the object array under "threeLetterWords"
-
-      // #endregion
-
-
-      // wordLists.js returned an array of the response.json() of each .json file
-      // forEach full json object (i.e. response.json())
-      arrWordLists.forEach(async (list, idx) => {
-        spacelog(Object.keys(list)[0]) // the main keyname e.g. "threeLetterWords"
-
-        spacelog(Object.values(list).length)
-
-        // forEach {word: value} object in the list (: array)
-        Object.values(list)[0].forEach(async (objWord, i) => {
-          // spacelog(objWord.word)
-          // and THAT contains the word. and if you uncomment that,
-          // it will take 5 minutes to log all 14 arrays of thousands of words (170,000+)
-          // --> so don't.
-
-          fullWordList.push(objWord.word)
-        })
-      })
-    })
-  spacelog(`'done': fullWordList contains ${fullWordList.length} words. fullWordList[6000] = ${fullWordList[6000]}`)
 
 }) // end window.addEvenListener('load')
 
