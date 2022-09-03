@@ -14,10 +14,102 @@ const dls = [2056, 0, 320, 16513, 0, 0, 4420, 2056, 4420, 0, 0, 16513, 320, 0, 2
 
 const fullWordList = [];
 
-const loadBoard = () => {
-
+const getDiv = (className = 'div') => {
+  const div = document.createElement('div')
+  div.classList.add(className)
+  return div
 }
 
+const getOneRow = (idx, valsAtIdx) => {
+  // valsAtIdx is a four-element array (of arrays)
+  let row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  valsAtIdx.forEach((val, index) => {
+
+    // translate the decimal val into binary number (string) with leading '0's
+    const bits = val.toString(2).padStart(15, '0')
+    spacelog(bits)
+    if (bits === '0') {
+      row[bit] = getDiv('')
+    } else {
+      for (let bit = 0; bit < bits.length; bit++) {
+
+        // idx here is WHICH SQUARE-TYPE (i.e., idx=0 means square-type is TWS)
+        // so each switch will be hit 15 TIMES in a row before moving to the next case
+        switch (index) {
+          case 0:
+            row[bit] = bits[bit] == 1 ? getDiv('tws-div') : row[bit]
+            break
+          case 1:
+            row[bit] = bits[bit] == 1 ? getDiv('dws-div') : row[bit]
+            break
+          case 2:
+            row[bit] = bits[bit] == 1 ? getDiv('tls-div') : row[bit]
+            break
+          case 3:
+            row[bit] = bits[bit] == 1 ? getDiv('dls-div') : row[bit]
+            break
+        }
+      }
+    }
+  })
+
+  // but now the unmatched squares are 0s and need to be divs
+  row = row.map(el => el === 0 ? getDiv() : el)
+
+  return row
+}
+
+const loadBoard = () => {
+  const board = []
+  for (let i = 0; i < 15; i++) {
+    let currentRow = [tws[i], dws[i], tls[i], dls[i]]
+    board.push(getOneRow(i, currentRow))
+  }
+
+  spacelog(`board.length = ${board.length}`)
+
+  board.forEach(row => {
+    row.forEach(square => {
+      spacelog(square.classList)
+    })
+  })
+  // spacelog(board[4][2].classList)
+  // spacelog(board)
+}
+
+// const getDwsDiv = () => {
+//   const dwsDiv = document.createElement('div')
+//   dwsDiv.classList.add('dws-div')
+//   return dwsDiv
+// }
+// const getTlsDiv = () => {
+//   const tlsDiv = document.createElement('div')
+//   tlsDiv.classList.add('tls-div')
+//   return tlsDiv
+// }
+// const getDlsDiv = () => {
+//   const dlsDiv = document.createElement('div')
+//   dlsDiv.classList.add('dls-div')
+//   return dlsDiv
+// }
+
+
+
+/*
+tws.forEach(num => {
+  if (num != 0) {
+    let binary = num.toString(2)
+
+    for (let bit = 0; bit < binary.length; bit++) {
+      if (binary[bit] === '1') console.log('TWS')
+      else console.log('_');
+    }
+  }
+  else {
+    console.log('_ _ _ _ _ _ _ _ _ _ _ _ _ _ _');
+  }
+})
+*/
 
 
 window.addEventListener('load', async () => {
@@ -59,7 +151,9 @@ window.addEventListener('load', async () => {
   spacelog(`fullWordList[99999] = ${fullWordList[99999]}`)
 
   // insert the navbar : don't like doing the innerHTML this way, but I'll stop when we get to react
-  document.querySelector('.navbar-placeholder').innerHTML = navbar
+  // document.querySelector('.navbar-placeholder').innerHTML = navbar
+
+  loadBoard();
 
 }) // end window.addEvenListener('load')
 
