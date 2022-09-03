@@ -1,0 +1,23 @@
+body {
+  margin: 0;
+}
+
+
+
+.console-container {
+  font-family: monospace;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50vw;
+  height: 50vh;
+  margin: auto;
+}
+.console {
+  width: 90%; 
+  height: 90%;
+  /* margin: auto; */
+  background-color: #333;
+  color: white;
+}
