@@ -83,7 +83,10 @@ body {
   filter: saturate(250%);
 }
 
-
+.tile {
+  height: var(--square-width);
+  width: var(--square-width);
+}
 
 
 
