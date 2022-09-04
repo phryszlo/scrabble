@@ -51,9 +51,9 @@ body {
   border-width: .2px;
 }
 
-.gameboard div:hover {
+/* .gameboard div:hover {
   transform: scale(130%);
-}
+} */
 
 .div {
   border: solid green;
@@ -76,6 +76,15 @@ body {
 .dls-div {
   background-color: #adc4d2;
 }
+
+.square.over {
+  /* border: 2px dashed blue; */
+  transform: scale(130%);
+  filter: saturate(250%);
+}
+
+
+
 
 
 /* trays */
