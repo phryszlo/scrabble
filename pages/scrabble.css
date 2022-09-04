@@ -1,6 +1,144 @@
 body {
   margin: 0;
+  background-color: #333;
 }
+
+:root {
+  --square-width: calc((100vh - 70px) / 15);
+}
+
+.head-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: .1em auto .4em auto;
+  background-color: #3336;
+  /* border: solid blanchedalmond; */
+}
+
+.title {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  height: 100vh;
+  text-align: right;
+  background-color: #3336;
+  color: #526387;
+  margin: 0;
+  padding: 1em .2em;
+  font-size: 3.5em;
+  /* text-orientation: upright; */
+  writing-mode: vertical-rl;
+  letter-spacing: 1pc;
+  transform: rotate(180deg);
+  /* border: solid fuchsia; */
+}
+
+.gameboard {
+  display: flex;
+  justify-content: center;
+  width: calc(var(--square-width) * 15.8);
+  margin: auto;
+  flex-wrap: wrap;
+  /* border: 2px inset #677; */
+}
+
+.gameboard div {
+  width: var(--square-width);
+  height: var(--square-width);
+  border: solid orange;
+  border-width: .2px;
+}
+
+.gameboard div:hover {
+  transform: scale(130%);
+}
+
+.div {
+  border: solid green;
+  background-color: bisque;
+}
+
+.tws-div {
+  background-color: #b66361;
+  border: solid blueviolet;
+}
+
+.dws-div {
+  background-color: #e6ac8d;
+}
+
+.tls-div {
+  background-color: #526387;
+}
+
+.dls-div {
+  background-color: #adc4d2;
+}
+
+
+/* trays */
+.player1-tray {
+  position: absolute;
+  top: 70vh;
+  left: 3vw;
+  width: 300px;
+  height: 60px;
+  border: solid powderblue;
+}
+
+
+
+
+
+
+
+
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-around;
+  padding-left: 1em;
+  position: absolute;
+  top: 100px;
+  left: 75vw;
+  height: 180px;
+  width: 14em;
+  background-color: #52638744;
+}
+.color-line {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+}
+.color {
+  height: 25px;
+  width: 25px;
+}
+.color-text {
+  margin-left: .5em;
+  height: 20px;
+  line-height: var(--square-width);
+  color: #adc4d2;
+}
+
+.tws-color {
+  background-color: #b66361;
+}
+.dws-color {
+  background-color: #e6ac8d;
+}
+.tls-color {
+  background-color: #526387;
+}
+.dls-color {
+  background-color: #adc4d2;
+}
+
+
 
 
 
@@ -11,14 +149,15 @@ body {
   justify-content: center;
   align-items: center;
   width: 50vw;
-  height: 50vh;
+  height: 80vh;
   margin: auto;
 }
+
 .console {
-  width: 90%; 
-  height: 90%;
-  /* margin: auto; */
-  background-color: #333;
+  width: 90%;
+  height: 100%;
+  margin: 80px 0;
+  background-color: #235;
   color: white;
   overflow-y: auto;
 }
