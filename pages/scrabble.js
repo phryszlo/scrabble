@@ -44,7 +44,7 @@ W-2, X-1, Y-2, Z-1 and blank-2.
 // for tileDistribution and tileCounts, the index of the outer array is,
 // respectively, point-value, and #-of-tiles in set
 
-const tileDistribution = [
+const tileDistributionses = [
   ['blank'],
   ['A', 'E', 'I', 'O', 'U', 'L', 'N', 'S', 'T', 'R'],
   ['D', 'G'],
@@ -56,6 +56,19 @@ const tileDistribution = [
   ['J', 'X'],
   [],
   ['Q', 'Z']
+]
+const tileDistribution = [
+  ['2.blank'],
+  ['9.A', '12.E', '9.I', '8.O', '4.U', '4.L', '6.N', '4.S', '6.T', '6.R'],
+  ['4.D', '3.G'],
+  ['2.B', '2.C', '2.M', '2.P'],
+  ['2.F', '2.H', '2.V', '2.W', '2.Y'],
+  ['1.K'],
+  [],
+  [],
+  ['1.J', '1.X'],
+  [],
+  ['1.Q', '1.Z']
 ]
 
 // const tileCountses = `A-9, B-2, C-2, D-4, E-12, F-2, G-3, H-2, I-9, J-1, K-1, 
@@ -86,42 +99,45 @@ const createAllTiles = () => {
   let tileCount = '0'
   tileDistribution.forEach((arrLetters, idx) => {
     arrLetters.forEach((letter) => {
-
-      // idx is the point val
-      tile = document.createElement('div')
-      tile.classList.add('tile', `letter-${letter}`, `points-${idx}`)
-      bagOfTilesDOM.append(tile)
-
+      // letter is now like: 9.A, 12.E, 2.blank etc.
       let imgEl = document.createElement('img')
-      imgEl.src = `../images/tiles/${letter}.png`
+      imgEl.src = `../images/tiles/${letter.substring(letter.indexOf('.') + 1)}.png`
       document.querySelector('.tiles-images').append(imgEl)
 
-      tile.style.backgroundImage = `url(${imgEl.src})`
-      bagOfTiles.push(tile)
+      // so now I need the index of the array that contains this letter
+      let numTilesNeeded = letter.substring(0, letter.indexOf('.'))
+      for (let i = 0; i < numTilesNeeded; i++) {
+        // idx is the point val
+        tile = document.createElement('div')
+        tile.classList.add('tile', `letter-${letter}`, `points-${idx}`)
+        tile.style.backgroundImage = `url(${imgEl.src})`
+        bagOfTiles.push(tile)
+        bagOfTilesDOM.append(tile)
+      }
     })
   })
 
-  spacelog(`after tileDistro loop: ${bagOfTiles.length}`);
+  spacelog(`after tileDistro loop, bagOfTiles contains ${bagOfTiles.length} tiles`);
 
 
   // there should be 100 tiles at the end of this
-  tileCounts.forEach((arr, index) => {
-    // console.log(arr);
+  // tileCounts.forEach((arr, index) => {
+  //   // console.log(arr);
 
-    // this loop is each 
-    arr.forEach((letter) => {
-      // for (let i = 0; i <= index; i++) {
-      let tileToClone
-      let clonedTile;
-      arr.forEach((letter) => {
-        tileToClone = document.querySelector(`.letter-${letter}`)
-        // console.log(tileToClone);
-        // console.log(`count: ${letter} : ${index}`);
-        // clonedTile = tileToClone.cloneNode(true)
-        // bagOfTiles.push(clonedTile)
-      })
-    })
-  })
+  //   // this loop is each 
+  //   arr.forEach((letter) => {
+  //     // for (let i = 0; i <= index; i++) {
+  //     let tileToClone
+  //     let clonedTile;
+  //     arr.forEach((letter) => {
+  //       tileToClone = document.querySelector(`.letter-${letter}`)
+  //       // console.log(tileToClone);
+  //       // console.log(`count: ${letter} : ${index}`);
+  //       // clonedTile = tileToClone.cloneNode(true)
+  //       // bagOfTiles.push(clonedTile)
+  //     })
+  //   })
+  // })
 }
 
 // #endregion bagOfTiles creation
@@ -129,7 +145,6 @@ const createAllTiles = () => {
 const drawTiles = (player, num) => {
   for (let i = 1; i <= num; i++) {
     let idx = Math.floor(Math.random() * bagOfTiles.length)
-    spacelog(`bagOfTiles length = ${bagOfTiles.length} and idx = ${idx}`)
     let t = bagOfTiles.splice(idx, 1)
     // console.log(t);
   }
