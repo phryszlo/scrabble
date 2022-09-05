@@ -1,13 +1,13 @@
 
-import spacelog from "../spaceLog.js";
+import spacelog from "../spaceLog.js"
 import wordLists from "./wordLists.js"
 // import navbar from "../navbar.js"
 
 // HTML element refs
-const gameboard = document.querySelector('.gameboard');
-
-// probably change the class to.tile
-const trayTiles = document.querySelectorAll('.tray-tile');
+const gameboard = document.querySelector('.gameboard')
+const bagOfTilesDOM = document.querySelector('.bag-of-tiles')
+const player1Tray = document.querySelector('.player1-tray')
+const player2Tray = document.querySelector('.player2-tray')
 
 
 // the four special square-types (triple-word-score, double-letter-score, etc.)
@@ -21,8 +21,10 @@ const dls = [2056, 0, 320, 16513, 0, 0, 4420, 2056, 4420, 0, 0, 16513, 320, 0, 2
 // to contain the entire word list as parsed from the 14 json files
 // MAYBE TODO: do separate arrays for each word-length (to prevent find()s on word => word.length === len)
 // the array will contain like 170,000 words
-const fullWordList = [];
+const fullWordList = []
 
+
+// #region bagOfTiles creation
 
 /*
 TILE DISTRIBUTION (official)
@@ -33,10 +35,17 @@ TILE DISTRIBUTION (official)
 (5 points)-K
 (8 points)- J, X
 (10 points)-Q, Z
+
+A-9, B-2, C-2, D-4, E-12, F-2, G-3, H-2, I-9, J-1, K-1, 
+L-4, M-2, N-6, O-8, P-2, Q-1, R-6, S-4, T-6, U-4, V-2, 
+W-2, X-1, Y-2, Z-1 and blank-2.
 */
 
+// for tileDistribution and tileCounts, the index of the outer array is,
+// respectively, point-value, and #-of-tiles in set
+
 const tileDistribution = [
-  [],
+  ['blank'],
   ['A', 'E', 'I', 'O', 'U', 'L', 'N', 'S', 'T', 'R'],
   ['D', 'G'],
   ['B', 'C', 'M', 'P'],
@@ -49,39 +58,82 @@ const tileDistribution = [
   ['Q', 'Z']
 ]
 
+// const tileCountses = `A-9, B-2, C-2, D-4, E-12, F-2, G-3, H-2, I-9, J-1, K-1, 
+// L-4, M-2, N-6, O-8, P-2, Q-1, R-6, S-4, T-6, U-4, V-2, 
+// W-2, X-1, Y-2, Z-1, blank-2`
+
+
+const tileCounts = [
+  [],
+  ['J', 'K', 'Q', 'X', 'Z'],
+  ['B', 'C', 'F', 'H', 'M', 'P', 'V', 'W', 'Y', 'blank'],
+  ['G'],
+  ['D', 'L', 'S', 'U'],
+  [],
+  ['N', 'R', 'T'],
+  [],
+  ['O'],
+  ['A', 'I'],
+  [],
+  [],
+  ['E']
+]
+
 const bagOfTiles = []
 
 const createAllTiles = () => {
   let tile
-  for (let i = 1; i < 200; i++) {
-    tile = document.createElement('div')
-    tile.classList.add('tile')
-  }
-
+  let tileCount = '0'
   tileDistribution.forEach((arrLetters, idx) => {
     arrLetters.forEach((letter) => {
+
       // idx is the point val
       tile = document.createElement('div')
       tile.classList.add('tile', `letter-${letter}`, `points-${idx}`)
-      tile.style.backgroundImage = `url('images/tiles/${letter}.png)`
+      bagOfTilesDOM.append(tile)
+
+      let imgEl = document.createElement('img')
+      imgEl.src = `../images/tiles/${letter}.png`
+      document.querySelector('.tiles-images').append(imgEl)
+
+      tile.style.backgroundImage = `url(${imgEl.src})`
       bagOfTiles.push(tile)
-      spacelog(tile.classList);
     })
-
-    // push a couple of blanks
-    for (let i = 1; i <= 2; i++) {
-      tile = document.createElement('div')
-      tile.classList.add('tile', `letter-blank`)
-      tile.style.backgroundImage = `url('images/tiles/blank.png)`
-      bagOfTiles.push(tile)
-      spacelog(tile.classList);
-
-    }
   })
 
+  spacelog(`after tileDistro loop: ${bagOfTiles.length}`);
 
+
+  // there should be 100 tiles at the end of this
+  tileCounts.forEach((arr, index) => {
+    // console.log(arr);
+
+    // this loop is each 
+    arr.forEach((letter) => {
+      // for (let i = 0; i <= index; i++) {
+      let tileToClone
+      let clonedTile;
+      arr.forEach((letter) => {
+        tileToClone = document.querySelector(`.letter-${letter}`)
+        // console.log(tileToClone);
+        // console.log(`count: ${letter} : ${index}`);
+        // clonedTile = tileToClone.cloneNode(true)
+        // bagOfTiles.push(clonedTile)
+      })
+    })
+  })
 }
 
+// #endregion bagOfTiles creation
+
+const drawTiles = (player, num) => {
+  for (let i = 1; i <= num; i++) {
+    let idx = Math.floor(Math.random() * bagOfTiles.length)
+    spacelog(`bagOfTiles length = ${bagOfTiles.length} and idx = ${idx}`)
+    let t = bagOfTiles.splice(idx, 1)
+    // console.log(t);
+  }
+}
 
 // #region drag events
 
@@ -163,7 +215,7 @@ function handleDrop(e) {
 // #endregion
 
 
-
+// #region board creation functions
 const getDiv = (className = 'div') => {
   const div = document.createElement('div')
   div.classList.add('square', className, `row-`)
@@ -243,6 +295,9 @@ const loadBoard = () => {
   })
 }
 
+// #endregion board creation functions
+
+
 window.addEventListener('DOMContentLoaded', async () => {
   await wordLists()
     .then(arrWordLists => {
@@ -263,34 +318,17 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   // loadBoard() has called getOneRow() which calls getDiv(), where the .square class is added
 
-
   const squares = document.querySelectorAll('.square');
-
 
   createAllTiles();
 
+  bagOfTiles.forEach((tile) => {
 
-
-
-  trayTiles.forEach((tile) => {
     tile.addEventListener('dragstart', handleDragStart)
     tile.addEventListener('dragend', handleDragEnd)
   })
 
-  // squares.forEach(function (square) {
-  //   console.log(square)
-  //   // square.addEventListener('dragstart', handleDragStart, false);
-  //   square.addEventListener('dragenter', handleDragEnter, false);
-  //   square.addEventListener('dragover', handleDragOver, false);
-  //   square.addEventListener('dragleave', handleDragLeave, false);
-  //   square.addEventListener('drop', handleDrop, false);
-  //   // square.addEventListener('dragend', handleDragEnd, false);
-  // });
-
-
-
-
-
+  drawTiles(player1Tray, 7)
 
 }) // end window.addEvenListener('load')
 

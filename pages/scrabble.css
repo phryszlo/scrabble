@@ -88,6 +88,10 @@ body {
   width: var(--square-width);
 }
 
+.bag-of-tiles {
+  display: none;
+}
+
 
 
 /* trays */
