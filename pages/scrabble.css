@@ -86,9 +86,12 @@ body {
 .tile {
   height: var(--square-width);
   width: var(--square-width);
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
-.bag-of-tiles {
+
+.bag-of-tiles, .tiles-images {
   display: none;
 }
 

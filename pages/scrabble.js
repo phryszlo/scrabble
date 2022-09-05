@@ -71,28 +71,7 @@ const tileDistribution = [
   ['1.Q', '1.Z']
 ]
 
-// const tileCountses = `A-9, B-2, C-2, D-4, E-12, F-2, G-3, H-2, I-9, J-1, K-1, 
-// L-4, M-2, N-6, O-8, P-2, Q-1, R-6, S-4, T-6, U-4, V-2, 
-// W-2, X-1, Y-2, Z-1, blank-2`
-
-
-const tileCounts = [
-  [],
-  ['J', 'K', 'Q', 'X', 'Z'],
-  ['B', 'C', 'F', 'H', 'M', 'P', 'V', 'W', 'Y', 'blank'],
-  ['G'],
-  ['D', 'L', 'S', 'U'],
-  [],
-  ['N', 'R', 'T'],
-  [],
-  ['O'],
-  ['A', 'I'],
-  [],
-  [],
-  ['E']
-]
-
-const bagOfTiles = []
+const bagOfTileClasses = []
 
 const createAllTiles = () => {
   let tile
@@ -109,15 +88,18 @@ const createAllTiles = () => {
       for (let i = 0; i < numTilesNeeded; i++) {
         // idx is the point val
         tile = document.createElement('div')
-        tile.classList.add('tile', `letter-${letter}`, `points-${idx}`)
+        tile.classList.add('tile', `letter-${letter.substring(letter.indexOf('.') + 1)}`, `points-${idx}`)
+
+        // classlist is a DOMTokenList ([<string>])
+        spacelog(tile.classList[1])//  `the tile classlist: ${tile.classList}`)
         tile.style.backgroundImage = `url(${imgEl.src})`
-        bagOfTiles.push(tile)
+        bagOfTileClasses.push(tile.classList[1])
         bagOfTilesDOM.append(tile)
       }
     })
   })
 
-  spacelog(`after tileDistro loop, bagOfTiles contains ${bagOfTiles.length} tiles`);
+  spacelog(`after tileDistro loop, bagOfTiles contains ${bagOfTileClasses.length} tiles`);
 
 
   // there should be 100 tiles at the end of this
@@ -143,10 +125,18 @@ const createAllTiles = () => {
 // #endregion bagOfTiles creation
 
 const drawTiles = (player, num) => {
+  spacelog('anything')
+
   for (let i = 1; i <= num; i++) {
-    let idx = Math.floor(Math.random() * bagOfTiles.length)
-    let t = bagOfTiles.splice(idx, 1)
-    // console.log(t);
+    spacelog('anything')
+    let idx = Math.floor(Math.random() * bagOfTileClasses.length)
+    let tyle = bagOfTileClasses.splice(idx, 1)
+    spacelog(`classlist[1] = ${tyle}`)
+    player.append(bagOfTilesDOM.querySelector(`.${tyle}`))
+    // let sackOfTiles = [...bagOfTiles]
+    // let t = sackOfTiles.splice(idx, 1)
+    // spacelog(typeof(t));
+    // player.append()
   }
 }
 
@@ -337,7 +327,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   createAllTiles();
 
-  bagOfTiles.forEach((tile) => {
+  bagOfTilesDOM.childNodes.forEach((tile) => {
 
     tile.addEventListener('dragstart', handleDragStart)
     tile.addEventListener('dragend', handleDragEnd)
