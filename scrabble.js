@@ -1,5 +1,5 @@
 
-import spacelog from "../spaceLog.js"
+import spacelog from "./spaceLog.js"
 import wordLists from "./wordLists.js"
 // import navbar from "../navbar.js"
 
@@ -80,7 +80,7 @@ const createAllTiles = () => {
     arrLetters.forEach((letter) => {
       // letter is now like: 9.A, 12.E, 2.blank etc.
       let imgEl = document.createElement('img')
-      imgEl.src = `../images/tiles/${letter.substring(letter.indexOf('.') + 1)}.png`
+      imgEl.src = `./images/tiles/${letter.substring(letter.indexOf('.') + 1)}.png`
       document.querySelector('.tiles-images').append(imgEl)
 
       // so now I need the index of the array that contains this letter
