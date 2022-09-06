@@ -15,62 +15,56 @@
     />
     <link rel="stylesheet" href="scrabble.css" />
   </head>
-  <>
-    <!-- <div class="navbar-placeholder"></div> -->
 
-    <div class="head-container">
-    </div>
-    <h1 class="title">scrabble</h1>
+  <body>
+    <div class="layout-wrapper">
+      <h1 class="title">scrabble</h1>
 
+      <!-- game-container (trays, legend, gameboard) -->
+      <div class="game-container">
+        <div class="tray-legend-container">
+          <div class="tray-container">
+            <div class="player1-tray"></div>
+            <div class="player2-tray"></div>
+          </div>
 
-   
+          <div class="legend">
+            <div class="color-line">
+              <div class="color-swatch tws-color"></div>
+              <p class="color-text">Triple Word Score</p>
+            </div>
 
-    <div class="game-container">
-      <div class="gameboard"></div>
-    </div>
+            <div class="color-line">
+              <div class="color-swatch dws-color"></div>
+              <p class="color-text">Double Word Score</p>
+            </div>
 
-    <div class="legend">
+            <div class="color-line">
+              <div class="color-swatch tls-color"></div>
+              <p class="color-text">Triple Letter Score</p>
+            </div>
 
-      <div class="color-line" >
-        <div class="color tws-color"></div>
-        <p class="color-text">
-        = Triple Word Score
-        </p>
+            <div class="color-line">
+              <div class="color-swatch dls-color"></div>
+              <p class="color-text">Double Letter Score</p>
+            </div>
+          </div>
+          <!-- end of legend -->
+        </div>
+
+        <div class="gameboard"></div>
+      </div>
+      <!-- end of game-container -->
+
+      <div class="console-container">
+        <div class="console"></div>
       </div>
 
-      <div class="color-line">
-        <div class="color dws-color"></div>
-          <p class="color-text">
-            = Double Word Score
-          </p>
-      </div>
-
-      <div class="color-line">
-        <div class="color tls-color"></div>
-          <p class="color-text">
-            = Triple Letter Score
-          </p>
-      </div>
-
-      <div class="color-line">
-        <div class="color dls-color"></div>
-          <p class="color-text">
-            = Double Letter Score
-          </p>
-      </div>
+      <!-- holders -- no display
+       -->
+      <div class="bag-of-tiles"></div>
+      <div class="tiles-images"></div>
     </div>
-    <div class="player1-tray"></div>
-    <div class="player2-tray"></div>
-
-    <div class="bag-of-tiles"></div>
-    <div class="tiles-images"></div>
-
-
-    <div class="console-container">
-      <div class="console"></div>
-    </div>
-
-
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"

@@ -146,6 +146,7 @@ const drawTiles = (player, num) => {
 let srcTile = null;
 
 function handleDragStart(e) {
+  spacelog(`drag start on ${e}`)
   this.style.opacity = '0.4';
 
   srcTile = this;
@@ -328,7 +329,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   createAllTiles();
 
   bagOfTilesDOM.childNodes.forEach((tile) => {
-
+    tile.addEventListener('mousedown', () => {
+      spacelog(tile.classList[2])
+    })
     tile.addEventListener('dragstart', handleDragStart)
     tile.addEventListener('dragend', handleDragEnd)
   })
