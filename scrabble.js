@@ -23,6 +23,8 @@ const dls = [2056, 0, 320, 16513, 0, 0, 4420, 2056, 4420, 0, 0, 16513, 320, 0, 2
 // the array will contain like 170,000 words
 const fullWordList = []
 
+let squares;
+
 
 // #region bagOfTiles creation
 
@@ -91,7 +93,7 @@ const createAllTiles = () => {
         tile.classList.add('tile', `letter-${letter.substring(letter.indexOf('.') + 1)}`, `points-${idx}`)
 
         // classlist is a DOMTokenList ([<string>])
-        spacelog(tile.classList[1])//  `the tile classlist: ${tile.classList}`)
+        // spacelog(tile.classList[1])//  `the tile classlist: ${tile.classList}`)
         tile.style.backgroundImage = `url(${imgEl.src})`
         bagOfTileClasses.push(tile.classList[1])
         bagOfTilesDOM.append(tile)
@@ -125,13 +127,10 @@ const createAllTiles = () => {
 // #endregion bagOfTiles creation
 
 const drawTiles = (player, num) => {
-  spacelog('anything')
-
   for (let i = 1; i <= num; i++) {
-    spacelog('anything')
     let idx = Math.floor(Math.random() * bagOfTileClasses.length)
     let tyle = bagOfTileClasses.splice(idx, 1)
-    spacelog(`classlist[1] = ${tyle}`)
+    // spacelog(`classlist[1] = ${tyle}`)
     player.append(bagOfTilesDOM.querySelector(`.${tyle}`))
     // let sackOfTiles = [...bagOfTiles]
     // let t = sackOfTiles.splice(idx, 1)
@@ -324,7 +323,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   // loadBoard() has called getOneRow() which calls getDiv(), where the .square class is added
 
-  const squares = document.querySelectorAll('.square');
+  squares = document.querySelectorAll('.square');
 
   createAllTiles();
 
@@ -337,6 +336,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   })
 
   drawTiles(player1Tray, 7)
+  drawTiles(player2Tray, 7)
 
 }) // end window.addEvenListener('load')
 

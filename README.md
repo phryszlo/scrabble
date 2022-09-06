@@ -25,11 +25,14 @@ for (let col = 1; col <= grid-cols; col++) {
 # Game Play   
 ---------
 ### opening  
-draw a letter to see who goes first   
-closest to 'a' goes first.   
-return tiles to 'bag'   
+- draw a letter to see who goes first   
+  - closest to 'a' goes first.   
+- return tiles to 'bag'  (automatic)
 
-each draw 7.   
+- each draw 7.   (automatic)
+- drag tiles to board from tray. ---BUG: the first drag attempt is failing, like the event doesn't attach until after it occurs once   
+
+- either auto-replace played tiles, or record the 
 
 ---------
 ### tile distribution   
