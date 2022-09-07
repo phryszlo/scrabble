@@ -183,35 +183,17 @@ function handleDragOver(e) {
   return false;
 }
 
+
 function handleDrop(e) {
   if (e.stopPropagation) {
     e.stopPropagation(); // stops the browser from redirecting.
   }
-
-  // no need to check if the square is the dragSrc because it's not even draggable
-  // if (dragSrcEl != this) { 
-
-  // this line overwrites the src-tile's innerHTML with the target-square's innerHTML, which we don't actually want
-  // dragSrcEl.innerHTML = this.innerHTML;
-
-  /*
-      Maybe: just go ahead and replace the tile with another
-        - does the tile have an id or something, or is any tile just defined as its contents (i.e. the letter)
-          - i think just the letter?
-          - no, i think there should be actual tile divs, the exact # of each letter that come with scrabble.
-          - we aren't actually schizophrenic
-        - i mean instead of making someone hit 'draw tile' -> unless you want the possibility of them shorting themselves: i.e. more cutthroat
-      Target square: 
-        - do we just replace the innerHTML with the letter content, and restyle via classList?
-        - or do we append a tile inside the square div, with like 100% w&h? 
-  */
 
   this.replaceChildren(srcTile) // this seems better
   // this.innerHTML = e.dataTransfer.getData('text/html'); //than this
   // }
 
   this.classList.remove('over');
-
 
   return false;
 }
@@ -303,6 +285,7 @@ const loadBoard = () => {
 // #endregion board creation functions
 
 
+// =========== DOM LOADED EVENT ==============
 window.addEventListener('DOMContentLoaded', async () => {
   await wordLists()
     .then(arrWordLists => {
