@@ -2,6 +2,10 @@
 
   :root {
     --square-width: calc(50vw / 18);
+    --dws-color: #2fd60d88;
+    --tws-color: #b66361;
+    --tls-color: #526387;
+    --dls-color: #adc4d2;
   }
 
 
@@ -63,7 +67,7 @@ body::before {
   height: fit-content;
   text-align: right;
   /* background-color: #3336; */
-  color: #526387;
+  color: var(--tls-color);
   text-shadow: .7px .5px  #9ff;
   margin: 0 1em 0 0;
   padding: 1em .2em;
@@ -221,20 +225,20 @@ body::before {
 }
 
 .tws-div {
-  background-color: #b66361;
+  background-color: var(--tws-color);
   border: solid blueviolet;
 }
 
 .dws-div {
-  background-color: #e6ac8d;
+  background-color: var(--dws-color);
 }
 
 .tls-div {
-  background-color: #526387;
+  background-color: var(--tls-color);
 }
 
 .dls-div {
-  background-color: #adc4d2;
+  background-color: var(--dls-color);
 }
 
 .square.over {
@@ -292,23 +296,23 @@ body::before {
   margin: 1em 0 0 0;
   /* height: 20px; */
   /* line-height: var(--square-width); */
-  color: #adc4d2;
+  color: var(--dls-color);
 }
 
 .tws-color {
-  background-color: #b66361;
+  background-color: var(--tws-color);
 }
 
 .dws-color {
-  background-color: #e6ac8d;
+  background-color: var(--dws-color);
 }
 
 .tls-color {
-  background-color: #526387;
+  background-color: var(--tls-color);
 }
 
 .dls-color {
-  background-color: #adc4d2;
+  background-color: var(--dls-color);
 }
 
 @media screen and (max-width: 755px) {

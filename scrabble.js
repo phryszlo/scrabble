@@ -66,23 +66,35 @@ const bagOfTileClasses = []
 const createAllTiles = () => {
   let tile
   let tileCount = '0'
+  let id = 1;
   tileDistribution.forEach((arrLetters, idx) => {
     arrLetters.forEach((letter) => {
       // letter is now like: 9.A, 12.E, 2.blank etc.
+
+      // create an element to hold the background image of the tile
       let imgEl = document.createElement('img')
       imgEl.src = `./images/tiles/${letter.substring(letter.indexOf('.') + 1)}.png`
       document.querySelector('.tiles-images').append(imgEl)
 
-      // so now I need the index of the array that contains this letter
-      let numTilesNeeded = letter.substring(0, letter.indexOf('.'))
+      let numTilesNeeded = letter.substring(0, letter.indexOf('.')) // e.g. '2.W', numTilesNeeded = 2
       for (let i = 0; i < numTilesNeeded; i++) {
         // idx is the point val
         tile = document.createElement('div')
+
+
+
         tile.classList.add('tile', `letter-${letter.substring(letter.indexOf('.') + 1)}`, `points-${idx}`)
 
         // classlist is a DOMTokenList ([<string>])
-        // spacelog(tile.classList[1])//  `the tile classlist: ${tile.classList}`)
+
         tile.style.backgroundImage = `url(${imgEl.src})`
+
+        // custom attributes addition
+        // a unique id for every tile? could be useful. could be not.
+        tile.setAttribute('data-id', id)
+        id += 1
+
+
         bagOfTileClasses.push(tile.classList[1])
         bagOfTilesDOM.append(tile)
 
@@ -99,16 +111,30 @@ const createAllTiles = () => {
 // #endregion bagOfTiles creation
 
 
-
+// the name drawTiles is a bit misleading given the 2 meanings. this means: pick it from the bagOfTiles.
+//  i.e. this does not draw anything on the screen
 const drawTiles = (playerTray, numTiles) => {
+  let t, p, letter // tile, player-prefix (p1-,p2-), and tile-letter
   for (let i = 1; i <= numTiles; i++) {
-    let idx = Math.floor(Math.random() * bagOfTileClasses.length)
-    let tileClass = bagOfTileClasses.splice(idx, 1)
+    const idx = Math.floor(Math.random() * bagOfTileClasses.length)
+    const tileClass = bagOfTileClasses.splice(idx, 1)
 
-    let t = bagOfTilesDOM.querySelector(`.${tileClass}`)
+
+
+    // custom attributes addition
+    // tile.setAttribute('data-
+
+    t = bagOfTilesDOM.querySelector(`.${tileClass}`)
+    p = playerTray === player1Tray ? 'p1-' : 'p2-'
+    letter = t.classList.value.split(' ').find(c => c.startsWith('letter-'))
+    letter = letter.substring(letter.indexOf('-') + 1)
+    console.log(letter)
+    t.classList.add(`${p}tile`, `${p}${letter}`)
+
+
     playerTray.append(t)
 
-    t.addEventListener('dragstart', handleDragStart)
+    t.addEventListener('dragstart', dragStartHandler)
     t.addEventListener('dragend', handleDragEnd)
 
   }
@@ -119,12 +145,20 @@ const drawTiles = (playerTray, numTiles) => {
 // based on: https://glitch.com/edit/#!/simple-drag-drop?path=dnd.js%3A65%3A3
 let srcTile = null;
 
-function handleDragStart(e) {
+function dragStartHandler(e) {
   spacelog(`drag start on ${e}`)
   this.style.opacity = '0.4';
 
   srcTile = e.target;
   console.dir(e.target)
+
+  const img = new Image();
+  const m = this.style.backgroundImage
+  spacelog(m + m.substring(m.lastIndexOf('/'), m.lastIndexOf('.') + 3))
+  img.src = "./images/tiles" + 
+    m.substring(m.lastIndexOf('/'), m.length - 2)
+  e.dataTransfer.setDragImage(img, 1, 1)
+
 
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('text/html', this.innerHTML);
@@ -162,7 +196,7 @@ function handleDragOver(e) {
 
 function handleDrop(e) {
   if (e.stopPropagation) {
-    e.stopPropagation(); // stops the browser from redirecting.
+    e.stopPropagation();
   }
 
   this.replaceChildren(srcTile) // this seems better
@@ -179,52 +213,72 @@ function handleDrop(e) {
 
 
 // #region board creation functions
-const getDiv = (className = 'div') => {
+const getDiv = (row, col, className = 'div') => {
   const div = document.createElement('div')
-  div.classList.add('square', className, `row-`)
-
+  div.classList.add('square', className) //,`row-${row}`, `col-${col}`)
+  div.setAttribute('data-row', row)
+  div.setAttribute('data-col', col)
   return div
 }
 
 const getOneRow = (idx, valsAtIdx) => {
 
+  let currentCol
   // there are 4 vals at each idx: we have 4 arrays of 15 elements. idx = 0-14, valsAtIdx = 0-3.
+
+  // so idx is the row 
+  // spacelog(valsAtIdx + '..' + idx)
 
   let row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
   // valsAtIdx is a four-element array: one for each of the four special square-types
   // think: the vertical cross of the four 15-element arrays stacked (a 4 row, 15 column grid)
   valsAtIdx.forEach((val, index) => {
-    // val is the actual number in the row (e.g. 16513, or 0), index is the position in the row
+
+    // val is the actual number in the row (e.g. 16513, or 0)
     // translate the decimal (val) into a binary number (a string: toString(2)), padding with leading '0's
+
     const bits = val.toString(2).padStart(15, '0')
+
+    // now we have either the binary string or a '0'
+    // if it's a '0' how do we know what rows we're dealing with?
+
+
+
     if (bits === '0') {
-      row[index] = getDiv('')
+      // this will never be reached.
+      spacelog(`bits=${bits}`)
+      row[index] = getDiv(`${idx}`, `${index}`)
+
     } else {
       for (let bit = 0; bit < bits.length; bit++) {
-
+        currentCol = bit
         // index here is WHICH SQUARE-TYPE (e.g., index=0 means square-type is TripleWordScore(TWS))
         // so each switch will be hit 15 TIMES in a row before moving to the next case
         switch (index) {
           case 0:
-            row[bit] = bits[bit] == 1 ? getDiv('tws-div') : row[bit]
+            row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'tws-div') : row[bit]
             break
           case 1:
-            row[bit] = bits[bit] == 1 ? getDiv('dws-div') : row[bit]
+            row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'dws-div') : row[bit]
             break
           case 2:
-            row[bit] = bits[bit] == 1 ? getDiv('tls-div') : row[bit]
+            row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'tls-div') : row[bit]
             break
           case 3:
-            row[bit] = bits[bit] == 1 ? getDiv('dls-div') : row[bit]
+            row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'dls-div') : row[bit]
             break
+          default:
+            spacelog('default')
+            break;
         }
       }
     }
   })
 
   // but now the unmatched squares are 0s and need to be divs('empty' divs: call getDiv() with no args)
-  row = row.map(el => el === 0 ? getDiv() : el)
+
+  row = row.map((el, i) => el === 0 ? getDiv(idx, i) : el)
 
   return row
 }
@@ -290,21 +344,21 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   // ========= Fill the bagOfTiles ==========
   createAllTiles();
-// ------- and fill the player trays with tiles ---------
+  // ------- and fill the player trays with tiles ---------
   drawTiles(player1Tray, 7)
   drawTiles(player2Tray, 7)
 
 
-  document.querySelectorAll('.tile').forEach((tile) => {
-    tile.addEventListener('mousedown', (e) => {
-      // e.preventDefault()
-      // spacelog(tile.classList[2])
-    })
+  // document.querySelectorAll('.tile').forEach((tile) => {
+  //   tile.addEventListener('mousedown', (e) => {
+  //     // e.preventDefault()
+  //     // spacelog(tile.classList[2])
+  //   })
 
-    // --- Moved to drawTiles() --- 
-    // tile.addEventListener('dragstart', handleDragStart)
-    // tile.addEventListener('dragend', handleDragEnd)
-  })
+  //   // --- Moved to drawTiles() --- 
+  //   // tile.addEventListener('dragstart', handleDragStart)
+  //   // tile.addEventListener('dragend', handleDragEnd)
+  // })
 
 
   btnP1Draw.addEventListener('click', () => {
