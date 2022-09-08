@@ -1,0 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Acme&family=Combo&family=Quicksand&display=swap');
+
+:root {
+  --console-width: 350px;
+}
+
+body {
+  margin: 0;
+  background-color: #222;
+
+  font-family: 'Quicksand', sans-serif;
+  font-family: 'Acme', sans-serif;
+  font-family: 'Combo', cursive;
+}
+
+.console {
+  position: absolute;
+  top: 50px;
+  left: calc(50vw - (var(--console-width) / 2));
+  height: 200px;
+  width: var(--console-width);
+  background-color: #111;
+  color: rgb(2, 222, 24);
+  font-family: monospace;
+  font-size: 10px;
+  overflow: auto;
+  border: 8px inset #99b;
+
+}

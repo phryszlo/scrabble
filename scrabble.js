@@ -1,14 +1,14 @@
 
 import spacelog from "./spaceLog.js"
 import wordLists from "./wordLists.js"
-// import navbar from "../navbar.js"
 
 // HTML element refs
 const gameboard = document.querySelector('.gameboard')
 const bagOfTilesDOM = document.querySelector('.bag-of-tiles')
 const player1Tray = document.querySelector('.player1-tray')
 const player2Tray = document.querySelector('.player2-tray')
-
+const btnP1Draw = document.querySelector('.btn-p1-draw')
+const btnP2Draw = document.querySelector('.btn-p2-draw')
 
 // the four special square-types (triple-word-score, double-letter-score, etc.)
 // the numbers will be (if !0) converted to binary, the one bits representing where the square goes in the row
@@ -46,19 +46,7 @@ W-2, X-1, Y-2, Z-1 and blank-2.
 // for tileDistribution and tileCounts, the index of the outer array is,
 // respectively, point-value, and #-of-tiles in set
 
-const tileDistributionses = [
-  ['blank'],
-  ['A', 'E', 'I', 'O', 'U', 'L', 'N', 'S', 'T', 'R'],
-  ['D', 'G'],
-  ['B', 'C', 'M', 'P'],
-  ['F', 'H', 'V', 'W', 'Y'],
-  ['K'],
-  [],
-  [],
-  ['J', 'X'],
-  [],
-  ['Q', 'Z']
-]
+
 const tileDistribution = [
   ['2.blank'],
   ['9.A', '12.E', '9.I', '8.O', '4.U', '4.L', '6.N', '4.S', '6.T', '6.R'],
@@ -97,45 +85,32 @@ const createAllTiles = () => {
         tile.style.backgroundImage = `url(${imgEl.src})`
         bagOfTileClasses.push(tile.classList[1])
         bagOfTilesDOM.append(tile)
+
+
+        // tile.addEventListener('dragstart', handleDragStart)
+        // tile.addEventListener('dragend', handleDragEnd)
       }
     })
   })
 
   spacelog(`after tileDistro loop, bagOfTiles contains ${bagOfTileClasses.length} tiles`);
-
-
-  // there should be 100 tiles at the end of this
-  // tileCounts.forEach((arr, index) => {
-  //   // console.log(arr);
-
-  //   // this loop is each 
-  //   arr.forEach((letter) => {
-  //     // for (let i = 0; i <= index; i++) {
-  //     let tileToClone
-  //     let clonedTile;
-  //     arr.forEach((letter) => {
-  //       tileToClone = document.querySelector(`.letter-${letter}`)
-  //       // console.log(tileToClone);
-  //       // console.log(`count: ${letter} : ${index}`);
-  //       // clonedTile = tileToClone.cloneNode(true)
-  //       // bagOfTiles.push(clonedTile)
-  //     })
-  //   })
-  // })
 }
 
 // #endregion bagOfTiles creation
 
-const drawTiles = (player, num) => {
-  for (let i = 1; i <= num; i++) {
+
+
+const drawTiles = (playerTray, numTiles) => {
+  for (let i = 1; i <= numTiles; i++) {
     let idx = Math.floor(Math.random() * bagOfTileClasses.length)
-    let tyle = bagOfTileClasses.splice(idx, 1)
-    // spacelog(`classlist[1] = ${tyle}`)
-    player.append(bagOfTilesDOM.querySelector(`.${tyle}`))
-    // let sackOfTiles = [...bagOfTiles]
-    // let t = sackOfTiles.splice(idx, 1)
-    // spacelog(typeof(t));
-    // player.append()
+    let tileClass = bagOfTileClasses.splice(idx, 1)
+
+    let t = bagOfTilesDOM.querySelector(`.${tileClass}`)
+    playerTray.append(t)
+
+    t.addEventListener('dragstart', handleDragStart)
+    t.addEventListener('dragend', handleDragEnd)
+
   }
 }
 
@@ -148,7 +123,8 @@ function handleDragStart(e) {
   spacelog(`drag start on ${e}`)
   this.style.opacity = '0.4';
 
-  srcTile = this;
+  srcTile = e.target;
+  console.dir(e.target)
 
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('text/html', this.innerHTML);
@@ -217,17 +193,17 @@ const getOneRow = (idx, valsAtIdx) => {
   let row = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
   // valsAtIdx is a four-element array: one for each of the four special square-types
-  // think: the vertical cross of the four 15-element arrays stacked (a 4 high, 15 across grid)
+  // think: the vertical cross of the four 15-element arrays stacked (a 4 row, 15 column grid)
   valsAtIdx.forEach((val, index) => {
-    // val is the actual number in the row, index is the position in the row
-    // translate the decimal val into binary number (string) with leading '0's
+    // val is the actual number in the row (e.g. 16513, or 0), index is the position in the row
+    // translate the decimal (val) into a binary number (a string: toString(2)), padding with leading '0's
     const bits = val.toString(2).padStart(15, '0')
     if (bits === '0') {
       row[index] = getDiv('')
     } else {
       for (let bit = 0; bit < bits.length; bit++) {
 
-        // idx here is WHICH SQUARE-TYPE (e.g., idx=0 means square-type is TripleWordScore(TWS))
+        // index here is WHICH SQUARE-TYPE (e.g., index=0 means square-type is TripleWordScore(TWS))
         // so each switch will be hit 15 TIMES in a row before moving to the next case
         switch (index) {
           case 0:
@@ -247,7 +223,7 @@ const getOneRow = (idx, valsAtIdx) => {
     }
   })
 
-  // but now the unmatched squares are 0s and need to be divs
+  // but now the unmatched squares are 0s and need to be divs('empty' divs: call getDiv() with no args)
   row = row.map(el => el === 0 ? getDiv() : el)
 
   return row
@@ -287,6 +263,8 @@ const loadBoard = () => {
 
 // =========== DOM LOADED EVENT ==============
 window.addEventListener('DOMContentLoaded', async () => {
+
+  // ======== load the word list ==========
   await wordLists()
     .then(arrWordLists => {
 
@@ -302,24 +280,45 @@ window.addEventListener('DOMContentLoaded', async () => {
     })
   spacelog(`'done': fullWordList contains ${fullWordList.length} words. fullWordList[6000] = ${fullWordList[6000]}`)
   spacelog(`fullWordList[11999] = ${fullWordList[11999]}`)
+
+  // ======== Generate the board =========
   loadBoard();
 
   // loadBoard() has called getOneRow() which calls getDiv(), where the .square class is added
-
   squares = document.querySelectorAll('.square');
 
+
+  // ========= Fill the bagOfTiles ==========
   createAllTiles();
-
-  bagOfTilesDOM.childNodes.forEach((tile) => {
-    tile.addEventListener('mousedown', () => {
-      spacelog(tile.classList[2])
-    })
-    tile.addEventListener('dragstart', handleDragStart)
-    tile.addEventListener('dragend', handleDragEnd)
-  })
-
+// ------- and fill the player trays with tiles ---------
   drawTiles(player1Tray, 7)
   drawTiles(player2Tray, 7)
+
+
+  document.querySelectorAll('.tile').forEach((tile) => {
+    tile.addEventListener('mousedown', (e) => {
+      // e.preventDefault()
+      // spacelog(tile.classList[2])
+    })
+
+    // --- Moved to drawTiles() --- 
+    // tile.addEventListener('dragstart', handleDragStart)
+    // tile.addEventListener('dragend', handleDragEnd)
+  })
+
+
+  btnP1Draw.addEventListener('click', () => {
+    let trayCount = player1Tray.querySelectorAll('.tile').length
+    // spacelog(`trayCount p1 = ${trayCount}`)
+    drawTiles(player1Tray, 7 - trayCount)
+
+  })
+  btnP2Draw.addEventListener('click', () => {
+    let trayCount = player2Tray.querySelectorAll('.tile').length
+    // spacelog(`trayCount p2 = ${trayCount}`)
+    drawTiles(player2Tray, 7 - trayCount)
+  })
+
 
 }) // end window.addEvenListener('load')
 
