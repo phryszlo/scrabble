@@ -9,6 +9,8 @@ const player1Tray = document.querySelector('.player1-tray')
 const player2Tray = document.querySelector('.player2-tray')
 const btnP1Draw = document.querySelector('.btn-p1-draw')
 const btnP2Draw = document.querySelector('.btn-p2-draw')
+const btnP1Toggle = document.querySelector('.btn-p1-toggle')
+const btnP2Toggle = document.querySelector('.btn-p2-toggle')
 const btnFreeWords = document.querySelector('.btn-free-words')
 const freeWordCount = document.querySelector('.free-word-count')
 
@@ -22,9 +24,6 @@ const bagOfTiles_classes = []
 let playerUp = 'player1'
 let tilesPlayedThisTurn = []
 let currentTileInPlay = null
-
-
-
 
 
 let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
@@ -172,14 +171,49 @@ const drawTiles = (playerTray, numTiles) => {
 let srcTile = null;
 
 
+// =========== GAMEPLAY FUNCTIONS ===========
+// only run this/these when 'end turn' is called. let player move willy-gnilly until then
+
+const validatePlay = (firstPlay = false) => {
+  let goOn = true
+  if (firstPlay) {
+    goOn = verifyCenterSquareUsed()
+  }
+
+}
+
+const verifyCenterSquareUsed = () => {
+  return true
+}
+
+const verifyInline = (tiles = tilesPlayedThisTurn) => {
+  let row = 1
+  let col = 1
+  let zRow = tiles[0].dataset.row
+  let zCol = tiles[0].dataset.col
+  for (let i = 1; i < tiles.length; i++) {
+    if (tiles[i].dataset.row === zRow) {
+      row++
+    }
+    if (tiles[i].dataset.col === zCol) {
+      col++
+    }
+  }
+  spacelog(`row=${row} and tiles.length = ${tiles.length}`)
+  if (row === tiles.length || col === tiles.length) return true
+  else return false
+}
+
+
+//  if (Math.abs(tile.dataset.col - lastPlayed.dataset.col) > 7) {}
 
 // =========== DRAG START EVENT =============
 function dragStartHandler(e) {
-  spacelog(`drag start on ${e}`)
+  // spacelog(`drag start on ${e}`)
   this.style.opacity = '0.4';
 
   srcTile = e.target;
-  console.dir(e.target)
+  // console.dir(e.target)
 
   // const img = new Image();
   // const m = this.style.backgroundImage
@@ -232,7 +266,12 @@ function handleDragOver(e) {
   return false;
 }
 
-
+// ===============================
+// 🎟 🇦🇫 :🧮 ✈ 🍆 🔂 🙆‍♂️ 🤢 ⁉ 📦 
+// 🎟 🇦🇫 :🧮 ✈ 🍆 🔂 🙆‍♂️ 🤢 ⁉ 📦 
+// 🎟 🇦🇫 :🧮 ✈ 🍆 🔂 🙆‍♂️ 🤢 ⁉ 📦 
+//  ======== DROP HANDLER =======
+// ===============================
 function handleDrop(e) {
   if (e.stopPropagation) {
     e.stopPropagation();
@@ -250,10 +289,17 @@ function handleDrop(e) {
   srcTile.dataset.row = this.dataset.row
   tilesPlayedThisTurn.push(srcTile)
 
+  tilesPlayedThisTurn.forEach(tile => {
+    spacelog(`(${tile.dataset.row}, ${tile.dataset.col})`)
+  })
+  spacelog(verifyInline())
+
 
   return false;
 }
-
+// 🎟 🇦🇫 :🧮 ✈ 🍆 🔂 🙆‍♂️ 🤢 ⁉ 📦 
+// 🎟 🇦🇫 :🧮 ✈ 🍆 🔂 🙆‍♂️ 🤢 ⁉ 📦 
+// 🎟 🇦🇫 :🧮 ✈ 🍆 🔂 🙆‍♂️ 🤢 ⁉ 📦 
 
 // #endregion
 
@@ -290,26 +336,26 @@ const getOneRow = (idx, valsAtIdx) => {
 
     const bits = val.toString(2).padStart(15, '0')
 
-      for (let bit = 0; bit < bits.length; bit++) {
-        currentCol = bit
-        // index here is WHICH SQUARE-TYPE (e.g., index=0 means square-type is TripleWordScore(TWS))
-        // so each switch will be hit 15 TIMES in a row before moving to the next case
-        switch (index) {
-          case 0:
-            row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'tws-div') : row[bit]
-            break
-          case 1:
-            row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'dws-div') : row[bit]
-            break
-          case 2:
-            row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'tls-div') : row[bit]
-            break
-          case 3:
-            row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'dls-div') : row[bit]
-            break
+    for (let bit = 0; bit < bits.length; bit++) {
+      currentCol = bit
+      // index here is WHICH SQUARE-TYPE (e.g., index=0 means square-type is TripleWordScore(TWS))
+      // so each switch will be hit 15 TIMES in a row before moving to the next case
+      switch (index) {
+        case 0:
+          row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'tws-div') : row[bit]
+          break
+        case 1:
+          row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'dws-div') : row[bit]
+          break
+        case 2:
+          row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'tls-div') : row[bit]
+          break
+        case 3:
+          row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'dls-div') : row[bit]
+          break
 
-        }
       }
+    }
   })
 
   // but now the unmatched squares are 0s and need to be divs('empty' divs: call getDiv() with no args)
@@ -422,10 +468,26 @@ window.addEventListener('DOMContentLoaded', async () => {
     // spacelog(`trayCount p2 = ${trayCount}`)
     drawTiles(player2Tray, 7 - trayCount)
   })
-  
+
   btnFreeWords.addEventListener('click', () => {
     spaceConsole.replaceChildren('')
     pickSomeRandomWords(freeWordCount.value)
+  })
+
+  // these are a cheap way to give the option to obscure the other players' trays
+  btnP1Toggle.addEventListener('click', () => {
+    if (player1Tray.style.filter != 'contrast(0)') {
+      player1Tray.style.filter = 'contrast(0)'
+    } else {
+      player1Tray.style.filter = ''
+    }
+  })
+  btnP2Toggle.addEventListener('click', () => {
+    if (player2Tray.style.filter != 'contrast(0)') {
+      player2Tray.style.filter = 'contrast(0)'
+    } else {
+      player2Tray.style.filter = ''
+    }
   })
 
   // btnTilesModal.addEventListener('click', () => {

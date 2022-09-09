@@ -170,7 +170,7 @@ body::before {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  width: 28vw;
+  width: 26vw;
   height: calc(25vw * .9);
   height: fit-content;
   padding: 0;
@@ -237,8 +237,7 @@ body::before {
   background-image: linear-gradient(black, deeppink), url('./images/wood-grain-bg.jpg');
 }
 
-.btn-p1-draw,
-.btn-p2-draw {
+.btn-p  {
   /* prevent hightlighting of button text */
   user-select: none;
   margin-top: .2em;
