@@ -7,8 +7,8 @@ const gameboard = document.querySelector('.gameboard')
 const spaceConsole = document.querySelector('.console');
 const player1Tray = document.querySelector('.player1-tray')
 const player2Tray = document.querySelector('.player2-tray')
-const btnP1Draw = document.querySelector('.btn-p1-draw')
-const btnP2Draw = document.querySelector('.btn-p2-draw')
+const btnP1EndTurn = document.querySelector('.btn-p1-draw')
+const btnP2EndTurn = document.querySelector('.btn-p2-draw')
 const btnP1Toggle = document.querySelector('.btn-p1-toggle')
 const btnP2Toggle = document.querySelector('.btn-p2-toggle')
 const btnFreeWords = document.querySelector('.btn-free-words')
@@ -104,10 +104,12 @@ const createAllTiles = () => {
         // idx is the point val
         tile = document.createElement('div')
 
-
+        // this is the place where you at first added letter- and points- classes and then decided to go with attributes
+        // but were uncommitted to the idea so kept both.
 
         tile.classList.add('tile', `letter-${letter.substring(letter.indexOf('.') + 1)}`, `points-${idx}`)
         tile.setAttribute('data-letter', letter.substring(letter.indexOf('.') + 1))
+        tile.setAttribute('data-points', idx)
 
         // classlist is a DOMTokenList ([<string>])
 
@@ -119,6 +121,8 @@ const createAllTiles = () => {
         id += 1
 
 
+        // reminder: bagOfTiles_classes is just a list of A classname of the tiles
+        // and _DOM is the elements themselves
         bagOfTiles_classes.push(tile.classList[1])
         bagOfTiles_DOM.append(tile)
 
@@ -171,15 +175,53 @@ const drawTiles = (playerTray, numTiles) => {
 let srcTile = null;
 
 
+
+////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 // =========== GAMEPLAY FUNCTIONS ===========
 // only run this/these when 'end turn' is called. let player move willy-gnilly until then
+
+
+const endTurn_click = (e) => {
+  if (e.target === btnP1EndTurn) {
+    spacelog('p1 click')
+    if (validatePlay()) {
+      'p1 valid'
+      let trayCount = player1Tray.querySelectorAll('.tile').length
+      // spacelog(`trayCount p2 = ${trayCount}`)
+      drawTiles(player1Tray, 7 - trayCount)
+    }
+    else {
+      // notify of the problem
+      return false
+    }
+  }
+  else {
+    if (validatePlay()) {
+      let trayCount = player1Tray.querySelectorAll('.tile').length
+      // spacelog(`trayCount p2 = ${trayCount}`)
+      drawTiles(player2Tray, 7 - trayCount)
+    }
+    else {
+      // notify of the problem
+      return false
+    }
+  }
+
+  tilesPlayedThisTurn.splice(0)
+  tallyScore()
+
+}
+
+
 
 const validatePlay = (firstPlay = false) => {
   let goOn = true
   if (firstPlay) {
     goOn = verifyCenterSquareUsed()
   }
-
+  goOn = verifyInline()
+  return goOn
 }
 
 const verifyCenterSquareUsed = () => {
@@ -199,9 +241,23 @@ const verifyInline = (tiles = tilesPlayedThisTurn) => {
       col++
     }
   }
-  spacelog(`row=${row} and tiles.length = ${tiles.length}`)
-  if (row === tiles.length || col === tiles.length) return true
+  // spacelog(`row=${row} and tiles.length = ${tiles.length}`)
+  if ((row === tiles.length || col === tiles.length) && (col === 1 || row === 1) && tiles.length > 1) return true
   else return false
+}
+
+const tallyScore = (tiles = tilesPlayedThisTurn) => {
+  let points = 0
+  let letterMultiplier = 1
+  let wordMultiplier = 1
+  let g = 0
+  tiles.forEach((tile) => {
+    g += tile.parentElement.dataset.ltr_multi ?
+      parseInt(tile.dataset.points) * parseInt(tile.parentElement.dataset.ltr_multi) :
+      parseInt(tile.dataset.points)
+
+  })
+  spacelog(g)
 }
 
 
@@ -308,6 +364,12 @@ function handleDrop(e) {
 const getDiv = (row, col, className = 'div') => {
   const div = document.createElement('div')
   div.classList.add('square', className) //,`row-${row}`, `col-${col}`)
+  // the following syntax may break < IE11
+  if (className === 'dls-div') { div.dataset.ltr_multi = 2 }
+  if (className === 'tls-div') { div.dataset.ltr_multi = 3 }
+  if (className === 'dws-div') { div.dataset.word_multi = 2 }
+  if (className === 'tws-div') { div.dataset.word_multi = 3 }
+  // whereas the following may not
   div.setAttribute('data-row', row)
   div.setAttribute('data-col', col)
   if (row === 7 && col === 7) {
@@ -457,17 +519,19 @@ window.addEventListener('DOMContentLoaded', async () => {
   // })
 
 
-  btnP1Draw.addEventListener('click', () => {
-    let trayCount = player1Tray.querySelectorAll('.tile').length
-    // spacelog(`trayCount p1 = ${trayCount}`)
-    drawTiles(player1Tray, 7 - trayCount)
+  btnP1EndTurn.addEventListener('click', endTurn_click)
 
-  })
-  btnP2Draw.addEventListener('click', () => {
-    let trayCount = player2Tray.querySelectorAll('.tile').length
-    // spacelog(`trayCount p2 = ${trayCount}`)
-    drawTiles(player2Tray, 7 - trayCount)
-  })
+  // () => {
+  //   let trayCount = player1Tray.querySelectorAll('.tile').length
+  //   // spacelog(`trayCount p1 = ${trayCount}`)
+  //   drawTiles(player1Tray, 7 - trayCount)
+  // })
+  btnP2EndTurn.addEventListener('click', endTurn_click)
+  // () => {
+  //   let trayCount = player2Tray.querySelectorAll('.tile').length
+  //   // spacelog(`trayCount p2 = ${trayCount}`)
+  //   drawTiles(player2Tray, 7 - trayCount)
+  // })
 
   btnFreeWords.addEventListener('click', () => {
     spaceConsole.replaceChildren('')

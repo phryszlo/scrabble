@@ -20,8 +20,20 @@
     <div class="layout-wrapper">
       <h1 class="title">scrabble</h1>
 
-      <!-- game-container (trays, legend, gameboard) -->
-      <div class="gameboard"></div>
+      <div class="gameboard-container">
+        <div class="gameboard"></div>
+        <div class="scores">
+          <div class="score">
+            <label for="p1-score" class="score-label">player 1</label>
+            <input type="text" class="p1-score" />
+          </div>
+          <div class="score">
+            <label for="p2-score" class="score-label">player 2</label>
+            <input type="text" class="p2-score" />
+          </div>
+        </div>
+      </div>
+      <!-- game-container (trays, legend) (leftover name)-->
       <div class="game-container">
         <div class="tray-legend-container">
           <div class="trays-container">
@@ -65,7 +77,14 @@
 
       <div class="dashboard">
         <div class="free-words">
-          <input type="number" class="free-word-count" max="1000" step="5" value="100" width="50px">
+          <input
+            type="number"
+            class="free-word-count"
+            max="1000"
+            step="5"
+            value="100"
+            width="50px"
+          />
           <button class="btn-free-words">load</button>
         </div>
         <div class="console"></div>
@@ -78,13 +97,13 @@
           tile-distribution
         </button>
         <button
-        type="button"
-        class="btn btn-primary btn-sm btn-mine"
-        data-bs-toggle="modal"
-        data-bs-target="#modal-gameplay"
-      >
-        scrabble-rules
-      </button>
+          type="button"
+          class="btn btn-primary btn-sm btn-mine"
+          data-bs-toggle="modal"
+          data-bs-target="#modal-gameplay"
+        >
+          scrabble-rules
+        </button>
       </div>
 
       <!-- holders -- no display
@@ -153,39 +172,69 @@
         </div>
       </div>
 
-
-
       <!-- rules modals: toggler -->
-      <div class="modal fade" id="modal-gameplay" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+      <div
+        class="modal fade"
+        id="modal-gameplay"
+        aria-hidden="true"
+        aria-labelledby="exampleModalToggleLabel"
+        tabindex="-1"
+      >
         <div class="modal-dialog modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalToggleLabel">Gameplay</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
             <div class="modal-body">
               <img src="images/rules-gameplay.png" alt="gameplay png" />
-
             </div>
             <div class="modal-footer">
-              <button class="btn btn-primary" data-bs-target="#modal-scoring" data-bs-toggle="modal">Go to scoring rules</button>
+              <button
+                class="btn btn-primary"
+                data-bs-target="#modal-scoring"
+                data-bs-toggle="modal"
+              >
+                Go to scoring rules
+              </button>
             </div>
           </div>
         </div>
       </div>
-      <div class="modal fade" id="modal-scoring" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+      <div
+        class="modal fade"
+        id="modal-scoring"
+        aria-hidden="true"
+        aria-labelledby="exampleModalToggleLabel2"
+        tabindex="-1"
+      >
         <div class="modal-dialog modal-dialog-scrollable">
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalToggleLabel2">Scoring</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
             </div>
             <div class="modal-body">
               <img src="images/rules-scoring.png" alt="scoring png" />
-
             </div>
             <div class="modal-footer">
-              <button class="btn btn-primary" data-bs-target="#modal-gameplay" data-bs-toggle="modal">Back to gameplay</button>
+              <button
+                class="btn btn-primary"
+                data-bs-target="#modal-gameplay"
+                data-bs-toggle="modal"
+              >
+                Back to gameplay
+              </button>
             </div>
           </div>
         </div>
