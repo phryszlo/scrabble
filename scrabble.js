@@ -5,14 +5,26 @@ import wordLists from "./wordLists.js"
 // HTML element refs
 const gameboard = document.querySelector('.gameboard')
 const spaceConsole = document.querySelector('.console');
-const bagOfTilesDOM = document.querySelector('.bag-of-tiles')
 const player1Tray = document.querySelector('.player1-tray')
 const player2Tray = document.querySelector('.player2-tray')
 const btnP1Draw = document.querySelector('.btn-p1-draw')
 const btnP2Draw = document.querySelector('.btn-p2-draw')
-// const btnTilesModal = document.querySelector('#btn-tiles-modal')
 const btnFreeWords = document.querySelector('.btn-free-words')
 const freeWordCount = document.querySelector('.free-word-count')
+
+
+const bagOfTiles_DOM = document.querySelector('.bag-of-tiles')
+
+const bagOfTiles_classes = []
+
+
+// ==== Gameplay variables =====
+let playerUp = 'player1'
+let tilesPlayedThisTurn = []
+let currentTileInPlay = null
+
+
+
 
 
 let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
@@ -72,7 +84,6 @@ const tileDistribution = [
   ['1.Q', '1.Z']
 ]
 
-const bagOfTileClasses = []
 
 const createAllTiles = () => {
   let tile
@@ -109,8 +120,8 @@ const createAllTiles = () => {
         id += 1
 
 
-        bagOfTileClasses.push(tile.classList[1])
-        bagOfTilesDOM.append(tile)
+        bagOfTiles_classes.push(tile.classList[1])
+        bagOfTiles_DOM.append(tile)
 
 
         // tile.addEventListener('dragstart', handleDragStart)
@@ -130,15 +141,15 @@ const createAllTiles = () => {
 const drawTiles = (playerTray, numTiles) => {
   let t, p, letter // tile, player-prefix (p1-,p2-), and tile-letter
   for (let i = 1; i <= numTiles; i++) {
-    const idx = Math.floor(Math.random() * bagOfTileClasses.length)
-    const tileClass = bagOfTileClasses.splice(idx, 1)
+    const idx = Math.floor(Math.random() * bagOfTiles_classes.length)
+    const tileClass = bagOfTiles_classes.splice(idx, 1)
 
 
 
     // custom attributes addition
     // tile.setAttribute('data-
 
-    t = bagOfTilesDOM.querySelector(`.${tileClass}`)
+    t = bagOfTiles_DOM.querySelector(`.${tileClass}`)
     p = playerTray === player1Tray ? 'p1-' : 'p2-'
     letter = t.classList.value.split(' ').find(c => c.startsWith('letter-'))
     letter = letter.substring(letter.indexOf('-') + 1)
@@ -234,7 +245,10 @@ function handleDrop(e) {
   this.classList.remove('over');
 
   // ------ set custom attributes/classes of tiles -------
-
+  // allegedly this way of using .dataset is a problem pre-IE11
+  srcTile.dataset.col = this.dataset.col
+  srcTile.dataset.row = this.dataset.row
+  tilesPlayedThisTurn.push(srcTile)
 
 
   return false;
@@ -250,6 +264,10 @@ const getDiv = (row, col, className = 'div') => {
   div.classList.add('square', className) //,`row-${row}`, `col-${col}`)
   div.setAttribute('data-row', row)
   div.setAttribute('data-col', col)
+  if (row === 7 && col === 7) {
+    div.style.backgroundImage = `url('./images/star.png')`
+    div.style.backgroundSize = 'contain'
+  }
   return div
 }
 
@@ -365,7 +383,8 @@ window.addEventListener('DOMContentLoaded', async () => {
   // spacelog(`'done': fullWordList contains ${fullWordList.length} words. fullWordList[6000] = ${fullWordList[6000]}`)
   // spacelog(`fullWordList[11999] = ${fullWordList[11999]}`)
 
-  pickSomeRandomWords(100)
+  spacelog(`vw=${vw} & vh=${vh} & vmin=${vmin}`)
+  // pickSomeRandomWords(100)
   // ======== Generate the board =========
   loadBoard();
 
