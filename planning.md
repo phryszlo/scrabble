@@ -21,3 +21,34 @@ four arrays (tws,dws,tls,dws):
           - [twsDiv, div, div, dlsDiv, div, div, div, twsDiv, div, div, div, dlsDiv, div, div, twsDiv]
         - so the return array would be init with 15 divs, or 15 nulls or whatever and then use splice to overwrite slots as needed
         - the return is a single complete row
+
+
+-----------------
+## classes and attributes
+**in bag**  
+.tile  
+.letter-x  
+.points-n  
+[data-id]  
+  
+**in tray**  
+.pn-tile  
+.pn-x  
+
+**board**  
+.div, .dls/dws/tls/tws-div  
+[data-col]  
+[data-row]  
+
+*do we keep the adjacents in an array or in four data- attrs?*  
+[data-above]  
+[data-below]  
+[data-left]  
+[data-right]  
+*and what goes in the values either way? [data-id]? or the element itself? the [data-row][data-col] attrs? the .letter-x classes?*  
+
+major point: if there is no tile at all adjacent in one direction or another, the adjacent square element in that direction will be an empty div.  
+simply checking if the .square has children shows mere adjacency.  
+
+
+

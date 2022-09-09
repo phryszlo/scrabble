@@ -4,11 +4,22 @@ import wordLists from "./wordLists.js"
 
 // HTML element refs
 const gameboard = document.querySelector('.gameboard')
+const spaceConsole = document.querySelector('.console');
 const bagOfTilesDOM = document.querySelector('.bag-of-tiles')
 const player1Tray = document.querySelector('.player1-tray')
 const player2Tray = document.querySelector('.player2-tray')
 const btnP1Draw = document.querySelector('.btn-p1-draw')
 const btnP2Draw = document.querySelector('.btn-p2-draw')
+// const btnTilesModal = document.querySelector('#btn-tiles-modal')
+const btnFreeWords = document.querySelector('.btn-free-words')
+const freeWordCount = document.querySelector('.free-word-count')
+
+
+let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
+let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
+let vmin = Math.min(vw, vh)
+
+console.log(`vw=${vw} & vh=${vh} & vmin=${vmin}`)
 
 // the four special square-types (triple-word-score, double-letter-score, etc.)
 // the numbers will be (if !0) converted to binary, the one bits representing where the square goes in the row
@@ -74,6 +85,8 @@ const createAllTiles = () => {
       // create an element to hold the background image of the tile
       let imgEl = document.createElement('img')
       imgEl.src = `./images/tiles/${letter.substring(letter.indexOf('.') + 1)}.png`
+      imgEl.classList.add(letter.substring(letter.indexOf('.') + 1)) //set a class of just the letter
+      imgEl.setAttribute('width', (50 * vw) / 18) // attempt to mimic the css
       document.querySelector('.tiles-images').append(imgEl)
 
       let numTilesNeeded = letter.substring(0, letter.indexOf('.')) // e.g. '2.W', numTilesNeeded = 2
@@ -84,6 +97,7 @@ const createAllTiles = () => {
 
 
         tile.classList.add('tile', `letter-${letter.substring(letter.indexOf('.') + 1)}`, `points-${idx}`)
+        tile.setAttribute('data-letter', letter.substring(letter.indexOf('.') + 1))
 
         // classlist is a DOMTokenList ([<string>])
 
@@ -105,13 +119,13 @@ const createAllTiles = () => {
     })
   })
 
-  spacelog(`after tileDistro loop, bagOfTiles contains ${bagOfTileClasses.length} tiles`);
+  // spacelog(`after tileDistro loop, bagOfTiles contains ${bagOfTileClasses.length} tiles`);
 }
 
 // #endregion bagOfTiles creation
 
 
-// the name drawTiles is a bit misleading given the 2 meanings. this means: pick it from the bagOfTiles.
+// the name drawTiles is a bit misleading given the 2 meanings. here it means: pick it from the bagOfTiles.
 //  i.e. this does not draw anything on the screen
 const drawTiles = (playerTray, numTiles) => {
   let t, p, letter // tile, player-prefix (p1-,p2-), and tile-letter
@@ -134,6 +148,7 @@ const drawTiles = (playerTray, numTiles) => {
 
     playerTray.append(t)
 
+    t.setAttribute('draggable', true)
     t.addEventListener('dragstart', dragStartHandler)
     t.addEventListener('dragend', handleDragEnd)
 
@@ -145,6 +160,9 @@ const drawTiles = (playerTray, numTiles) => {
 // based on: https://glitch.com/edit/#!/simple-drag-drop?path=dnd.js%3A65%3A3
 let srcTile = null;
 
+
+
+// =========== DRAG START EVENT =============
 function dragStartHandler(e) {
   spacelog(`drag start on ${e}`)
   this.style.opacity = '0.4';
@@ -152,12 +170,24 @@ function dragStartHandler(e) {
   srcTile = e.target;
   console.dir(e.target)
 
-  const img = new Image();
-  const m = this.style.backgroundImage
-  spacelog(m + m.substring(m.lastIndexOf('/'), m.lastIndexOf('.') + 3))
-  img.src = "./images/tiles" + 
-    m.substring(m.lastIndexOf('/'), m.length - 2)
-  e.dataTransfer.setDragImage(img, 1, 1)
+  // const img = new Image();
+  // const m = this.style.backgroundImage
+  // spacelog(m + m.substring(m.lastIndexOf('/'), m.lastIndexOf('.') + 3))
+
+
+
+  // img.src = "./images/tiles" +
+  //   m.substring(m.lastIndexOf('/'), m.length - 2)
+  // img.width = 5
+  // img.height = 5
+
+  // const letter = this.getAttribute('data-letter')
+  // spacelog(letter)
+  // let bgi = document.querySelector(`letter-${letter}`)
+
+  // spacelog(typeof(bgi))
+
+  // e.dataTransfer.setDragImage(bgi, 1, 1)
 
 
   e.dataTransfer.effectAllowed = 'move';
@@ -187,9 +217,7 @@ function handleDragOver(e) {
   if (e.preventDefault) {
     e.preventDefault();
   }
-
   e.dataTransfer.dropEffect = 'move';
-
   return false;
 }
 
@@ -204,6 +232,10 @@ function handleDrop(e) {
   // }
 
   this.classList.remove('over');
+
+  // ------ set custom attributes/classes of tiles -------
+
+
 
   return false;
 }
@@ -240,17 +272,6 @@ const getOneRow = (idx, valsAtIdx) => {
 
     const bits = val.toString(2).padStart(15, '0')
 
-    // now we have either the binary string or a '0'
-    // if it's a '0' how do we know what rows we're dealing with?
-
-
-
-    if (bits === '0') {
-      // this will never be reached.
-      spacelog(`bits=${bits}`)
-      row[index] = getDiv(`${idx}`, `${index}`)
-
-    } else {
       for (let bit = 0; bit < bits.length; bit++) {
         currentCol = bit
         // index here is WHICH SQUARE-TYPE (e.g., index=0 means square-type is TripleWordScore(TWS))
@@ -268,12 +289,9 @@ const getOneRow = (idx, valsAtIdx) => {
           case 3:
             row[bit] = bits[bit] == 1 ? getDiv(idx, bit, 'dls-div') : row[bit]
             break
-          default:
-            spacelog('default')
-            break;
+
         }
       }
-    }
   })
 
   // but now the unmatched squares are 0s and need to be divs('empty' divs: call getDiv() with no args)
@@ -315,6 +333,18 @@ const loadBoard = () => {
 // #endregion board creation functions
 
 
+const pickSomeRandomWords = (numWords) => {
+  let idx = Math.floor(Math.random() * fullWordList.length)
+  spacelog(`here are ${numWords} free word suggestions`)
+  spacelog('-------------------------')
+  for (let i = 0; i < numWords; i++) {
+    spacelog(fullWordList[idx])
+    idx = Math.floor(Math.random() * fullWordList.length)
+  }
+}
+
+
+
 // =========== DOM LOADED EVENT ==============
 window.addEventListener('DOMContentLoaded', async () => {
 
@@ -332,9 +362,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         })
       })
     })
-  spacelog(`'done': fullWordList contains ${fullWordList.length} words. fullWordList[6000] = ${fullWordList[6000]}`)
-  spacelog(`fullWordList[11999] = ${fullWordList[11999]}`)
+  // spacelog(`'done': fullWordList contains ${fullWordList.length} words. fullWordList[6000] = ${fullWordList[6000]}`)
+  // spacelog(`fullWordList[11999] = ${fullWordList[11999]}`)
 
+  pickSomeRandomWords(100)
   // ======== Generate the board =========
   loadBoard();
 
@@ -372,7 +403,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     // spacelog(`trayCount p2 = ${trayCount}`)
     drawTiles(player2Tray, 7 - trayCount)
   })
+  
+  btnFreeWords.addEventListener('click', () => {
+    spaceConsole.replaceChildren('')
+    pickSomeRandomWords(freeWordCount.value)
+  })
 
+  // btnTilesModal.addEventListener('click', () => {
+  //   document.getElementById('modalTilesDistro').modal('show')
+  // })
 
 }) // end window.addEvenListener('load')
 

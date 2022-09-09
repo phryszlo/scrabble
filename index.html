@@ -7,12 +7,12 @@
     <title>scrabble</title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- <link
+    <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
       integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx"
       crossorigin="anonymous"
-    /> -->
+    />
     <link rel="stylesheet" href="scrabble.css" />
   </head>
 
@@ -61,19 +61,142 @@
       </div>
       <!-- end of game-container -->
 
-      <div class="console"></div>
+      <div class="dashboard">
+        <div class="free-words">
+          <input type="number" class="free-word-count" max="1000" step="5" value="100" width="50px">
+          <button class="btn-free-words">load</button>
+        </div>
+        <div class="console"></div>
+        <button
+          type="button"
+          class="btn btn-primary btn-sm btn-mine"
+          data-bs-toggle="modal"
+          data-bs-target="#modalTilesDistro"
+        >
+          tile-distribution
+        </button>
+        <button
+        type="button"
+        class="btn btn-primary btn-sm btn-mine"
+        data-bs-toggle="modal"
+        data-bs-target="#modal-gameplay"
+      >
+        scrabble-rules
+      </button>
+      </div>
 
       <!-- holders -- no display
        -->
       <div class="bag-of-tiles"></div>
       <div class="tiles-images"></div>
+
+      <!-- BOOTSTRAP MODALS -->
+
+      <!-- tiles modal -->
+      <div
+        class="modal fade"
+        id="modalTilesDistro"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <p class="modal-title" id="exampleModalLongTitle">
+                TILE DISTRIBUTION (official)
+              </p>
+              <!-- <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button> -->
+            </div>
+            <div class="modal-body">
+              (1 point)-A, E, I, O, U, L, N, S, T, R
+              <br />
+              (2 points)-D, G
+              <br />
+              (3 points)-B, C, M, P
+              <br />
+              (4 points)-F, H, V, W, Y
+              <br />
+              (5 points)-K
+              <br />
+              (8 points)- J, X
+              <br />
+              (10 points)-Q, Z
+              <br />
+              <br />
+              COUNTS
+              <br />
+              A-9, B-2, C-2, D-4, E-12, F-2, G-3, H-2, I-9, J-1, K-1, L-4, M-2,
+              N-6, O-8, P-2, Q-1, R-6, S-4, T-6, U-4, V-2, W-2, X-1, Y-2, Z-1
+              and blank-2.
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- rules modals: toggler -->
+      <div class="modal fade" id="modal-gameplay" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalToggleLabel">Gameplay</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <img src="images/rules-gameplay.png" alt="gameplay png" />
+
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" data-bs-target="#modal-scoring" data-bs-toggle="modal">Go to scoring rules</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal fade" id="modal-scoring" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalToggleLabel2">Scoring</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <img src="images/rules-scoring.png" alt="scoring png" />
+
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" data-bs-target="#modal-gameplay" data-bs-toggle="modal">Back to gameplay</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- END BOOTSTRAP MODALS -->
     </div>
 
-    <!-- <script
+    <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
       crossorigin="anonymous"
-    ></script> -->
+    ></script>
     <script src="./scrabble.js" type="module" defer></script>
   </body>
 </html>
