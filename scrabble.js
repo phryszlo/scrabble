@@ -22,7 +22,7 @@ const bagOfTiles_classes = []
 
 // ==== Gameplay variables =====
 let playerUp = 'player1'
-let tilesPlayedThisTurn = []
+let tilesInPlay = []
 let currentTileInPlay = null
 
 
@@ -209,7 +209,7 @@ const endTurn_click = (e) => {
   }
 
   tallyScore()
-  tilesPlayedThisTurn.splice(0)
+  tilesInPlay.splice(0)
 
 }
 
@@ -228,11 +228,15 @@ const verifyCenterSquareUsed = () => {
   return true
 }
 
-const verifyInline = (tiles = tilesPlayedThisTurn) => {
+
+const verifyInline = (tiles = tilesInPlay) => {
   let row = 1
   let col = 1
+  //mark the first tile as both zRow and zCol. isRow || isCol cannot be known at this time
   let zRow = tiles[0].dataset.row
   let zCol = tiles[0].dataset.col
+
+  // start the loop on the second tile placement
   for (let i = 1; i < tiles.length; i++) {
     if (tiles[i].dataset.row === zRow) {
       row++
@@ -242,13 +246,16 @@ const verifyInline = (tiles = tilesPlayedThisTurn) => {
     }
   }
   // spacelog(`row=${row} and tiles.length = ${tiles.length}`)
-  if ((row === tiles.length || col === tiles.length) && (col === 1 || row === 1) && tiles.length > 1) return true
+
+  // this defines the condition of isRow or isCol. min word length is 2.
+  if (((row === tiles.length && col === 1) || (col === tiles.length && row === 1)) && tiles.length > 1) return true
   else return false
 }
 
-const tallyScore = (tiles = tilesPlayedThisTurn) => {
+const tallyScore = (tiles = tilesInPlay) => {
   let points = 0
   let wordMultiplier = 1
+  // this loop only counts the in-play tiles, i.e. not the on-board/re-used tiles
   tiles.forEach((tile) => {
     points += tile.parentElement.dataset.ltr_multi ?
       parseInt(tile.dataset.points) * parseInt(tile.parentElement.dataset.ltr_multi) :
@@ -260,7 +267,9 @@ const tallyScore = (tiles = tilesPlayedThisTurn) => {
   spacelog(points)
 }
 
+// ** state-of-work vs. state-of-play **
 
+// this is bogus. this is only a first turn problem. length can be up to 15 including on-board tiles.
 //  if (Math.abs(tile.dataset.col - lastPlayed.dataset.col) > 7) {}
 
 // =========== DRAG START EVENT =============
@@ -343,9 +352,14 @@ function handleDrop(e) {
   // allegedly this way of using .dataset is a problem pre-IE11
   srcTile.dataset.col = this.dataset.col
   srcTile.dataset.row = this.dataset.row
-  tilesPlayedThisTurn.push(srcTile)
 
-  tilesPlayedThisTurn.forEach(tile => {
+  // only add to tilesInPlay if it's being dragged from the tray -- i.e. if it's not already in play
+  // spacelog(tilesInPlay.indexOf(srcTile))
+  if (tilesInPlay.indexOf(srcTile) < 0) {
+    tilesInPlay.push(srcTile)
+  }
+
+  tilesInPlay.forEach(tile => {
     spacelog(`(${tile.dataset.row}, ${tile.dataset.col})`)
   })
   spacelog(verifyInline())
