@@ -190,6 +190,7 @@ const endTurn_click = (e) => {
       let trayCount = player1Tray.querySelectorAll('.tile').length
       // spacelog(`trayCount p2 = ${trayCount}`)
       drawTiles(player1Tray, 7 - trayCount)
+      currentWord.splice(0)
     }
     else {
       // notify of the problem
@@ -201,6 +202,7 @@ const endTurn_click = (e) => {
       let trayCount = player1Tray.querySelectorAll('.tile').length
       // spacelog(`trayCount p2 = ${trayCount}`)
       drawTiles(player2Tray, 7 - trayCount)
+      currentWord.splice(0)
     }
     else {
       // notify of the problem
@@ -291,11 +293,32 @@ const verifyInline = (tiles = tilesInPlay) => {
 
 
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+                   THE WORST PART OF THE CODE
                    DETERMINE LINEAR ADJACENCY
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
+
+
+// const simpleIsAdjacent = (tiles = tilesInPlay) => {
+//   let isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise it's a column
+//   tiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+//   tiles.forEach(tile => {
+//     spacelog('hi' + tile.dataset.col)
+//   })
+//   if (tilesOnBoard.length > 0) {
+
+//     let tilesToLeft = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col < minCol)))
+//     tilesToLeft.forEach(tile => {
+//       spacelog('ttl' + tile.dataset.col)
+//     })
+//   }
+// }
+
 const determineLinearAdjacency = (tiles = tilesInPlay) => {
   // if tiles.length === 1, row or col is determined by something else. I'm not prepared to deal with it yet.
   // maybe we would be reaching a different fn()?
+
+  // simpleIsAdjacent()
+  // return
 
   // row or col has already been verified, so comparing two tiles should be sufficient
   let isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise it's a column
@@ -307,36 +330,55 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
       colNums.push(tile.dataset.col)
     })
     let minCol = Math.min(...colNums)
-    spacelog(`minCol = ${minCol}`)
     let maxCol = Math.max(...colNums)
-    spacelog(`maxCol = ${maxCol}`)
+    let isCongruent = true
+    let word = []
+    // simplistic check: between min and max cols, check each square at that col/row coord. for a child tile
+    // this should work for pushing letters to the currentWord
+    for (let i = minCol; i <= maxCol; i++) {
+      const sq = document.querySelectorAll(`.tile[data-col="${i}"][data-row="${row}"]`)
+      sq.forEach(s => {
+        word.push(s)
+        spacelog(`data-col = ${s.classList}`)
+      })
+    }
+    if (word.length > 0) {
+      word.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+    }
+    word.forEach(letter => {
+      currentWord.push(letter.dataset.letter)
+    })
+    spacelog(`currentWord after in-play portion${currentWord.join('')}`)
 
+    // END OF CONGRUENT IN-PLAY FIRST-TO-LAST-LAID-LETTER SECTION. INCLUDES ON-BOARD GAP-FILLERS.
+    // NEXT UP: ADD ADJACENT EXISTING ON-BOARD TILES TO WORD
+
+    word.splice(0)
     // check on-board pieces to left
     if (tilesOnBoard.length > 0) {
       let tilesToLeft = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col < minCol)))
 
-      // just a logger
-      tilesToLeft.forEach(tile => {
-        spacelog(`onboard tile to left: ${tile.dataset.col}`)
-      })
-
       // sort the tilesToLeft array backwards ... why? so index 0 is the right-most tile, and moving left up the indexes
       tilesToLeft.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
-      spacelog(`obtir[0] = ${tilesToLeft[0]}`)
-      tilesToLeft.forEach((tile, index) => {
-        spacelog(`onboard tiles to left: ${tile.dataset.col}.${index}`)
-      })
 
       // does minCol - 1 etc exist?
-      // let i = 0
       if (tilesToLeft.length > 0) {
-        // while (parseInt(onBoardTilesInRow[i].dataset.col) === minCol - 1) {
         for (let i = 0; i < tilesToLeft.length; i++) {
           spacelog(`immleft/then..${tilesToLeft[i].dataset.letter}`)
-          if (!(parseInt(tilesToLeft[i].dataset.col) === minCol - 1) ) {break}
+          word.unshift(tilesToLeft[i])
+          if (!(parseInt(tilesToLeft[i].dataset.col) === minCol - 1)) { break }
           minCol -= 1
         }
-        spacelog(`minCol in word is ${minCol}`)
+        if (word.length > 0) {
+          word.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
+        }
+
+
+        word.forEach(letter => {
+          currentWord.unshift(letter.dataset.letter)
+        })
+        spacelog(`currentWord after on-board unshift ${currentWord.join('')}`)
+
       }
     }
 
