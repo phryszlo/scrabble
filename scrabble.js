@@ -208,8 +208,8 @@ const endTurn_click = (e) => {
     }
   }
 
-  tilesPlayedThisTurn.splice(0)
   tallyScore()
+  tilesPlayedThisTurn.splice(0)
 
 }
 
@@ -248,16 +248,16 @@ const verifyInline = (tiles = tilesPlayedThisTurn) => {
 
 const tallyScore = (tiles = tilesPlayedThisTurn) => {
   let points = 0
-  let letterMultiplier = 1
   let wordMultiplier = 1
-  let g = 0
   tiles.forEach((tile) => {
-    g += tile.parentElement.dataset.ltr_multi ?
+    points += tile.parentElement.dataset.ltr_multi ?
       parseInt(tile.dataset.points) * parseInt(tile.parentElement.dataset.ltr_multi) :
       parseInt(tile.dataset.points)
-
+    wordMultiplier *= tile.parentElement.dataset.word_multi ?
+      parseInt(tile.parentElement.dataset.word_multi) : 1
   })
-  spacelog(g)
+  points *= wordMultiplier
+  spacelog(points)
 }
 
 
