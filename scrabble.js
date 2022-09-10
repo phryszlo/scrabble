@@ -22,9 +22,9 @@ const bagOfTiles_classes = []
 
 // ==== Gameplay variables =====
 let playerUp = 'player1'
+let currentWord = [] //char[] so easy to add letters to beginning. this may be a bad idea.
 let tilesInPlay = []
-let currentTileInPlay = null
-
+let tilesOnBoard = []
 
 let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
 let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
@@ -209,18 +209,26 @@ const endTurn_click = (e) => {
   }
 
   tallyScore()
-  tilesInPlay.splice(0)
+  tilesOnBoard.push(...tilesInPlay.splice(0))
+  tilesOnBoard.forEach(tile => {
+    spacelog(`${tile.dataset.letter}-${tile.dataset.row},${tile.dataset.col}`)
+
+  })
 
 }
 
 
-
+/*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+                    VALIDATE PLAY (MASTER)
+       ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
 const validatePlay = (firstPlay = false) => {
   let goOn = true
   if (firstPlay) {
     goOn = verifyCenterSquareUsed()
   }
-  goOn = verifyInline()
+  if (goOn) goOn = verifyInline()
+  if (goOn) goOn = determineLinearAdjacency()
+
   return goOn
 }
 
@@ -228,7 +236,9 @@ const verifyCenterSquareUsed = () => {
   return true
 }
 
-
+/*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+                    VERIFY INLINE
+       ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
 const verifyInline = (tiles = tilesInPlay) => {
   let row = 1
   let col = 1
@@ -236,7 +246,7 @@ const verifyInline = (tiles = tilesInPlay) => {
   let zRow = tiles[0].dataset.row
   let zCol = tiles[0].dataset.col
 
-  // start the loop on the second tile placement
+  // start the loop on the second tile ; i.e. assume row or col based on this first evidence
   for (let i = 1; i < tiles.length; i++) {
     if (tiles[i].dataset.row === zRow) {
       row++
@@ -247,10 +257,101 @@ const verifyInline = (tiles = tilesInPlay) => {
   }
   // spacelog(`row=${row} and tiles.length = ${tiles.length}`)
 
-  // this defines the condition of isRow or isCol. min word length is 2.
-  if (((row === tiles.length && col === 1) || (col === tiles.length && row === 1)) && tiles.length > 1) return true
-  else return false
+  let isRow = (row === tiles.length && col === 1)
+  let isCol = (col === tiles.length && row === 1)
+
+  // *** MOVE verifyLength() out to own fn(). it's a problem when adding a single letter to existing words
+
+  if ((isRow || isCol) && tiles.length > 1) {
+
+    // ** HERE'S Another PROBLEM. this should sort the word by tile order. but it assumes left to right or top to bottom. HMMM.
+    if (isRow) {
+      tiles.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
+
+    }
+    else {
+      tiles.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
+    }
+
+    // and, i'm going to add these to the currentWord here. this fn() is called verifyInline, so this seems an odd place.
+    // tiles.forEach((tile) => {
+    //   currentWord.push(tile.dataset.letter)
+    //   spacelog(`currentWord=${currentWord}`)
+    // })
+
+
+    return true
+  }
+  else {
+    // we are not in a line. unacceptable.
+    return false
+  }
 }
+
+
+
+/*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+                   DETERMINE LINEAR ADJACENCY
+       ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
+const determineLinearAdjacency = (tiles = tilesInPlay) => {
+  // if tiles.length === 1, row or col is determined by something else. I'm not prepared to deal with it yet.
+  // maybe we would be reaching a different fn()?
+
+  // row or col has already been verified, so comparing two tiles should be sufficient
+  let isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise it's a column
+
+  if (isRow) {
+    let row = tiles[0].dataset.row
+    let colNums = []
+    tiles.forEach((tile) => {
+      colNums.push(tile.dataset.col)
+    })
+    let minCol = Math.min(...colNums)
+    spacelog(`minCol = ${minCol}`)
+    let maxCol = Math.max(...colNums)
+    spacelog(`maxCol = ${maxCol}`)
+
+    // check on-board pieces to left
+    if (tilesOnBoard.length > 0) {
+      let tilesToLeft = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col < minCol)))
+
+      // just a logger
+      tilesToLeft.forEach(tile => {
+        spacelog(`onboard tile to left: ${tile.dataset.col}`)
+      })
+
+      // sort the tilesToLeft array backwards ... why? so index 0 is the right-most tile, and moving left up the indexes
+      tilesToLeft.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
+      spacelog(`obtir[0] = ${tilesToLeft[0]}`)
+      tilesToLeft.forEach((tile, index) => {
+        spacelog(`onboard tiles to left: ${tile.dataset.col}.${index}`)
+      })
+
+      // does minCol - 1 etc exist?
+      // let i = 0
+      if (tilesToLeft.length > 0) {
+        // while (parseInt(onBoardTilesInRow[i].dataset.col) === minCol - 1) {
+        for (let i = 0; i < tilesToLeft.length; i++) {
+          spacelog(`immleft/then..${tilesToLeft[i].dataset.letter}`)
+          if (!(parseInt(tilesToLeft[i].dataset.col) === minCol - 1) ) {break}
+          minCol -= 1
+        }
+        spacelog(`minCol in word is ${minCol}`)
+      }
+    }
+
+  }
+
+
+  return true
+
+
+}
+
+
+
+
+
 
 const tallyScore = (tiles = tilesInPlay) => {
   let points = 0
