@@ -13,6 +13,10 @@ const btnP1Toggle = document.querySelector('.btn-p1-toggle')
 const btnP2Toggle = document.querySelector('.btn-p2-toggle')
 const btnFreeWords = document.querySelector('.btn-free-words')
 const freeWordCount = document.querySelector('.free-word-count')
+const lastWord = document.querySelector('.last-word')
+const lastPlay = document.querySelector('.last-play')
+const p1Score = document.querySelector('.p1-score')
+const p2Score = document.querySelector('.p2-score')
 
 
 const bagOfTiles_DOM = document.querySelector('.bag-of-tiles')
@@ -26,6 +30,7 @@ let currentWord = [] //char[] so easy to add letters to beginning. this may be a
 const currentWordTiles = [] // = tile[] 
 let tilesInPlay = []
 let tilesOnBoard = []
+const specialsInPlay = []
 
 let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
 let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
@@ -184,6 +189,7 @@ let srcTile = null;
 
 
 const endTurn_click = (e) => {
+  let p = 1
   if (e.target === btnP1EndTurn) {
     if (validatePlay()) {
       'p1 valid'
@@ -196,6 +202,7 @@ const endTurn_click = (e) => {
     }
   }
   else {
+    p = 2
     if (validatePlay()) {
       'p2 valid'
       let trayCount = player2Tray.querySelectorAll('.tile').length
@@ -207,7 +214,18 @@ const endTurn_click = (e) => {
     }
   }
 
-  tallyScore()
+  const points = tallyScore()
+  if (p === 1) {
+    p1Score.replaceChildren(points.toString().padStart(5, '0'))
+  }
+  else {
+    p2Score.replaceChildren(points.toString().padStart(5, '0'))
+  }
+  if (specialsInPlay.length === 0) {
+    lastPlay.replaceChildren('no multipliers')
+  } else { }
+  lastPlay.replaceChildren(specialsInPlay.join(', '))
+  lastWord.replaceChildren(` last-word:  ${currentWord.join('')}`)
   currentWordTiles.splice(0)
   currentWord.splice(0)
 
@@ -301,15 +319,15 @@ const verifyInline = (tiles = tilesInPlay) => {
 
 
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-                   THE WORST PART OF THE CODE
-                   DETERMINE LINEAR ADJACENCY
-                   NOW SPLIT INTO FOUR FUNCS
+              --->> THE WORST PART OF THE CODE <---
+  "DETERMINE LINEAR ADJACENCY" (the original name. it made sense then.)
+            NOW SPLIT INTO FOUR CONVENIENT FUNCTIONS!
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
 
 
 
 // ==================================================================
-//          =================== ROWS ====================
+//          =================== THE ROWS ====================
 // ==================================================================
 
 const grepRowBusiness = (row, minCol, maxCol) => {
@@ -339,7 +357,7 @@ const grepRowBusiness = (row, minCol, maxCol) => {
         currentWordTiles.unshift(letter)
         currentWord.unshift(letter.dataset.letter)
       })
-      spacelog(`currentWord after left: ${currentWord.join('')}`)
+      // spacelog(`currentWord after left: ${currentWord.join('')}`)
 
     }
 
@@ -366,7 +384,7 @@ const grepRowBusiness = (row, minCol, maxCol) => {
         currentWordTiles.push(letter)
         currentWord.push(letter.dataset.letter)
       })
-      spacelog(`currentWord after right: ${currentWord.join('')}`)
+      // spacelog(`currentWord after right: ${currentWord.join('')}`)
     }
 
   }
@@ -374,7 +392,7 @@ const grepRowBusiness = (row, minCol, maxCol) => {
 
 
 // ==================================================================
-//          =================== COLUMNS ====================
+//          =================== THE COLUMNS ====================
 // ==================================================================
 const grepColBusiness = (collie, col, minRow, maxRow) => {
 
@@ -403,7 +421,7 @@ const grepColBusiness = (collie, col, minRow, maxRow) => {
         currentWordTiles.unshift(letter)
         currentWord.unshift(letter.dataset.letter)
       })
-      spacelog(`currentWord after Top: ${currentWord.join('')}`)
+      // spacelog(`currentWord after Top: ${currentWord.join('')}`)
 
     }
 
@@ -433,13 +451,14 @@ const grepColBusiness = (collie, col, minRow, maxRow) => {
       currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
-    spacelog(`currentWord after Bottom: ${currentWord.join('')}`)
+    // spacelog(`currentWord after Bottom: ${currentWord.join('')}`)
   }
 }
 
-//  plus a bonus helper function! the whole thing needs to be split into some number of smaller functions. 
-//      >> but I just can't right now. you get this one.
-const isTheInPlayPartCongruent = (isRow, idx,  min, max) => {
+// ==================================================================
+// =================== ONE SUPER BONUS FUNCTION! ====================
+// ==================================================================
+const isTheInPlayPartCongruent = (isRow, idx, min, max) => {
   const param1 = isRow ? 'data-row' : 'data-col'
   const param2 = isRow ? 'data-col' : 'data-row'
   for (let i = min; i <= max; i++) {
@@ -451,7 +470,9 @@ const isTheInPlayPartCongruent = (isRow, idx,  min, max) => {
   return true
 }
 
-
+// ==================================================================
+// =================== AND THE ONE THAT STARTED IT ALL===============
+// ==================================================================
 const determineLinearAdjacency = (tiles = tilesInPlay) => {
   // if tiles.length === 1, row or col is determined by something else. I'm not prepared to deal with it yet.
   // maybe we would be reaching a different fn()?
@@ -502,7 +523,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
       currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
-    spacelog(`currentWord after center portion: ${currentWord.join('')}`)
+    // spacelog(`currentWord after center portion: ${currentWord.join('')}`)
 
 
     // spacelog('=======ROWS===========')
@@ -541,7 +562,6 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
       const sq = document.querySelectorAll(`.tile[data-row="${i}"][data-col="${col}"]`)
       sq.forEach(s => {
         colTiles.push(s)
-        spacelog(`data-row = ${s.classList}`)
       })
     }
     if (colTiles.length > 0) {
@@ -551,7 +571,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
       currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
-    spacelog(`currentWord after center portion: ${currentWord.join('')}`)
+    // spacelog(`currentWord after center portion: ${currentWord.join('')}`)
 
     grepColBusiness(colTiles, col, minRow, maxRow)
   }
@@ -564,8 +584,17 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
 const tallyScore = (tiles = currentWordTiles) => {
   let points = 0
   let wordMultiplier = 1
+  specialsInPlay.splice(0)
   // this loop only counts the in-play tiles, i.e. not the on-board/re-used tiles
   tiles.forEach((tile) => {
+    if (tile.parentElement.dataset.ltr_multi) {
+      if (parseInt(tile.parentElement.dataset.ltr_multi) === 2) { specialsInPlay.push('Double-Letter-Score') }
+      else { specialsInPlay.push('Triple-Letter-Score') }
+    }
+    if (tile.parentElement.dataset.word_multi) {
+      if (parseInt(tile.parentElement.dataset.word_multi) === 2) { specialsInPlay.push('Double-Word-Score') }
+      else { specialsInPlay.push('Triple-Word-Score') }
+    }
     points += tile.parentElement.dataset.ltr_multi ?
       parseInt(tile.dataset.points) * parseInt(tile.parentElement.dataset.ltr_multi) :
       parseInt(tile.dataset.points)
@@ -573,7 +602,8 @@ const tallyScore = (tiles = currentWordTiles) => {
       parseInt(tile.parentElement.dataset.word_multi) : 1
   })
   points *= wordMultiplier
-  spacelog(`tallyScore say: ${points}`)
+  // spacelog(`tallyScore say: ${points}`)
+  return points
 }
 
 // ** state-of-work vs. state-of-play **
@@ -636,6 +666,15 @@ function handleDragOver(e) {
   if (e.preventDefault) {
     e.preventDefault();
   }
+
+
+  // if(e.target.classList) {
+  //   spacelog('that was a juicy treat')
+  // }
+  // else {
+  //   spacelog('no')
+  // }
+
   e.dataTransfer.dropEffect = 'move';
   return false;
 }
@@ -652,7 +691,7 @@ function handleDrop(e) {
   }
 
   // if there's anything in this square, just ... don't
-  if(this.childNodes.length > 0) return
+  if (this.childNodes.length > 0) return
 
 
   this.replaceChildren(srcTile) // this seems better
@@ -818,7 +857,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   // spacelog(`'done': fullWordList contains ${fullWordList.length} words. fullWordList[6000] = ${fullWordList[6000]}`)
   // spacelog(`fullWordList[11999] = ${fullWordList[11999]}`)
 
-  spacelog(`vw=${vw} & vh=${vh} & vmin=${vmin}`)
+  // spacelog(`vw=${vw} & vh=${vh} & vmin=${vmin}`)
   // pickSomeRandomWords(100)
   // ======== Generate the board =========
   loadBoard();

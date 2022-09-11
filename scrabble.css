@@ -143,11 +143,22 @@ body::before {
   margin: 0 3em;
 }
 
+.last-play-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .last-word {
   display: block;
   color:rgb(228, 111, 32);
   font-size: 20px;
   font-family: 'Bungee Inline', cursive;
+}
+.last-play {
+  display: block;
+  font-size: 14px;
+  font-family: 'Bungee Inline', cursive;
+  color:rgb(228, 111, 32);
 }
 
 .title {
@@ -237,10 +248,8 @@ body::before {
   border: 2px inset #677;
 }
 
-/* dashboard contains console and modal buttons */
-.dashboard {
-  /* grid-area: 2/4/ 7/5; */
-  /* align-self: center; */
+/* .dashboard {
+
   position: relative;
   top: 30px;
   font-family: monospace;
@@ -253,7 +262,56 @@ body::before {
   height: fit-content;
   padding: 0;
   margin: 50px auto;
-  /* border: 5px solid yellow; */
+} */
+
+.console {
+
+  width: 90%;
+  height: 250px;
+  margin: 0 auto;
+  padding: 1em;
+  background-color: #235d;
+  color: #32cd32ee;
+  font-family: monospace;
+  font-size: .6em;
+  scrollbar-base-color: #333;
+  scrollbar-color: #999;
+  overflow-y: auto;
+  border: .5px solid black;
+}
+
+.dashboard {
+  /* grid-area: 2/4/ 7/5; */
+  /* align-self: center; */
+  position: relative;
+  top: -10px;
+  font-family: monospace;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  /* width: 100%; */
+  height: calc(25vw * .9);
+  height: fit-content;
+  padding: 0;
+  margin: 50px 2vw;
+  /* border: 3px solid yellow; */
+}
+
+.console {
+
+  width: 240px;
+  height: 250px;
+  margin: 1em auto 1em 1em;
+  padding: 1em;
+  background-color: #235d;
+  color: #32cd32ee;
+  font-family: monospace;
+  font-size: .6em;
+  scrollbar-base-color: #333;
+  scrollbar-color: #999;
+  overflow-y: auto;
+  border: .5px solid black;
 }
 
 .free-words{
@@ -275,21 +333,7 @@ body::before {
 
 /* #endregion END MAJOR CONTAINERS SECTION */
 
-.console {
-
-  width: 90%;
-  height: 250px;
-  margin: 0 auto;
-  padding: 1em;
-  background-color: #235d;
-  color: #32cd32ee;
-  font-family: monospace;
-  font-size: .6em;
-  scrollbar-base-color: #333;
-  scrollbar-color: #999;
-  overflow-y: auto;
-  border: .5px solid black;
-}
+/*  */
 
 
 /* trays */
