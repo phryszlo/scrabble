@@ -295,17 +295,6 @@ const verifyInline = (tiles = tilesInPlay) => {
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
 
 
-//  plus a bonus helper function! the whole thing needs to be split into some number of smaller functions. 
-//      >> but I just can't right now. you get this one.
-const isTheInPlayPartCongruent = (q, min, max) => {
-  for (let i = min; i <= max; i++) {
-    if (document.querySelector(`.square${q}[data-col="${i}"]`).childNodes.length == 0) {
-      spacelog('nope')
-      return false
-    }
-  }
-  return true
-}
 
 
 
@@ -453,6 +442,22 @@ const grepColBusiness = (collie, col, minRow, maxRow) => {
   }
 }
 
+//  plus a bonus helper function! the whole thing needs to be split into some number of smaller functions. 
+//      >> but I just can't right now. you get this one.
+const isTheInPlayPartCongruent = (isRow, idx,  min, max) => {
+  const param1 = isRow ? 'data-row' : 'data-col'
+  const param2 = isRow ? 'data-col' : 'data-row'
+  for (let i = min; i <= max; i++) {
+  spacelog(`.square${`[${param1}="${idx}"]`}[${param2}="${i}"]`)
+
+    if (document.querySelector(`.square${`[${param1}="${idx}"]`}[${param2}="${i}"]`).childNodes.length === 0) {
+      spacelog('nope')
+      return false
+    }
+  }
+  return true
+}
+
 
 const determineLinearAdjacency = (tiles = tilesInPlay) => {
   // if tiles.length === 1, row or col is determined by something else. I'm not prepared to deal with it yet.
@@ -474,7 +479,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     let minCol = Math.min(...colNums)
     let maxCol = Math.max(...colNums)
 
-    if (!isTheInPlayPartCongruent(`[data-row="${row}"]`, minCol, maxCol)) {
+    if (!isTheInPlayPartCongruent(true, row, minCol, maxCol)) {
       // I think an actual error needs to be returned, or else the log/display needs to happen here
       return false
     }
@@ -504,7 +509,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
 
     // spacelog('=======ROWS===========')
 
-    grepRowBusiness(rowTiles, row, minCol, maxCol)
+    grepRowBusiness(row, minCol, maxCol)
 
   }// end if (isRow)
 
@@ -522,6 +527,11 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     })
     let minRow = Math.min(...rowNums)
     let maxRow = Math.max(...rowNums)
+
+    if (!isTheInPlayPartCongruent(false, col, minRow, maxRow)) {
+      // I think an actual error needs to be returned, or else the log/display needs to happen here
+      return false
+    }
 
 
     let colTiles = []
