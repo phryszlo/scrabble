@@ -12,6 +12,7 @@ const btnP2EndTurn = document.querySelector('.btn-p2-end')
 const btnP1Toggle = document.querySelector('.btn-p1-toggle')
 const btnP2Toggle = document.querySelector('.btn-p2-toggle')
 const btnFreeWords = document.querySelector('.btn-free-words')
+const btnClearConsole = document.querySelector('.btn-clear-console')
 const freeWordCount = document.querySelector('.free-word-count')
 const lastWord = document.querySelector('.last-word')
 const lastPlay = document.querySelector('.last-play')
@@ -215,16 +216,23 @@ const endTurn_click = (e) => {
   }
 
   const points = tallyScore()
+
+  // ==> update display: move section to new function
+
+  currentWord.forEach((word, i) => {
+    currentWord[i] = word.replace('BLANK', '__').replace('blank', '-')
+  })
   if (p === 1) {
-    p1Score.replaceChildren(points.toString().padStart(5, '0'))
+    p1Score.replaceChildren(points.toString().padStart(4, '0'))
   }
   else {
-    p2Score.replaceChildren(points.toString().padStart(5, '0'))
+    p2Score.replaceChildren(points.toString().padStart(4, '0'))
   }
   if (specialsInPlay.length === 0) {
     lastPlay.replaceChildren('no multipliers')
-  } else { }
-  lastPlay.replaceChildren(specialsInPlay.join(', '))
+  } else {
+    lastPlay.replaceChildren(specialsInPlay.join(', '))
+  }
   lastWord.replaceChildren(` last-word:  ${currentWord.join('')}`)
   currentWordTiles.splice(0)
   currentWord.splice(0)
@@ -237,13 +245,10 @@ const endTurn_click = (e) => {
 
   tilesOnBoard.push(...tilesInPlay.splice(0))
 
-
-
-  // tilesOnBoard.forEach(tile => {
-  //   spacelog(`${tile.dataset.letter}-${tile.dataset.row},${tile.dataset.col}`)
-  // })
-
 }
+
+
+
 
 
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -394,9 +399,9 @@ const grepRowBusiness = (row, minCol, maxCol) => {
 // ==================================================================
 //          =================== THE COLUMNS ====================
 // ==================================================================
-const grepColBusiness = (collie, col, minRow, maxRow) => {
+const grepColBusiness = (col, minRow, maxRow) => {
 
-
+  let colTiles = []
   if (tilesOnBoard.length > 0) {
 
     // ======= TO THE TOP ========
@@ -411,13 +416,13 @@ const grepColBusiness = (collie, col, minRow, maxRow) => {
     if (tilesToTop.length > 0) {
       for (let i = 0; i < tilesToTop.length; i++) {
         if (!(parseInt(tilesToTop[i].dataset.row) === minRow - 1)) { break }
-        collie.unshift(tilesToTop[i])
+        colTiles.unshift(tilesToTop[i])
         minRow -= 1
       }
-      if (collie.length > 0) {
-        collie.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
+      if (colTiles.length > 0) {
+        colTiles.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
       }
-      collie.forEach(letter => {
+      colTiles.forEach(letter => {
         currentWordTiles.unshift(letter)
         currentWord.unshift(letter.dataset.letter)
       })
@@ -441,13 +446,13 @@ const grepColBusiness = (collie, col, minRow, maxRow) => {
   if (tilesToBottom.length > 0) {
     for (let i = 0; i < tilesToBottom.length; i++) {
       if (!(parseInt(tilesToBottom[i].dataset.row) === maxRow + 1)) { break }
-      collie.push(tilesToBottom[i])
+      colTiles.push(tilesToBottom[i])
       maxRow += 1
     }
-    if (collie.length > 0) {
-      collie.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
+    if (colTiles.length > 0) {
+      colTiles.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
     }
-    collie.forEach(letter => {
+    colTiles.forEach(letter => {
       currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
@@ -573,7 +578,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     })
     // spacelog(`currentWord after center portion: ${currentWord.join('')}`)
 
-    grepColBusiness(colTiles, col, minRow, maxRow)
+    grepColBusiness(col, minRow, maxRow)
   }
 
   return true
@@ -891,6 +896,9 @@ window.addEventListener('DOMContentLoaded', async () => {
   btnFreeWords.addEventListener('click', () => {
     spaceConsole.replaceChildren('')
     pickSomeRandomWords(freeWordCount.value)
+  })
+  btnClearConsole.addEventListener('click', () => {
+    spaceConsole.replaceChildren('')
   })
 
   // these are a cheap way to give the option to obscure the other players' trays
