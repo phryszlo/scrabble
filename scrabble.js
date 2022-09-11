@@ -316,9 +316,14 @@ const isTheInPlayPartCongruent = (q, min, max) => {
 //          =================== ROWS ====================
 // ==================================================================
 
-const grepRowBusiness = (rowie, row, minCol, maxCol) => {
+const grepRowBusiness = (rowTiles, row, minCol, maxCol) => {
   // spacelog('=======ROWS===========')
 
+  rowTiles.forEach((tile, i) => {
+    spacelog(`grepRowBusiness: rowTiles[${i}]: ${tile.dataset.letter} `)
+
+  })
+  spacelog(`currentWord at gRB: ${currentWord.join('')}`)
 
   if (tilesOnBoard.length > 0) {
 
@@ -330,17 +335,25 @@ const grepRowBusiness = (rowie, row, minCol, maxCol) => {
     // sort the tilesToLeft array backwards ... why? so index 0 is the right-most tile, and moving left up the indexes
     tilesToLeft.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
 
+    // tilesToLeft.forEach((t,i) => {
+    //   spacelog(`after tTL sort: t[${i}]: ${t.dataset.letter}`)
+    // }) // checks out
+
     // does minCol - 1 etc exist?
     if (tilesToLeft.length > 0) {
       for (let i = 0; i < tilesToLeft.length; i++) {
         if (!(parseInt(tilesToLeft[i].dataset.col) === minCol - 1)) { break }
-        rowie.unshift(tilesToLeft[i])
+        rowTiles.unshift(tilesToLeft[i])
         minCol -= 1
       }
-      if (rowie.length > 0) {
-        rowie.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
+      if (rowTiles.length > 0) {
+        rowTiles.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
       }
-      rowie.forEach(letter => {
+      rowTiles.forEach((t, i) => {
+        spacelog(`after rowTiles sort: t[${i}]: ${t.dataset.letter}`)
+      }) 
+
+      rowTiles.forEach(letter => {
         currentWord.unshift(letter.dataset.letter)
       })
       spacelog(`currentWord after left: ${currentWord.join('')}`)
@@ -361,13 +374,13 @@ const grepRowBusiness = (rowie, row, minCol, maxCol) => {
     if (tilesToRight.length > 0) {
       for (let i = 0; i < tilesToRight.length; i++) {
         if (!(parseInt(tilesToRight[i].dataset.col) === maxCol + 1)) { break }
-        rowie.push(tilesToRight[i])
+        rowTiles.push(tilesToRight[i])
         maxCol += 1
       }
-      if (rowie.length > 0) {
-        rowie.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+      if (rowTiles.length > 0) {
+        rowTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
       }
-      rowie.forEach(letter => {
+      rowTiles.forEach(letter => {
         currentWord.push(letter.dataset.letter)
       })
       spacelog(`currentWord after right: ${currentWord.join('')}`)
@@ -466,7 +479,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     }
 
 
-    let rowie = []
+    let rowTiles = []
 
     // ======= THE CENTER (BETWEEN minCol and maxCol, i.e. inside the newly played tiles) ========
 
@@ -474,78 +487,23 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     for (let i = minCol; i <= maxCol; i++) {
       const sq = document.querySelectorAll(`.tile[data-col="${i}"][data-row="${row}"]`)
       sq.forEach(s => {
-        rowie.push(s)
-        // spacelog(`data-col = ${s.classList}`)
+        rowTiles.push(s)
+        spacelog(`data-col = ${s.classList}`)
       })
     }
-    if (rowie.length > 0) {
-      rowie.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+    spacelog(`rowtiles len = ${rowTiles.length}`)
+    if (rowTiles.length > 0) {
+      rowTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
     }
-    rowie.forEach(letter => {
+    rowTiles.forEach(letter => {
       currentWord.push(letter.dataset.letter)
     })
     spacelog(`currentWord after center portion: ${currentWord.join('')}`)
 
 
-     // spacelog('=======ROWS===========')
+    // spacelog('=======ROWS===========')
 
-
-  if (tilesOnBoard.length > 0) {
-
-    // ======= TO THE LEFT ========
-    // check on-board pieces to left
-    // spacelog('LEFT')
-    let tilesToLeft = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col < minCol)))
-
-    // sort the tilesToLeft array backwards ... why? so index 0 is the right-most tile, and moving left up the indexes
-    tilesToLeft.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
-
-    // does minCol - 1 etc exist?
-    if (tilesToLeft.length > 0) {
-      for (let i = 0; i < tilesToLeft.length; i++) {
-        if (!(parseInt(tilesToLeft[i].dataset.col) === minCol - 1)) { break }
-        rowie.unshift(tilesToLeft[i])
-        minCol -= 1
-      }
-      if (rowie.length > 0) {
-        rowie.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
-      }
-      rowie.forEach(letter => {
-        currentWord.unshift(letter.dataset.letter)
-      })
-      spacelog(`currentWord after left: ${currentWord.join('')}`)
-
-    }
-
-    // ======= TO THE RIGHT ========
-    // check on-board pieces to right
-    // spacelog('RIGHT')
-    let tilesToRight = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col > maxCol)))
-    // sort this array forward
-    tilesToRight.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-    // tilesToRight.forEach((tile, index) => {
-    //   spacelog(`right[${index}] = ${tile.dataset.letter}`)
-    // })
-
-    // does maxCol + 1 etc exist?
-    if (tilesToRight.length > 0) {
-      for (let i = 0; i < tilesToRight.length; i++) {
-        if (!(parseInt(tilesToRight[i].dataset.col) === maxCol + 1)) { break }
-        rowie.push(tilesToRight[i])
-        maxCol += 1
-      }
-      if (rowie.length > 0) {
-        rowie.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-      }
-      rowie.forEach(letter => {
-        currentWord.push(letter.dataset.letter)
-      })
-      spacelog(`currentWord after right: ${currentWord.join('')}`)
-    }
-
-  }
-
-    // grepRowBusiness(rowie, row, minCol, maxCol)
+    grepRowBusiness(rowTiles, row, minCol, maxCol)
 
   }// end if (isRow)
 
@@ -565,7 +523,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     let maxRow = Math.max(...rowNums)
 
 
-    let collie = []
+    let colTiles = []
 
     // ======= THE CENTER (BETWEEN minRow and maxRow, i.e. inside the newly played tiles) ========
 
@@ -573,76 +531,19 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     for (let i = minRow; i <= maxRow; i++) {
       const sq = document.querySelectorAll(`.tile[data-row="${i}"][data-col="${col}"]`)
       sq.forEach(s => {
-        collie.push(s)
-        // spacelog(`data-row = ${s.classList}`)
+        colTiles.push(s)
+        spacelog(`data-row = ${s.classList}`)
       })
     }
-    if (collie.length > 0) {
-      collie.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
+    if (colTiles.length > 0) {
+      colTiles.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
     }
-    collie.forEach(letter => {
+    colTiles.forEach(letter => {
       currentWord.push(letter.dataset.letter)
     })
     spacelog(`currentWord after center portion: ${currentWord.join('')}`)
 
-
-    
-  if (tilesOnBoard.length > 0) {
-
-    // ======= TO THE TOP ========
-    // check on-board pieces to left
-    // spacelog('TOP')
-    let tilesToTop = tilesOnBoard.filter((tile) => ((tile.dataset.col === col) && (tile.dataset.row < minRow)))
-
-    // sort the tilesToTop array backwards ... why? so index 0 is the right-most tile, and moving Top up the indexes
-    tilesToTop.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
-
-    // does minCol - 1 etc exist?
-    if (tilesToTop.length > 0) {
-      for (let i = 0; i < tilesToTop.length; i++) {
-        if (!(parseInt(tilesToTop[i].dataset.row) === minRow - 1)) { break }
-        collie.unshift(tilesToTop[i])
-        minRow -= 1
-      }
-      if (collie.length > 0) {
-        collie.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
-      }
-      collie.forEach(letter => {
-        currentWord.unshift(letter.dataset.letter)
-      })
-      spacelog(`currentWord after Top: ${currentWord.join('')}`)
-
-    }
-
-  }
-
-  // ======= TO THE BOTTOM ========
-  // check on-board pieces to BOTTOM
-  // spacelog('BOTTOM')
-  let tilesToBottom = tilesOnBoard.filter((tile) => ((tile.dataset.col === col) && (tile.dataset.row > maxRow)))
-  // sort this array forward
-  tilesToBottom.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
-  tilesToBottom.forEach((tile, index) => {
-    // spacelog(`Bottom[${index}] = ${tile.dataset.letter}`)
-  })
-
-  // does maxCol + 1 etc exist?
-  if (tilesToBottom.length > 0) {
-    for (let i = 0; i < tilesToBottom.length; i++) {
-      if (!(parseInt(tilesToBottom[i].dataset.row) === maxRow + 1)) { break }
-      collie.push(tilesToBottom[i])
-      maxRow += 1
-    }
-    if (collie.length > 0) {
-      collie.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
-    }
-    collie.forEach(letter => {
-      currentWord.push(letter.dataset.letter)
-    })
-    spacelog(`currentWord after Bottom: ${currentWord.join('')}`)
-  }
-
-    // grepColBusiness(collie, col, minRow, maxRow)
+    grepColBusiness(colTiles, col, minRow, maxRow)
   }
 
   return true
