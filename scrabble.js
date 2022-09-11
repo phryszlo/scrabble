@@ -210,7 +210,17 @@ const endTurn_click = (e) => {
   tallyScore()
   currentWordTiles.splice(0)
   currentWord.splice(0)
+
+  tilesInPlay.forEach((tile) => {
+    // if this ever works, these events/attrs need to go back on when these get put back in the bag
+    tile.setAttribute('draggable', 'false')
+    tile.removeEventListener('dragstart', dragStartHandler)
+  })
+
   tilesOnBoard.push(...tilesInPlay.splice(0))
+
+
+
   // tilesOnBoard.forEach(tile => {
   //   spacelog(`${tile.dataset.letter}-${tile.dataset.row},${tile.dataset.col}`)
   // })
@@ -640,6 +650,10 @@ function handleDrop(e) {
   if (e.stopPropagation) {
     e.stopPropagation();
   }
+
+  // if there's anything in this square, just ... don't
+  if(this.childNodes.length > 0) return
+
 
   this.replaceChildren(srcTile) // this seems better
   // this.innerHTML = e.dataTransfer.getData('text/html'); //than this
