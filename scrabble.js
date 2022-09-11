@@ -7,8 +7,8 @@ const gameboard = document.querySelector('.gameboard')
 const spaceConsole = document.querySelector('.console');
 const player1Tray = document.querySelector('.player1-tray')
 const player2Tray = document.querySelector('.player2-tray')
-const btnP1EndTurn = document.querySelector('.btn-p1-draw')
-const btnP2EndTurn = document.querySelector('.btn-p2-draw')
+const btnP1EndTurn = document.querySelector('.btn-p1-end')
+const btnP2EndTurn = document.querySelector('.btn-p2-end')
 const btnP1Toggle = document.querySelector('.btn-p1-toggle')
 const btnP2Toggle = document.querySelector('.btn-p2-toggle')
 const btnFreeWords = document.querySelector('.btn-free-words')
@@ -184,11 +184,9 @@ let srcTile = null;
 
 const endTurn_click = (e) => {
   if (e.target === btnP1EndTurn) {
-    spacelog('p1 click')
     if (validatePlay()) {
       'p1 valid'
       let trayCount = player1Tray.querySelectorAll('.tile').length
-      // spacelog(`trayCount p2 = ${trayCount}`)
       drawTiles(player1Tray, 7 - trayCount)
       currentWord.splice(0)
     }
@@ -199,8 +197,8 @@ const endTurn_click = (e) => {
   }
   else {
     if (validatePlay()) {
-      let trayCount = player1Tray.querySelectorAll('.tile').length
-      // spacelog(`trayCount p2 = ${trayCount}`)
+      'p2 valid'
+      let trayCount = player2Tray.querySelectorAll('.tile').length
       drawTiles(player2Tray, 7 - trayCount)
       currentWord.splice(0)
     }
@@ -212,10 +210,9 @@ const endTurn_click = (e) => {
 
   tallyScore()
   tilesOnBoard.push(...tilesInPlay.splice(0))
-  tilesOnBoard.forEach(tile => {
-    spacelog(`${tile.dataset.letter}-${tile.dataset.row},${tile.dataset.col}`)
-
-  })
+  // tilesOnBoard.forEach(tile => {
+  //   spacelog(`${tile.dataset.letter}-${tile.dataset.row},${tile.dataset.col}`)
+  // })
 
 }
 
@@ -239,9 +236,15 @@ const verifyCenterSquareUsed = () => {
 }
 
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-                    VERIFY INLINE
+                      VERIFY INLINE
+      (this version assumes this is not the first play, 
+                so accepts a single letter)
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
 const verifyInline = (tiles = tilesInPlay) => {
+
+  // let the next validator deal with this case
+  if (tiles.length === 1) return true
+
   let row = 1
   let col = 1
   //mark the first tile as both zRow and zCol. isRow || isCol cannot be known at this time
@@ -262,9 +265,10 @@ const verifyInline = (tiles = tilesInPlay) => {
   let isRow = (row === tiles.length && col === 1)
   let isCol = (col === tiles.length && row === 1)
 
-  // *** MOVE verifyLength() out to own fn(). it's a problem when adding a single letter to existing words
+  // *** length > 1 is only needed on first word.
+  //  && tiles.length > 1
 
-  if ((isRow || isCol) && tiles.length > 1) {
+  if ((isRow || isCol)) {
 
     // ** HERE'S Another PROBLEM. this should sort the word by tile order. but it assumes left to right or top to bottom. HMMM.
     if (isRow) {
@@ -274,13 +278,6 @@ const verifyInline = (tiles = tilesInPlay) => {
     else {
       tiles.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
     }
-
-    // and, i'm going to add these to the currentWord here. this fn() is called verifyInline, so this seems an odd place.
-    // tiles.forEach((tile) => {
-    //   currentWord.push(tile.dataset.letter)
-    //   spacelog(`currentWord=${currentWord}`)
-    // })
-
 
     return true
   }
@@ -298,36 +295,181 @@ const verifyInline = (tiles = tilesInPlay) => {
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
 
 
-// const simpleIsAdjacent = (tiles = tilesInPlay) => {
-//   let isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise it's a column
-//   tiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-//   tiles.forEach(tile => {
-//     spacelog('hi' + tile.dataset.col)
-//   })
-//   if (tilesOnBoard.length > 0) {
 
-//     let tilesToLeft = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col < minCol)))
-//     tilesToLeft.forEach(tile => {
-//       spacelog('ttl' + tile.dataset.col)
-//     })
-//   }
-// }
+
+
+
+
+
+// ==================================================================
+//          =================== ROWS ====================
+// ==================================================================
+
+const grepRowBusiness = (row, minCol, maxCol) => {
+  // spacelog('=======ROWS===========')
+
+  // rowTiles.forEach((tile, i) => {
+  //   spacelog(`grepRowBusiness: rowTiles[${i}]: ${tile.dataset.letter} `)
+
+  // })
+  spacelog(`currentWord at gRB: ${currentWord.join('')}`)
+
+  let rowTiles = []
+  if (tilesOnBoard.length > 0) {
+
+    // ======= TO THE LEFT ========
+    // check on-board pieces to left
+    // spacelog('LEFT')
+    let tilesToLeft = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col < minCol)))
+
+    // sort the tilesToLeft array backwards ... why? so index 0 is the right-most tile, and moving left up the indexes
+    tilesToLeft.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
+
+    // tilesToLeft.forEach((t,i) => {
+    //   spacelog(`after tTL sort: t[${i}]: ${t.dataset.letter}`)
+    // }) // checks out
+
+    // does minCol - 1 etc exist?
+    if (tilesToLeft.length > 0) {
+      for (let i = 0; i < tilesToLeft.length; i++) {
+        if (!(parseInt(tilesToLeft[i].dataset.col) === minCol - 1)) { break }
+        rowTiles.unshift(tilesToLeft[i])
+        minCol -= 1
+      }
+      if (rowTiles.length > 0) {
+        rowTiles.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
+      }
+      rowTiles.forEach((t, i) => {
+        spacelog(`after rowTiles sort: t[${i}]: ${t.dataset.letter}`)
+      }) 
+
+      rowTiles.forEach(letter => {
+        currentWord.unshift(letter.dataset.letter)
+      })
+      spacelog(`currentWord after left: ${currentWord.join('')}`)
+
+    }
+
+    // ======= TO THE RIGHT ========
+    // check on-board pieces to right
+    // spacelog('RIGHT')
+    let tilesToRight = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col > maxCol)))
+    // sort this array forward
+    tilesToRight.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+    // tilesToRight.forEach((tile, index) => {
+    //   spacelog(`right[${index}] = ${tile.dataset.letter}`)
+    // })
+
+    // does maxCol + 1 etc exist?
+    if (tilesToRight.length > 0) {
+      for (let i = 0; i < tilesToRight.length; i++) {
+        if (!(parseInt(tilesToRight[i].dataset.col) === maxCol + 1)) { break }
+        rowTiles.push(tilesToRight[i])
+        maxCol += 1
+      }
+      if (rowTiles.length > 0) {
+        rowTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+      }
+      rowTiles.forEach(letter => {
+        currentWord.push(letter.dataset.letter)
+      })
+      spacelog(`currentWord after right: ${currentWord.join('')}`)
+    }
+
+  }
+}
+
+
+// ==================================================================
+//          =================== COLUMNS ====================
+// ==================================================================
+const grepColBusiness = (collie, col, minRow, maxRow) => {
+
+
+  if (tilesOnBoard.length > 0) {
+
+    // ======= TO THE TOP ========
+    // check on-board pieces to left
+    // spacelog('TOP')
+    let tilesToTop = tilesOnBoard.filter((tile) => ((tile.dataset.col === col) && (tile.dataset.row < minRow)))
+
+    // sort the tilesToTop array backwards ... why? so index 0 is the right-most tile, and moving Top up the indexes
+    tilesToTop.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
+
+    // does minCol - 1 etc exist?
+    if (tilesToTop.length > 0) {
+      for (let i = 0; i < tilesToTop.length; i++) {
+        if (!(parseInt(tilesToTop[i].dataset.row) === minRow - 1)) { break }
+        collie.unshift(tilesToTop[i])
+        minRow -= 1
+      }
+      if (collie.length > 0) {
+        collie.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
+      }
+      collie.forEach(letter => {
+        currentWord.unshift(letter.dataset.letter)
+      })
+      spacelog(`currentWord after Top: ${currentWord.join('')}`)
+
+    }
+
+  }
+
+  // ======= TO THE BOTTOM ========
+  // check on-board pieces to BOTTOM
+  // spacelog('BOTTOM')
+  let tilesToBottom = tilesOnBoard.filter((tile) => ((tile.dataset.col === col) && (tile.dataset.row > maxRow)))
+  // sort this array forward
+  tilesToBottom.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
+  tilesToBottom.forEach((tile, index) => {
+    // spacelog(`Bottom[${index}] = ${tile.dataset.letter}`)
+  })
+
+  // does maxCol + 1 etc exist?
+  if (tilesToBottom.length > 0) {
+    for (let i = 0; i < tilesToBottom.length; i++) {
+      if (!(parseInt(tilesToBottom[i].dataset.row) === maxRow + 1)) { break }
+      collie.push(tilesToBottom[i])
+      maxRow += 1
+    }
+    if (collie.length > 0) {
+      collie.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
+    }
+    collie.forEach(letter => {
+      currentWord.push(letter.dataset.letter)
+    })
+    spacelog(`currentWord after Bottom: ${currentWord.join('')}`)
+  }
+}
+
+//  plus a bonus helper function! the whole thing needs to be split into some number of smaller functions. 
+//      >> but I just can't right now. you get this one.
+const isTheInPlayPartCongruent = (isRow, idx,  min, max) => {
+  const param1 = isRow ? 'data-row' : 'data-col'
+  const param2 = isRow ? 'data-col' : 'data-row'
+  for (let i = min; i <= max; i++) {
+  spacelog(`.square${`[${param1}="${idx}"]`}[${param2}="${i}"]`)
+
+    if (document.querySelector(`.square${`[${param1}="${idx}"]`}[${param2}="${i}"]`).childNodes.length === 0) {
+      spacelog('nope')
+      return false
+    }
+  }
+  return true
+}
+
 
 const determineLinearAdjacency = (tiles = tilesInPlay) => {
   // if tiles.length === 1, row or col is determined by something else. I'm not prepared to deal with it yet.
   // maybe we would be reaching a different fn()?
 
 
+
   // row or col has already been verified, so comparing two tiles should be sufficient
   let isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise it's a column
 
 
-  // ==================================================================
-  //          =================== ROWS ====================
-  // ==================================================================
-
   if (isRow) {
-    spacelog('=======ROWS===========')
 
     let row = tiles[0].dataset.row
     let colNums = []
@@ -337,8 +479,13 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     let minCol = Math.min(...colNums)
     let maxCol = Math.max(...colNums)
 
+    if (!isTheInPlayPartCongruent(true, row, minCol, maxCol)) {
+      // I think an actual error needs to be returned, or else the log/display needs to happen here
+      return false
+    }
 
-    let word = []
+
+    let rowTiles = []
 
     // ======= THE CENTER (BETWEEN minCol and maxCol, i.e. inside the newly played tiles) ========
 
@@ -346,90 +493,33 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     for (let i = minCol; i <= maxCol; i++) {
       const sq = document.querySelectorAll(`.tile[data-col="${i}"][data-row="${row}"]`)
       sq.forEach(s => {
-        word.push(s)
-        // spacelog(`data-col = ${s.classList}`)
+        rowTiles.push(s)
+        spacelog(`data-col = ${s.classList}`)
       })
     }
-    if (word.length > 0) {
-      word.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+    spacelog(`rowtiles len = ${rowTiles.length}`)
+    if (rowTiles.length > 0) {
+      rowTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
     }
-    word.forEach(letter => {
+    rowTiles.forEach(letter => {
       currentWord.push(letter.dataset.letter)
     })
     spacelog(`currentWord after center portion: ${currentWord.join('')}`)
 
 
+    // spacelog('=======ROWS===========')
 
-
-    word.splice(0)
-    if (tilesOnBoard.length > 0) {
-
-      // ======= TO THE LEFT ========
-      // check on-board pieces to left
-      spacelog('LEFT')
-      let tilesToLeft = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col < minCol)))
-
-      // sort the tilesToLeft array backwards ... why? so index 0 is the right-most tile, and moving left up the indexes
-      tilesToLeft.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
-
-      // does minCol - 1 etc exist?
-      if (tilesToLeft.length > 0) {
-        for (let i = 0; i < tilesToLeft.length; i++) {
-          if (!(parseInt(tilesToLeft[i].dataset.col) === minCol - 1)) { break }
-          word.unshift(tilesToLeft[i])
-          minCol -= 1
-        }
-        word.forEach((t,i) => {
-          spacelog(`t[${i} after word unshift: ${t.dataset.letter}]`)
-        })
-        if (word.length > 0) {
-          word.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
-        }
-        word.forEach(letter => {
-          currentWord.unshift(letter.dataset.letter)
-        })
-        spacelog(`currentWord after left: ${currentWord.join('')}`)
-
-      }
-
-      // ======= TO THE RIGHT ========
-      // check on-board pieces to right
-      spacelog('RIGHT')
-      let tilesToRight = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col > maxCol)))
-      // sort this array forward
-      tilesToRight.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-      tilesToRight.forEach((tile, index) => {
-        spacelog(`right[${index}] = ${tile.dataset.letter}`)
-      })
-
-      // does maxCol + 1 etc exist?
-      if (tilesToRight.length > 0) {
-        for (let i = 0; i < tilesToRight.length; i++) {
-          if (!(parseInt(tilesToRight[i].dataset.col) === maxCol + 1)) { break }
-          word.push(tilesToRight[i])
-          maxCol += 1
-        }
-        if (word.length > 0) {
-          word.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-        }
-        word.forEach(letter => {
-          currentWord.push(letter.dataset.letter)
-        })
-        spacelog(`currentWord after right: ${currentWord.join('')}`)
-      }
-
-    }
+    grepRowBusiness(row, minCol, maxCol)
 
   }// end if (isRow)
 
-  // ==================================================================
-  //          =================== COLUMNS ====================
-  // ==================================================================
+
 
   // else (isCol)
 
   else {
-    spacelog('=======COLUMNS===========')
+
+    // spacelog('=======COLUMNS===========')
     let col = tiles[0].dataset.col
     let rowNums = []
     tiles.forEach((tile) => {
@@ -438,8 +528,13 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     let minRow = Math.min(...rowNums)
     let maxRow = Math.max(...rowNums)
 
+    if (!isTheInPlayPartCongruent(false, col, minRow, maxRow)) {
+      // I think an actual error needs to be returned, or else the log/display needs to happen here
+      return false
+    }
 
-    let collie = []
+
+    let colTiles = []
 
     // ======= THE CENTER (BETWEEN minRow and maxRow, i.e. inside the newly played tiles) ========
 
@@ -447,82 +542,24 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     for (let i = minRow; i <= maxRow; i++) {
       const sq = document.querySelectorAll(`.tile[data-row="${i}"][data-col="${col}"]`)
       sq.forEach(s => {
-        collie.push(s)
-        // spacelog(`data-row = ${s.classList}`)
+        colTiles.push(s)
+        spacelog(`data-row = ${s.classList}`)
       })
     }
-    if (collie.length > 0) {
-      collie.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
+    if (colTiles.length > 0) {
+      colTiles.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
     }
-    collie.forEach(letter => {
+    colTiles.forEach(letter => {
       currentWord.push(letter.dataset.letter)
     })
     spacelog(`currentWord after center portion: ${currentWord.join('')}`)
 
-
-    // NEXT UP: ADD ADJACENT EXISTING ON-BOARD TILES TO WORD
-
-
-    collie.splice(0)
-    if (tilesOnBoard.length > 0) {
-
-      // ======= TO THE TOP ========
-      // check on-board pieces to left
-      spacelog('TOP')
-      let tilesToTop = tilesOnBoard.filter((tile) => ((tile.dataset.col === col) && (tile.dataset.row < minRow)))
-
-      // sort the tilesToTop array backwards ... why? so index 0 is the right-most tile, and moving Top up the indexes
-      tilesToTop.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
-
-      // does minCol - 1 etc exist?
-      if (tilesToTop.length > 0) {
-        for (let i = 0; i < tilesToTop.length; i++) {
-          if (!(parseInt(tilesToTop[i].dataset.row) === minRow - 1)) { break }
-          collie.unshift(tilesToTop[i])
-          minRow -= 1
-        }
-        if (collie.length > 0) {
-          collie.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
-        }
-        collie.forEach(letter => {
-          currentWord.unshift(letter.dataset.letter)
-        })
-        spacelog(`currentWord after Top: ${currentWord.join('')}`)
-
-      }
-
-    }
-
-    // ======= TO THE BOTTOM ========
-    // check on-board pieces to BOTTOM
-    spacelog('BOTTOM')
-    let tilesToBottom = tilesOnBoard.filter((tile) => ((tile.dataset.col === col) && (tile.dataset.row > maxRow)))
-    // sort this array forward
-    tilesToBottom.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
-    tilesToBottom.forEach((tile, index) => {
-      spacelog(`Bottom[${index}] = ${tile.dataset.letter}`)
-    })
-
-    // does maxCol + 1 etc exist?
-    if (tilesToBottom.length > 0) {
-      for (let i = 0; i < tilesToBottom.length; i++) {
-        if (!(parseInt(tilesToBottom[i].dataset.row) === maxRow + 1)) { break }
-        collie.push(tilesToBottom[i])
-        maxRow += 1
-      }
-      if (collie.length > 0) {
-        collie.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
-      }
-      collie.forEach(letter => {
-        currentWord.push(letter.dataset.letter)
-      })
-      spacelog(`currentWord after Bottom: ${currentWord.join('')}`)
-    }
+    grepColBusiness(colTiles, col, minRow, maxRow)
   }
 
   return true
-}
 
+}
 
 
 const tallyScore = (tiles = tilesInPlay) => {
@@ -537,7 +574,7 @@ const tallyScore = (tiles = tilesInPlay) => {
       parseInt(tile.parentElement.dataset.word_multi) : 1
   })
   points *= wordMultiplier
-  spacelog(points)
+  // spacelog(points)
 }
 
 // ** state-of-work vs. state-of-play **
@@ -632,10 +669,10 @@ function handleDrop(e) {
     tilesInPlay.push(srcTile)
   }
 
-  tilesInPlay.forEach(tile => {
-    spacelog(`(${tile.dataset.row}, ${tile.dataset.col})`)
-  })
-  spacelog(verifyInline())
+  // tilesInPlay.forEach(tile => {
+  //   spacelog(`(${tile.dataset.row}, ${tile.dataset.col})`)
+  // })
+  // spacelog(verifyInline())
 
 
   return false;
@@ -793,17 +830,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   drawTiles(player1Tray, 7)
   drawTiles(player2Tray, 7)
 
-
-  // document.querySelectorAll('.tile').forEach((tile) => {
-  //   tile.addEventListener('mousedown', (e) => {
-  //     // e.preventDefault()
-  //     // spacelog(tile.classList[2])
-  //   })
-
-  //   // --- Moved to drawTiles() --- 
-  //   // tile.addEventListener('dragstart', handleDragStart)
-  //   // tile.addEventListener('dragend', handleDragEnd)
-  // })
 
 
   btnP1EndTurn.addEventListener('click', endTurn_click)
