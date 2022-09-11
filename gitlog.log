@@ -1,0 +1,222 @@
+commit 6a69e360427d772aea7d40871695ca5667db777e
+Merge: 3f3286f 542a688
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sun Sep 11 10:49:21 2022 -0400
+
+    what have we done
+
+commit 542a68848238905a627b173e35e8a2e011eff6b4
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sun Sep 11 10:43:32 2022 -0400
+
+    i think we have something. gaps not allowed. rows and cols in separate fns. all directions work. (no reverse words. i think that stays.)
+
+commit 46ac2cdf36ba46bceddad6c8d8e7fea6375ef95d
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sun Sep 11 10:14:52 2022 -0400
+
+    gotta check master again
+
+commit 3f3286f27144c77229dc4c7870d58cb9cfa4a80e
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sun Sep 11 10:08:56 2022 -0400
+
+    just added a test to help with the breakout branch error
+
+commit 8f8178dd778868e98da3558aabbc704b3cb90d3c
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sun Sep 11 10:00:59 2022 -0400
+
+    now know why the currentWord is getting unshifted twice. committing this branch to checkout master
+
+commit 6cbb43fb6e22603a2368156fdb6337dcb8f2a5d9
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 10 23:33:43 2022 -0400
+
+    broke it and yet fixed it. gaps now accounted for. doubling some letters now.
+
+commit e92c01586a4e626098f8aca840afaa6c7bec4581
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 10 21:00:48 2022 -0400
+
+    word completion vert and horiz both working, except allowing some gaps. pretty major step.
+
+commit 7a26b01999f61091849a6fffbbeecd37c9b69bf7
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 10 18:32:33 2022 -0400
+
+    getting the currentWord with congruent and prefixing, except there's one extra letter in beginning
+
+commit 9330ffd942a38ed3d97b1922bd24754d5bc6e1cb
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 10 16:08:41 2022 -0400
+
+    i think we got it to find left adjacency up to a gap, successfully, so the algorithm should be transferrable to the other three directions
+
+commit 97b859985e947c7fe11b72282c97a21a28708b7b
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 10 12:19:45 2022 -0400
+
+    fixed issue where moving tiles on board was re-adding them to tilesInPlay (also renamed that to tilesInPlay)
+
+commit bf54e9aa7ff18dffa0c5f3d8302ac7d1ae053b11
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 10 10:04:03 2022 -0400
+
+    word and letter multis working ONLY on current laid tiles. next up: already laid tiles points
+
+commit dc0f521fa29464eb2582d2eae074be9779f788d7
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Fri Sep 9 16:12:31 2022 -0400
+
+    reasonable stopping point. turns can end. columns and rows validated. points tallied, including letter multipliers, not words.
+
+commit 342d5b311caaa38170401aaca281c07293825854
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Fri Sep 9 14:36:54 2022 -0400
+
+    verifying plays are in a row or column
+
+commit bbce1491ee1d725dbcb03722c3287ef982c148ca
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Fri Sep 9 13:26:09 2022 -0400
+
+    basically added star to center square. added some data-attrs, and module vars for turn vars
+
+commit 64021fd1f7b44c0d9cbb018fa74af8e42567e8eb
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Fri Sep 9 11:34:29 2022 -0400
+
+    word suggestion feature added. some planning notes.
+
+commit 9dc5eb1b394765ddd394229f9eb89db491a9b9e2
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Thu Sep 8 10:11:48 2022 -0400
+
+    renamed the d** thing index.html
+
+commit 807ea3d9987082559b466fee1ab762a984901f26
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Thu Sep 8 10:08:07 2022 -0400
+
+    i guess it's safe to commit
+
+commit 85dbe10b8dd00d3ddb1388c0867be3a9a6efa498
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Wed Sep 7 21:28:07 2022 -0400
+
+    just seems like a commit is due. still grappling with the drag quirk.
+
+commit 09a4875a927bdcce9798df5de1e3fe030374a094
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Tue Sep 6 20:22:15 2022 -0400
+
+    about to merge to master. can't remember if I already committed.
+
+commit e24c4d7f6daab3d4f396b43cd62123342554d5d8
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Tue Sep 6 17:56:28 2022 -0400
+
+    layout much improved. close to ok. colors are insane in this one.
+
+commit a2862a54c8ff766fbd39ac64360824bf1526bd02
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Tue Sep 6 13:41:51 2022 -0400
+
+    still working on the re-layout of the page into major sections
+
+commit ecfe41928e35f094837d2a970b67442e9a45d616
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Mon Sep 5 09:48:05 2022 -0400
+
+    moved dashboard out of this repo
+
+commit 8021b26fe64af265b357d6eec921fb21cc80c97e
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sun Sep 4 22:11:12 2022 -0400
+
+    can now drag sized and imaged tiles onto board. dragging action is selecting text in other divs. boo.
+
+commit 2920d848611ad9c921fe132b4f9087a7a47369dc
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sun Sep 4 21:25:57 2022 -0400
+
+    exactly 100 tiles, with images (allegedly), now in sackOfTiles
+
+commit 412a0e04b150fb561fbb389fd44dd25c48f27d59
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sun Sep 4 21:04:05 2022 -0400
+
+    tile images drawing on page
+
+commit bea572420bafb78dcc05fe20907ed2220c44d414
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sun Sep 4 14:10:43 2022 -0400
+
+    tile creation loop working. some comment updating.
+
+commit e2d349948191d22bf64ef804f6d5acb9367a03ad
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sun Sep 4 12:45:11 2022 -0400
+
+    tile square images created. dragging style modified. (class: .over)
+
+commit 47851de9f9b9184df06788ab3cd673699d33e570
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 3 20:39:05 2022 -0400
+
+    first draft layout complete-ish up thru trays/tray-tiles
+
+commit bd0f5d67575ae3977aed74e8df7820abab77dbc0
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 3 20:26:15 2022 -0400
+
+    due for a commit. layout progressing. legend in. trays beginning.
+
+commit 1d8b87fc5eee8bbe5046319df1551d27318e6e8d
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 3 17:30:37 2022 -0400
+
+    ok, bitwise method is working, or at least setting up the board in array[15][15] form
+
+commit ee7cb9c82e2cef7d826699ab2cf53602562cb2c9
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 3 16:07:25 2022 -0400
+
+    trying some crazy bitwise js to layout my board. because why not.
+
+commit 1f271f67a3133157b97e7693999983721b627c79
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 3 14:27:26 2022 -0400
+
+    made a dashboard game launcher
+
+commit a78fb5d74cf64ab2b8d3e4bb806b602ada1796ab
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Sat Sep 3 10:53:51 2022 -0400
+
+    cleaned up, removed many previously useful loggings
+
+commit bde1c2758edb1532b95fc133fed8cab5ce0ecc1c
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Fri Sep 2 16:12:23 2022 -0400
+
+    fetch working on actual .json, .parse() etc, for one word from one file
+
+commit d9b988365ac306419a69c4f94f15e187282704a9
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Fri Sep 2 15:15:27 2022 -0400
+
+    word lists renamed, changed to .js, exported, imported
+
+commit 6e8e059179d42f8fa219c49e5cfec048efe1b367
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Fri Sep 2 14:29:17 2022 -0400
+
+    wirefame in README.md
+
+commit aac4308e050f38aee345fb8f9d2e5e023ae37389
+Author: phryszlo <phryszlo@gmail.com>
+Date:   Fri Sep 2 13:24:17 2022 -0400
+
+    opening commission

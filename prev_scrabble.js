@@ -12,12 +12,7 @@ const btnP2EndTurn = document.querySelector('.btn-p2-end')
 const btnP1Toggle = document.querySelector('.btn-p1-toggle')
 const btnP2Toggle = document.querySelector('.btn-p2-toggle')
 const btnFreeWords = document.querySelector('.btn-free-words')
-const btnClearConsole = document.querySelector('.btn-clear-console')
 const freeWordCount = document.querySelector('.free-word-count')
-const lastWord = document.querySelector('.last-word')
-const lastPlay = document.querySelector('.last-play')
-const p1Score = document.querySelector('.p1-score')
-const p2Score = document.querySelector('.p2-score')
 
 
 const bagOfTiles_DOM = document.querySelector('.bag-of-tiles')
@@ -31,7 +26,6 @@ let currentWord = [] //char[] so easy to add letters to beginning. this may be a
 const currentWordTiles = [] // = tile[] 
 let tilesInPlay = []
 let tilesOnBoard = []
-const specialsInPlay = []
 
 let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
 let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
@@ -190,7 +184,6 @@ let srcTile = null;
 
 
 const endTurn_click = (e) => {
-  let p = 1
   if (e.target === btnP1EndTurn) {
     if (validatePlay()) {
       'p1 valid'
@@ -203,7 +196,6 @@ const endTurn_click = (e) => {
     }
   }
   else {
-    p = 2
     if (validatePlay()) {
       'p2 valid'
       let trayCount = player2Tray.querySelectorAll('.tile').length
@@ -215,25 +207,7 @@ const endTurn_click = (e) => {
     }
   }
 
-  const points = tallyScore()
-
-  // ==> update display: move section to new function
-
-  currentWord.forEach((word, i) => {
-    currentWord[i] = word.replace('BLANK', '__').replace('blank', '-')
-  })
-  if (p === 1) {
-    p1Score.replaceChildren(points.toString().padStart(4, '0'))
-  }
-  else {
-    p2Score.replaceChildren(points.toString().padStart(4, '0'))
-  }
-  if (specialsInPlay.length === 0) {
-    lastPlay.replaceChildren('no multipliers')
-  } else {
-    lastPlay.replaceChildren(specialsInPlay.join(', '))
-  }
-  lastWord.replaceChildren(` last-word:  ${currentWord.join('')}`)
+  tallyScore()
   currentWordTiles.splice(0)
   currentWord.splice(0)
 
@@ -245,10 +219,13 @@ const endTurn_click = (e) => {
 
   tilesOnBoard.push(...tilesInPlay.splice(0))
 
+
+
+  // tilesOnBoard.forEach(tile => {
+  //   spacelog(`${tile.dataset.letter}-${tile.dataset.row},${tile.dataset.col}`)
+  // })
+
 }
-
-
-
 
 
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
@@ -324,78 +301,15 @@ const verifyInline = (tiles = tilesInPlay) => {
 
 
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
-              --->> THE WORST PART OF THE CODE <---
-  "DETERMINE LINEAR ADJACENCY" (the original name. it made sense then.)
-            NOW SPLIT INTO FOUR CONVENIENT FUNCTIONS!
+                   THE WORST PART OF THE CODE
+                   DETERMINE LINEAR ADJACENCY
+                   NOW SPLIT INTO FOUR FUNCS
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
 
 
 
-/*
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕                        👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-*/
 // ==================================================================
-//    =================== THE CROSS ====================
-// ==================================================================
-
-const checkTheCross_c = (tilesInRange, colIdx, minRow, maxRow) => {
-  let tilesToLeft = []
-  let tilesToRight = []
-  let currentColMin = colIdx
-  let potentialCrossWordTiles = []
-  tilesInRange.forEach((tile, index) => {
-    potentialCrossWordTiles.splice(0)
-    // spacelog(`tile data: ${tile.dataset.letter}.row${tile.dataset.row}.col${tile.dataset.col}`)
-    // big loop
-    currentColMin = colIdx
-
-    // push the column tile, because it'll be included in the crossword, if one exists
-    potentialCrossWordTiles.push(tile)
-    tilesToLeft = tilesOnBoard.filter((t) => 
-      ((parseInt(t.dataset.row) === parseInt(tile.dataset.row)) && (parseInt(t.dataset.col) < currentColMin)))
-    tilesToLeft.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
-
-    // now to find any gaps, and stop(break) if we we find one
-    if (tilesToLeft.length > 0) {
-      for (let i = 0; i < tilesToLeft.length; i++) {
-        if (!(parseInt(tilesToLeft[i].dataset.col) === currentColMin - 1)) { break }
-        potentialCrossWordTiles.unshift(tilesToLeft[i])
-        currentColMin -= 1
-      }
-      // here the other proc sorts the rowTiles (the tilesToLeft here). this seems wrong so I'm not.      
-    }
-    if (potentialCrossWordTiles.length > 0) {
-      potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-    }
-    potentialCrossWordTiles.forEach((tile, idx) => {
-      spacelog(`left pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
-    })
-
-    // if (potentialCrossWordTiles.length === 1) { potentialCrossWordTiles.splice(0) }
-
-  })
-
-
-}
-
-
-const checkTheCross_r = (tilesInRange, minCol, maxCol) => {
-
-}
-
-
-
-
-
-/*
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕                        👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-*/
-// ==================================================================
-//          =================== THE ROWS ====================
+//          =================== ROWS ====================
 // ==================================================================
 
 const grepRowBusiness = (row, minCol, maxCol) => {
@@ -425,7 +339,7 @@ const grepRowBusiness = (row, minCol, maxCol) => {
         currentWordTiles.unshift(letter)
         currentWord.unshift(letter.dataset.letter)
       })
-      // spacelog(`currentWord after left: ${currentWord.join('')}`)
+      spacelog(`currentWord after left: ${currentWord.join('')}`)
 
     }
 
@@ -452,23 +366,19 @@ const grepRowBusiness = (row, minCol, maxCol) => {
         currentWordTiles.push(letter)
         currentWord.push(letter.dataset.letter)
       })
-      // spacelog(`currentWord after right: ${currentWord.join('')}`)
+      spacelog(`currentWord after right: ${currentWord.join('')}`)
     }
 
   }
 }
 
-/*
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕                        👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-*/
-// ==================================================================
-//          =================== THE COLUMNS ====================
-// ==================================================================
-const grepColBusiness = (col, minRow, maxRow) => {
 
-  let colTiles = []
+// ==================================================================
+//          =================== COLUMNS ====================
+// ==================================================================
+const grepColBusiness = (collie, col, minRow, maxRow) => {
+
+
   if (tilesOnBoard.length > 0) {
 
     // ======= TO THE TOP ========
@@ -483,17 +393,17 @@ const grepColBusiness = (col, minRow, maxRow) => {
     if (tilesToTop.length > 0) {
       for (let i = 0; i < tilesToTop.length; i++) {
         if (!(parseInt(tilesToTop[i].dataset.row) === minRow - 1)) { break }
-        colTiles.unshift(tilesToTop[i])
+        collie.unshift(tilesToTop[i])
         minRow -= 1
       }
-      if (colTiles.length > 0) {
-        colTiles.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
+      if (collie.length > 0) {
+        collie.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
       }
-      colTiles.forEach(letter => {
+      collie.forEach(letter => {
         currentWordTiles.unshift(letter)
         currentWord.unshift(letter.dataset.letter)
       })
-      // spacelog(`currentWord after Top: ${currentWord.join('')}`)
+      spacelog(`currentWord after Top: ${currentWord.join('')}`)
 
     }
 
@@ -513,24 +423,23 @@ const grepColBusiness = (col, minRow, maxRow) => {
   if (tilesToBottom.length > 0) {
     for (let i = 0; i < tilesToBottom.length; i++) {
       if (!(parseInt(tilesToBottom[i].dataset.row) === maxRow + 1)) { break }
-      colTiles.push(tilesToBottom[i])
+      collie.push(tilesToBottom[i])
       maxRow += 1
     }
-    if (colTiles.length > 0) {
-      colTiles.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
+    if (collie.length > 0) {
+      collie.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
     }
-    colTiles.forEach(letter => {
+    collie.forEach(letter => {
       currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
-    // spacelog(`currentWord after Bottom: ${currentWord.join('')}`)
+    spacelog(`currentWord after Bottom: ${currentWord.join('')}`)
   }
 }
 
-// ==================================================================
-// =================== ONE SUPER BONUS FUNCTION! ====================
-// ==================================================================
-const isTheInPlayPartCongruent = (isRow, idx, min, max) => {
+//  plus a bonus helper function! the whole thing needs to be split into some number of smaller functions. 
+//      >> but I just can't right now. you get this one.
+const isTheInPlayPartCongruent = (isRow, idx,  min, max) => {
   const param1 = isRow ? 'data-row' : 'data-col'
   const param2 = isRow ? 'data-col' : 'data-row'
   for (let i = min; i <= max; i++) {
@@ -543,16 +452,6 @@ const isTheInPlayPartCongruent = (isRow, idx, min, max) => {
 }
 
 
-
-/*
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕            dLA            👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-*/
-
-// ==================================================================
-// =================== AND THE ONE THAT STARTED IT ALL===============
-// ==================================================================
 const determineLinearAdjacency = (tiles = tilesInPlay) => {
   // if tiles.length === 1, row or col is determined by something else. I'm not prepared to deal with it yet.
   // maybe we would be reaching a different fn()?
@@ -589,8 +488,8 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
 
     // find all tiles having data-row=${row} and data-col in range minCol -> maxCol and push these tiles to an array
     for (let i = minCol; i <= maxCol; i++) {
-      const tilesInRange = document.querySelectorAll(`.tile[data-col="${i}"][data-row="${row}"]`)
-      tilesInRange.forEach(s => {
+      const sq = document.querySelectorAll(`.tile[data-col="${i}"][data-row="${row}"]`)
+      sq.forEach(s => {
         rowTiles.push(s)
         // spacelog(`data-col = ${s.classList}`)
       })
@@ -603,7 +502,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
       currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
-    // spacelog(`currentWord after center portion: ${currentWord.join('')}`)
+    spacelog(`currentWord after center portion: ${currentWord.join('')}`)
 
 
     // spacelog('=======ROWS===========')
@@ -639,9 +538,10 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
 
     // find all tiles having data-row=${row} and data-Row in range minRow -> maxRow and push these tiles to an array
     for (let i = minRow; i <= maxRow; i++) {
-      const tilesInRange = document.querySelectorAll(`.tile[data-row="${i}"][data-col="${col}"]`)
-      tilesInRange.forEach(s => {
+      const sq = document.querySelectorAll(`.tile[data-row="${i}"][data-col="${col}"]`)
+      sq.forEach(s => {
         colTiles.push(s)
+        spacelog(`data-row = ${s.classList}`)
       })
     }
     if (colTiles.length > 0) {
@@ -651,10 +551,9 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
       currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
-    // spacelog(`currentWord after center portion: ${currentWord.join('')}`)
+    spacelog(`currentWord after center portion: ${currentWord.join('')}`)
 
-    grepColBusiness(col, minRow, maxRow)
-    checkTheCross_c(colTiles, col, minRow, maxRow)
+    grepColBusiness(colTiles, col, minRow, maxRow)
   }
 
   return true
@@ -662,30 +561,11 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
 }
 
 
-/*
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕          END OF dLA            👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-
-*/
-
-
 const tallyScore = (tiles = currentWordTiles) => {
   let points = 0
   let wordMultiplier = 1
-  specialsInPlay.splice(0)
   // this loop only counts the in-play tiles, i.e. not the on-board/re-used tiles
   tiles.forEach((tile) => {
-    if (tile.parentElement.dataset.ltr_multi) {
-      if (parseInt(tile.parentElement.dataset.ltr_multi) === 2) { specialsInPlay.push('Double-Letter-Score') }
-      else { specialsInPlay.push('Triple-Letter-Score') }
-    }
-    if (tile.parentElement.dataset.word_multi) {
-      if (parseInt(tile.parentElement.dataset.word_multi) === 2) { specialsInPlay.push('Double-Word-Score') }
-      else { specialsInPlay.push('Triple-Word-Score') }
-    }
     points += tile.parentElement.dataset.ltr_multi ?
       parseInt(tile.dataset.points) * parseInt(tile.parentElement.dataset.ltr_multi) :
       parseInt(tile.dataset.points)
@@ -693,28 +573,8 @@ const tallyScore = (tiles = currentWordTiles) => {
       parseInt(tile.parentElement.dataset.word_multi) : 1
   })
   points *= wordMultiplier
-  // spacelog(`tallyScore say: ${points}`)
-  return points
+  spacelog(`tallyScore say: ${points}`)
 }
-
-
-
-
-
-
-
-
-/*
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕       DRAG EVENTS              👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-
-*/
-
-
-
 
 // ** state-of-work vs. state-of-play **
 
@@ -776,15 +636,6 @@ function handleDragOver(e) {
   if (e.preventDefault) {
     e.preventDefault();
   }
-
-
-  // if(e.target.classList) {
-  //   spacelog('that was a juicy treat')
-  // }
-  // else {
-  //   spacelog('no')
-  // }
-
   e.dataTransfer.dropEffect = 'move';
   return false;
 }
@@ -801,7 +652,7 @@ function handleDrop(e) {
   }
 
   // if there's anything in this square, just ... don't
-  if (this.childNodes.length > 0) return
+  if(this.childNodes.length > 0) return
 
 
   this.replaceChildren(srcTile) // this seems better
@@ -967,7 +818,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   // spacelog(`'done': fullWordList contains ${fullWordList.length} words. fullWordList[6000] = ${fullWordList[6000]}`)
   // spacelog(`fullWordList[11999] = ${fullWordList[11999]}`)
 
-  // spacelog(`vw=${vw} & vh=${vh} & vmin=${vmin}`)
+  spacelog(`vw=${vw} & vh=${vh} & vmin=${vmin}`)
   // pickSomeRandomWords(100)
   // ======== Generate the board =========
   loadBoard();
@@ -1001,9 +852,6 @@ window.addEventListener('DOMContentLoaded', async () => {
   btnFreeWords.addEventListener('click', () => {
     spaceConsole.replaceChildren('')
     pickSomeRandomWords(freeWordCount.value)
-  })
-  btnClearConsole.addEventListener('click', () => {
-    spaceConsole.replaceChildren('')
   })
 
   // these are a cheap way to give the option to obscure the other players' trays
