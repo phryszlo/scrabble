@@ -18,93 +18,97 @@
 
   <body>
     <div class="layout-wrapper">
-      <h1 class="title">scrabble</h1>
+      <div class="board-section">
+        <h1 class="title">scrabble</h1>
 
-      <div class="gameboard-container">
-        <div class="gameboard"></div>
-        <div class="scores">
-          <div class="score">
-            <label for="p1-score" class="score-label">player 1</label>
-            <input type="text" class="p1-score" />
+        <div class="gameboard-container">
+          <div class="gameboard"></div>
+        </div>
+      </div>
+
+      <!-- ============= DASH SECTION ========== -->
+      <div class="dash-section">
+        <div class="scoring-section">
+          <div class="scores-subsection">
+            <span class="p1-score">00000</span>
+            <span class="p2-score">00000</span>
           </div>
-          <div class="score">
-            <label for="p2-score" class="score-label">player 2</label>
-            <input type="text" class="p2-score" />
+          <span class="last-word">_______</span>
+        </div>
+        <!-- game-container (trays, legend) (leftover name)-->
+        <div class="game-container">
+          <div class="tray-legend-container">
+            <div class="trays-container">
+              <div class="p1-tray-container">
+                <button class="btn-p btn-p1-toggle">show/hide</button>
+                <div class="player1-tray"></div>
+                <button class="btn-p btn-p1-end">end turn</button>
+              </div>
+              <div class="p2-tray-container">
+                <button class="btn-p btn-p2-toggle">show/hide</button>
+                <div class="player2-tray"></div>
+                <button class="btn-p btn-p2-end">end turn</button>
+              </div>
+            </div>
+
+            <div class="legend">
+              <div class="color-line">
+                <div class="color-swatch tws-color"></div>
+                <p class="color-text">Triple Word Score</p>
+              </div>
+
+              <div class="color-line">
+                <div class="color-swatch dws-color"></div>
+                <p class="color-text">Double Word Score</p>
+              </div>
+
+              <div class="color-line">
+                <div class="color-swatch tls-color"></div>
+                <p class="color-text">Triple Letter Score</p>
+              </div>
+
+              <div class="color-line">
+                <div class="color-swatch dls-color"></div>
+                <p class="color-text">Double Letter Score</p>
+              </div>
+            </div>
+            <!-- end of legend -->
+          </div>
+          <!-- end of game-container -->
+
+          <div class="dashboard">
+            <div class="free-words">
+              <input
+                type="number"
+                class="free-word-count"
+                max="1000"
+                step="5"
+                value="100"
+                width="50px"
+              />
+              <button class="btn-free-words">load</button>
+            </div>
+            <div class="console"></div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm btn-mine"
+              data-bs-toggle="modal"
+              data-bs-target="#modalTilesDistro"
+            >
+              tile-distribution
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm btn-mine"
+              data-bs-toggle="modal"
+              data-bs-target="#modal-gameplay"
+            >
+              scrabble-rules
+            </button>
           </div>
         </div>
       </div>
-      <!-- game-container (trays, legend) (leftover name)-->
-      <div class="game-container">
-        <div class="tray-legend-container">
-          <div class="trays-container">
-            <div class="p1-tray-container">
-              <button class="btn-p btn-p1-toggle">show/hide</button>
-              <div class="player1-tray"></div>
-              <button class="btn-p btn-p1-end">end turn</button>
-            </div>
-            <div class="p2-tray-container">
-              <button class="btn-p btn-p2-toggle">show/hide</button>
-              <div class="player2-tray"></div>
-              <button class="btn-p btn-p2-end">end turn</button>
-            </div>
-          </div>
-
-          <div class="legend">
-            <div class="color-line">
-              <div class="color-swatch tws-color"></div>
-              <p class="color-text">Triple Word Score</p>
-            </div>
-
-            <div class="color-line">
-              <div class="color-swatch dws-color"></div>
-              <p class="color-text">Double Word Score</p>
-            </div>
-
-            <div class="color-line">
-              <div class="color-swatch tls-color"></div>
-              <p class="color-text">Triple Letter Score</p>
-            </div>
-
-            <div class="color-line">
-              <div class="color-swatch dls-color"></div>
-              <p class="color-text">Double Letter Score</p>
-            </div>
-          </div>
-          <!-- end of legend -->
-        </div>
-      </div>
-      <!-- end of game-container -->
-
-      <div class="dashboard">
-        <div class="free-words">
-          <input
-            type="number"
-            class="free-word-count"
-            max="1000"
-            step="5"
-            value="100"
-            width="50px"
-          />
-          <button class="btn-free-words">load</button>
-        </div>
-        <div class="console"></div>
-        <button
-          type="button"
-          class="btn btn-primary btn-sm btn-mine"
-          data-bs-toggle="modal"
-          data-bs-target="#modalTilesDistro"
-        >
-          tile-distribution
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary btn-sm btn-mine"
-          data-bs-toggle="modal"
-          data-bs-target="#modal-gameplay"
-        >
-          scrabble-rules
-        </button>
-      </div>
+      // end of game-container --- a bad name
 
       <!-- holders -- no display
        -->
