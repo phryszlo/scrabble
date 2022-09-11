@@ -343,17 +343,23 @@ const verifyInline = (tiles = tilesInPlay) => {
 const checkTheCross_c = (tilesInRange, colIdx, minRow, maxRow) => {
   let tilesToLeft = []
   let tilesToRight = []
-  let currentColMin = colIdx
+  let currentColMin = 0
+  let currentColMax = 0
   let potentialCrossWordTiles = []
   tilesInRange.forEach((tile, index) => {
-    potentialCrossWordTiles.splice(0)
-    // spacelog(`tile data: ${tile.dataset.letter}.row${tile.dataset.row}.col${tile.dataset.col}`)
     // big loop
-    currentColMin = colIdx
+
+    // reset the things.
+    potentialCrossWordTiles.splice(0)
+    currentColMin = parseInt(colIdx)
+    currentColMax = parseInt(colIdx)
 
     // push the column tile, because it'll be included in the crossword, if one exists
     potentialCrossWordTiles.push(tile)
-    tilesToLeft = tilesOnBoard.filter((t) => 
+
+    // FIRSTLY THE LEFT SIDE
+
+    tilesToLeft = tilesOnBoard.filter((t) =>
       ((parseInt(t.dataset.row) === parseInt(tile.dataset.row)) && (parseInt(t.dataset.col) < currentColMin)))
     tilesToLeft.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
 
@@ -366,15 +372,42 @@ const checkTheCross_c = (tilesInRange, colIdx, minRow, maxRow) => {
       }
       // here the other proc sorts the rowTiles (the tilesToLeft here). this seems wrong so I'm not.      
     }
-    if (potentialCrossWordTiles.length > 0) {
-      potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-    }
+    // if (potentialCrossWordTiles.length > 0) {
+    //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+    // }
     potentialCrossWordTiles.forEach((tile, idx) => {
       spacelog(`left pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
     })
 
-    // if (potentialCrossWordTiles.length === 1) { potentialCrossWordTiles.splice(0) }
+    //  SECONDLY THE RIGHT SIDE (the letter from the column(tilesInRange) is already in the cross)
 
+    tilesToRight = tilesOnBoard.filter((t) =>
+      ((parseInt(t.dataset.row) === parseInt(tile.dataset.row)) && (parseInt(t.dataset.col) > currentColMax)))
+    tilesToRight.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+
+    // now to find any gaps, and stop(break) if we we find one
+    if (tilesToRight.length > 0) {
+      for (let i = 0; i < tilesToRight.length; i++) {
+        spacelog(`freekin ${tilesToRight[i].dataset.letter}.col = ${parseInt(tilesToRight[i].dataset.col)}`)
+        if (parseInt(tilesToRight[i].dataset.col) != (parseInt(currentColMax) + 1)) { 
+          spacelog(`you have been hijacked by ${currentColMax + 1}`)
+          break 
+        }
+        potentialCrossWordTiles.push(tilesToRight[i])
+        currentColMax += 1
+      }
+      // here the other proc sorts the rowTiles (the tilesToRight here). this seems wrong so I'm not.      
+    }
+    // if (potentialCrossWordTiles.length > 0) {
+    //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+    // }
+    potentialCrossWordTiles.forEach((tile, idx) => {
+      spacelog(`right pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
+    })
+
+
+
+    // here endeth the big loop
   })
 
 
