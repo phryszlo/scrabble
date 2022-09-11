@@ -23,6 +23,7 @@ const bagOfTiles_classes = []
 // ==== Gameplay variables =====
 let playerUp = 'player1'
 let currentWord = [] //char[] so easy to add letters to beginning. this may be a bad idea.
+const currentWordTiles = [] // = tile[] 
 let tilesInPlay = []
 let tilesOnBoard = []
 
@@ -188,7 +189,6 @@ const endTurn_click = (e) => {
       'p1 valid'
       let trayCount = player1Tray.querySelectorAll('.tile').length
       drawTiles(player1Tray, 7 - trayCount)
-      currentWord.splice(0)
     }
     else {
       // notify of the problem
@@ -200,7 +200,6 @@ const endTurn_click = (e) => {
       'p2 valid'
       let trayCount = player2Tray.querySelectorAll('.tile').length
       drawTiles(player2Tray, 7 - trayCount)
-      currentWord.splice(0)
     }
     else {
       // notify of the problem
@@ -209,6 +208,8 @@ const endTurn_click = (e) => {
   }
 
   tallyScore()
+  currentWordTiles.splice(0)
+  currentWord.splice(0)
   tilesOnBoard.push(...tilesInPlay.splice(0))
   // tilesOnBoard.forEach(tile => {
   //   spacelog(`${tile.dataset.letter}-${tile.dataset.row},${tile.dataset.col}`)
@@ -292,12 +293,8 @@ const verifyInline = (tiles = tilesInPlay) => {
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
                    THE WORST PART OF THE CODE
                    DETERMINE LINEAR ADJACENCY
+                   NOW SPLIT INTO FOUR FUNCS
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
-
-
-
-
-
 
 
 
@@ -306,28 +303,16 @@ const verifyInline = (tiles = tilesInPlay) => {
 // ==================================================================
 
 const grepRowBusiness = (row, minCol, maxCol) => {
-  // spacelog('=======ROWS===========')
-
-  // rowTiles.forEach((tile, i) => {
-  //   spacelog(`grepRowBusiness: rowTiles[${i}]: ${tile.dataset.letter} `)
-
-  // })
-  spacelog(`currentWord at gRB: ${currentWord.join('')}`)
 
   let rowTiles = []
   if (tilesOnBoard.length > 0) {
 
     // ======= TO THE LEFT ========
     // check on-board pieces to left
-    // spacelog('LEFT')
     let tilesToLeft = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col < minCol)))
 
     // sort the tilesToLeft array backwards ... why? so index 0 is the right-most tile, and moving left up the indexes
     tilesToLeft.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
-
-    // tilesToLeft.forEach((t,i) => {
-    //   spacelog(`after tTL sort: t[${i}]: ${t.dataset.letter}`)
-    // }) // checks out
 
     // does minCol - 1 etc exist?
     if (tilesToLeft.length > 0) {
@@ -339,11 +324,9 @@ const grepRowBusiness = (row, minCol, maxCol) => {
       if (rowTiles.length > 0) {
         rowTiles.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
       }
-      rowTiles.forEach((t, i) => {
-        spacelog(`after rowTiles sort: t[${i}]: ${t.dataset.letter}`)
-      }) 
 
       rowTiles.forEach(letter => {
+        currentWordTiles.unshift(letter)
         currentWord.unshift(letter.dataset.letter)
       })
       spacelog(`currentWord after left: ${currentWord.join('')}`)
@@ -352,7 +335,6 @@ const grepRowBusiness = (row, minCol, maxCol) => {
 
     // ======= TO THE RIGHT ========
     // check on-board pieces to right
-    // spacelog('RIGHT')
     let tilesToRight = tilesOnBoard.filter((tile) => ((tile.dataset.row === row) && (tile.dataset.col > maxCol)))
     // sort this array forward
     tilesToRight.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
@@ -371,6 +353,7 @@ const grepRowBusiness = (row, minCol, maxCol) => {
         rowTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
       }
       rowTiles.forEach(letter => {
+        currentWordTiles.push(letter)
         currentWord.push(letter.dataset.letter)
       })
       spacelog(`currentWord after right: ${currentWord.join('')}`)
@@ -407,6 +390,7 @@ const grepColBusiness = (collie, col, minRow, maxRow) => {
         collie.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
       }
       collie.forEach(letter => {
+        currentWordTiles.unshift(letter)
         currentWord.unshift(letter.dataset.letter)
       })
       spacelog(`currentWord after Top: ${currentWord.join('')}`)
@@ -436,6 +420,7 @@ const grepColBusiness = (collie, col, minRow, maxRow) => {
       collie.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
     }
     collie.forEach(letter => {
+      currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
     spacelog(`currentWord after Bottom: ${currentWord.join('')}`)
@@ -448,8 +433,6 @@ const isTheInPlayPartCongruent = (isRow, idx,  min, max) => {
   const param1 = isRow ? 'data-row' : 'data-col'
   const param2 = isRow ? 'data-col' : 'data-row'
   for (let i = min; i <= max; i++) {
-  spacelog(`.square${`[${param1}="${idx}"]`}[${param2}="${i}"]`)
-
     if (document.querySelector(`.square${`[${param1}="${idx}"]`}[${param2}="${i}"]`).childNodes.length === 0) {
       spacelog('nope')
       return false
@@ -463,7 +446,11 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
   // if tiles.length === 1, row or col is determined by something else. I'm not prepared to deal with it yet.
   // maybe we would be reaching a different fn()?
 
-
+  // but until you deal with it, it's messing everything up, so say you're sorry and bail
+  if (tiles.length === 1) {
+    spacelog('terribly sorry, but limitations of the programmer do not allow single tile placement at this time.')
+    return false
+  }
 
   // row or col has already been verified, so comparing two tiles should be sufficient
   let isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise it's a column
@@ -494,14 +481,15 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
       const sq = document.querySelectorAll(`.tile[data-col="${i}"][data-row="${row}"]`)
       sq.forEach(s => {
         rowTiles.push(s)
-        spacelog(`data-col = ${s.classList}`)
+        // spacelog(`data-col = ${s.classList}`)
       })
     }
-    spacelog(`rowtiles len = ${rowTiles.length}`)
+    // spacelog(`rowtiles len = ${rowTiles.length}`)
     if (rowTiles.length > 0) {
       rowTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
     }
     rowTiles.forEach(letter => {
+      currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
     spacelog(`currentWord after center portion: ${currentWord.join('')}`)
@@ -550,6 +538,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
       colTiles.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
     }
     colTiles.forEach(letter => {
+      currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
     spacelog(`currentWord after center portion: ${currentWord.join('')}`)
@@ -562,7 +551,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
 }
 
 
-const tallyScore = (tiles = tilesInPlay) => {
+const tallyScore = (tiles = currentWordTiles) => {
   let points = 0
   let wordMultiplier = 1
   // this loop only counts the in-play tiles, i.e. not the on-board/re-used tiles
@@ -574,7 +563,7 @@ const tallyScore = (tiles = tilesInPlay) => {
       parseInt(tile.parentElement.dataset.word_multi) : 1
   })
   points *= wordMultiplier
-  // spacelog(points)
+  spacelog(`tallyScore say: ${points}`)
 }
 
 // ** state-of-work vs. state-of-play **
