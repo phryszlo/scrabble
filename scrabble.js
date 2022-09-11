@@ -379,6 +379,9 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
           word.unshift(tilesToLeft[i])
           minCol -= 1
         }
+        word.forEach((t,i) => {
+          spacelog(`t[${i} after word unshift: ${t.dataset.letter}]`)
+        })
         if (word.length > 0) {
           word.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
         }
