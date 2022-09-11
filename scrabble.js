@@ -316,15 +316,16 @@ const isTheInPlayPartCongruent = (q, min, max) => {
 //          =================== ROWS ====================
 // ==================================================================
 
-const grepRowBusiness = (rowTiles, row, minCol, maxCol) => {
+const grepRowBusiness = (row, minCol, maxCol) => {
   // spacelog('=======ROWS===========')
 
-  rowTiles.forEach((tile, i) => {
-    spacelog(`grepRowBusiness: rowTiles[${i}]: ${tile.dataset.letter} `)
+  // rowTiles.forEach((tile, i) => {
+  //   spacelog(`grepRowBusiness: rowTiles[${i}]: ${tile.dataset.letter} `)
 
-  })
+  // })
   spacelog(`currentWord at gRB: ${currentWord.join('')}`)
 
+  let rowTiles = []
   if (tilesOnBoard.length > 0) {
 
     // ======= TO THE LEFT ========
