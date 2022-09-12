@@ -390,7 +390,7 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: .2px dotted burlywood;
+  border: .3px ridge rgb(76, 46, 7);
   margin-top: .8em;
 }
 
@@ -435,7 +435,7 @@ body::before {
   border-radius: 2.2px;
   font-family: monospace;
   font-size: .6em;
-  width: fit-content;
+  width: 100%;
   padding: 0 .3em;
 }
 .btn-p:hover {

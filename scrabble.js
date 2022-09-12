@@ -11,6 +11,8 @@ const btnP1EndTurn = document.querySelector('.btn-p1-end')
 const btnP2EndTurn = document.querySelector('.btn-p2-end')
 const btnP1Toggle = document.querySelector('.btn-p1-toggle')
 const btnP2Toggle = document.querySelector('.btn-p2-toggle')
+const btnP1Swap = document.querySelector('.btn-p1-swap')
+const btnP2Swap = document.querySelector('.btn-p2-swap')
 const btnFreeWords = document.querySelector('.btn-free-words')
 const btnClearConsole = document.querySelector('.btn-clear-console')
 const freeWordCount = document.querySelector('.free-word-count')
@@ -1324,10 +1326,12 @@ const pickSomeRandomWords = (numWords) => {
 
 const switchPlayers = (nextPlayer = playerUp) => {
   if (nextPlayer === 'player1') {
+    playerUp = 'player1'
     player2Tray.style.filter = 'contrast(0)'
     player1Tray.style.filter = ''
   }
   else {
+    playerUp = 'player2'
     player1Tray.style.filter = 'contrast(0)'
     player2Tray.style.filter = ''
   }
@@ -1407,6 +1411,38 @@ window.addEventListener('DOMContentLoaded', async () => {
       player2Tray.style.filter = 'contrast(0)'
     } else {
       player2Tray.style.filter = ''
+    }
+  })
+  btnP1Swap.addEventListener('click', () => {
+    if (playerUp === 'player1' && player2Tray.style.filter === 'contrast(0)') {
+      const p1Tiles = [...document.querySelector('.player1-tray').querySelectorAll('.p1-tile')]
+      console.log(typeof(p1Tiles));
+      console.log('bot_dom len = ', bagOfTiles_DOM.childNodes.length);
+      p1Tiles.forEach(t => {
+        bagOfTiles_DOM.append(player1Tray.removeChild(t))
+        
+      })
+      console.log('bot_dom len = ', bagOfTiles_DOM.childNodes.length);
+      drawTiles(player1Tray, 7)
+      setTimeout(() => {
+        switchPlayers('player2')
+      }, 2000)
+    }
+  })
+  btnP2Swap.addEventListener('click', () => {
+    if (playerUp === 'player2' && player1Tray.style.filter === 'contrast(0)') {
+      const p2Tiles = [...document.querySelector('.player2-tray').querySelectorAll('.p2-tile')]
+      console.log(typeof(p2Tiles));
+      console.log('bot_dom len = ', bagOfTiles_DOM.childNodes.length);
+      p2Tiles.forEach(t => {
+        bagOfTiles_DOM.append(player2Tray.removeChild(t))
+        
+      })
+      console.log('bot_dom len = ', bagOfTiles_DOM.childNodes.length);
+      drawTiles(player2Tray, 7)
+      setTimeout(() => {
+        switchPlayers('player1')
+      }, 2000)
     }
   })
 

@@ -90,40 +90,51 @@ Famous last words.
 
 Here's what I didn't manage that was on my personal I mean to do this list.   
 - You can't ever play just one letter. I know how stupid that seems, and it is. But I couldn't get to it.
+  - _**REVISION**_ This note no longer applies. The feature has been added.
 - You can only play top-down, and left-to-right.
-- You really have to decide between players about word validity. My dictionary efforts are functionally useless to you. They will be in version 2.
+- You really have to decide between players about word validity. My dictionary efforts are functionally useless to you, if still fun after-the-fact. They will be added in version 2.
 - I am not enforcing center square on first play. I might add in later this morning, but I'm not sure I really want to.
 
-There might be more, but it's depressing. You can still play. You can still lose. You can still win.
+There might be more, but it's depressing. You can still play. You can still lose. You can still win. Not officially, but you know, if you have a higher score when you stop...
 
 
 ---------------
+### one more lesson
+
+> ####  name things for the future 
+This is really hard to do, and an ongoing struggle. I have read it is the hardest problem in programming. I wouldn't know about that, as I'm currently voting for crossword adjacency in Scrabble, but I'll give you it's a persistent bugger.  
+
+That's all.
+
+--------------
+
 
 
 ## THE GAME
-#### The player tile trays   
+#### The player tile trays..   
 ![tile trays](./images/one-tray.png)   
 
-hold the pieces that players take turns dragging onto   
+..hold the pieces that players take turns dragging onto the gameboard.      
 
 #### the game board 
-(the colored squares have multipliers...)   
+The colored squares have multipliers..
 
 ![board](./images/board.png)   
 
 
-...indicated in the legend.   
+..indicated in the legend.   
 
 ![legend](./images/legend.png)   
 
 
-Score is tallied automatically   
+Score is tallied automatically.   
 
 ![scoring](./images/scoring-eg.png)   
 
-(the small blue number holds the value of just the last turn)   
+(The small blue number holds the value of just the last turn.)   
 
- you can view the scoring rules, and the tile values and counts by clicking the scrabble-rules button   
+ You can view the scoring rules, and the tile values and counts by clicking the scrabble-rules button.   
+ It doesn't mean all of these rules apply to _this_ game, but just in case you didn't want to search and wanted to see me pop a modal.     
 
 ![rules](./images/daash.png)   
 
@@ -134,10 +145,12 @@ Score is tallied automatically
 
 - The rules say you have to use the center square on your first turn, but if you two decide you don't care about that rule... this game is not your mother, kids.   
 
-- Don't try getting away with any of that playing just one tile business. You know it's a different algorithm don't you? If I can't immediately determine if you are in a row or a column, then I need a whole other function, my friend, and I just don't have the time. So just play two, you baby.
-  - _**REVISION**_ This note no longer applies. The feature has been added.
+- Don't try getting away with any of that playing just one tile business. You know it's a different algorithm don't you? If I can't immediately determine if you are in a row or a column, then I need a whole 'nother function, my friend, and I just don't have the time. So just play two, you baby.
+  - _**REVISION**_ This note no longer applies. The feature has been added. I was wrong about the 'nother function, it was actually super easy. So there.
 
 - Think there should be a pass option? Or an exchange tiles option? Just because it says so in the rules, you say? Quit whining and play with what you've got. I got deadlines here!
+  - _**REVISION**_ This note is only half true now. There _is_ now an exchange tiles option, although it's all or none. None of this, I'll take three please crap. You want an exchange, you gotta commit. And, as pursuant to rule 17, subsection iii.11 of the Fourth Revised Scrabble Rules of Decorum, this will forfeit your current turn. After two seconds to consider your new array of tilings.
+  
 
 
 
