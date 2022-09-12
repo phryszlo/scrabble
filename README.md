@@ -132,7 +132,6 @@ Score is tallied automatically.
 
 ![scoring](./images/scoring-eg.png)   
 
-(The small blue number holds the value of just the last turn.)   
 
  You can view the scoring rules, and the tile values and counts by clicking the scrabble-rules button.   
  It doesn't mean all of these rules apply to _this_ game, but just in case you didn't want to search and wanted to see me pop a modal.     
