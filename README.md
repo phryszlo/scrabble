@@ -136,6 +136,9 @@ Score is tallied automatically
 
 - Don't try getting away with any of that playing just one tile business. You know it's a different algorithm don't you? If I can't immediately determine if you are in a row or a column, then I need a whole other function, my friend, and I just don't have the time. So just play two, you baby.
 
+- Think there should be a pass option? Or an exchange tiles option? Just because it says so in the rules, you say? Quit whining and play with what you've got. I got deadlines here!
+
+
 
 
 
