@@ -425,7 +425,7 @@ const ascertainWordiness = () => {
     }
     if (wordsNeedingApproval.length > 0) {
       let h2 = document.createElement('h2')
-      h2.innerText = 'words not found in dictionary'
+      h2.innerText = 'words needing approval, or possible blank completers'
       const ul = document.createElement('ul')
 
       let li

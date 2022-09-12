@@ -94,6 +94,7 @@ Here's what I didn't manage that was on my personal I mean to do this list.
 - You can only play top-down, and left-to-right.
 - You really have to decide between players about word validity. My dictionary efforts are functionally useless to you, if still fun after-the-fact. They will be added in version 2.
 - I am not enforcing center square on first play. I might add in later this morning, but I'm not sure I really want to.
+- While I have a loop that looks up words that fits the blanks, right now those words are not displaying. I'll try to get that in.
 
 There might be more, but it's depressing. You can still play. You can still lose. You can still win. Not officially, but you know, if you have a higher score when you stop...
 
