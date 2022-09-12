@@ -117,7 +117,13 @@ hold the pieces that players take turns dragging onto
 ![legend](./images/legend.png)   
 
 
-Score is tallied automatically (you can view the scoring rules by clicking the scrabble-rules button)   
+Score is tallied automatically   
+
+![scoring](./images/scoring-eg.png)   
+
+(the small blue number holds the value of just the last turn)   
+
+ you can view the scoring rules, and the tile values and counts by clicking the scrabble-rules button   
 
 ![rules](./images/daash.png)   
 
