@@ -29,6 +29,8 @@ const bagOfTiles_classes = []
 let playerUp = 'player1'
 let currentWord = [] //char[] so easy to add letters to beginning. this may be a bad idea.
 const currentWordTiles = [] // = tile[] 
+const currentCrossWordTiles = []
+const currentCrossWords = []
 let tilesInPlay = []
 let tilesOnBoard = []
 const specialsInPlay = []
@@ -240,6 +242,7 @@ const endTurn_click = (e) => {
   tilesInPlay.forEach((tile) => {
     // if this ever works, these events/attrs need to go back on when these get put back in the bag
     tile.setAttribute('draggable', 'false')
+    tile.removeAttribute('data-inplay')
     tile.removeEventListener('dragstart', dragStartHandler)
   })
 
@@ -340,19 +343,23 @@ const verifyInline = (tiles = tilesInPlay) => {
 //    =================== THE CROSS ====================
 // ==================================================================
 
-const checkTheCross_c = (tilesInRange, colIdx, minRow, maxRow) => {
+const checkTheCross_c = (tilesInRange, colIdx) => {
   let tilesToLeft = []
   let tilesToRight = []
   let currentColMin = 0
   let currentColMax = 0
   let potentialCrossWordTiles = []
+  let crosswords = []
+  let tempWord = ''
   tilesInRange.forEach((tile, index) => {
     // big loop
-
+    if (!tile.dataset.inplay) { return }
     // reset the things.
     potentialCrossWordTiles.splice(0)
     currentColMin = parseInt(colIdx)
     currentColMax = parseInt(colIdx)
+    tempWord = ''
+    // crosswords.splice(0)
 
     // push the column tile, because it'll be included in the crossword, if one exists
     potentialCrossWordTiles.push(tile)
@@ -377,7 +384,9 @@ const checkTheCross_c = (tilesInRange, colIdx, minRow, maxRow) => {
     // }
     potentialCrossWordTiles.forEach((tile, idx) => {
       spacelog(`left pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
+      // tempWord += tile.dataset.letter
     })
+    // crosswords.push(tempWord)
 
     //  SECONDLY THE RIGHT SIDE (the letter from the column(tilesInRange) is already in the cross)
 
@@ -388,9 +397,7 @@ const checkTheCross_c = (tilesInRange, colIdx, minRow, maxRow) => {
     // now to find any gaps, and stop(break) if we we find one
     if (tilesToRight.length > 0) {
       for (let i = 0; i < tilesToRight.length; i++) {
-        spacelog(`freekin ${tilesToRight[i].dataset.letter}.col = ${parseInt(tilesToRight[i].dataset.col)}`)
         if (parseInt(tilesToRight[i].dataset.col) != (parseInt(currentColMax) + 1)) { 
-          spacelog(`you have been hijacked by ${currentColMax + 1}`)
           break 
         }
         potentialCrossWordTiles.push(tilesToRight[i])
@@ -403,18 +410,124 @@ const checkTheCross_c = (tilesInRange, colIdx, minRow, maxRow) => {
     // }
     potentialCrossWordTiles.forEach((tile, idx) => {
       spacelog(`right pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
+      tempWord += tile.dataset.letter
     })
+    crosswords.push(tempWord)
 
+    if (index === tilesInRange.length - 1) {
+      potentialCrossWordTiles.forEach((t, i) => {
+        currentCrossWordTiles.push(t)
+        let cross = []
+        cross.push(t.dataset.letter)
+        currentCrossWords.push(cross.join(''))
+      })
+      currentCrossWords.forEach(word => {
+        spacelog(word)
+      })
 
+    }
 
+    
     // here endeth the big loop
   })
+  crosswords.forEach(word => {
+    spacelog(word)
+  })
+} // end checkTheCross_c
 
 
-}
+// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 
+const checkTheCross_r = (tilesInRange, rowIdx) => {
+  let tilesToTop = []
+  let tilesToBottom = []
+  let currentRowMin = 0
+  let currentRowMax = 0
+  let potentialCrossWordTiles = []
+  let crosswords = []
+  let tempWord = ''
+  tilesInRange.forEach((tile, index) => {
+    // big loop
+    if (!tile.dataset.inplay) { return }
 
-const checkTheCross_r = (tilesInRange, minCol, maxCol) => {
+    // reset the things.
+    potentialCrossWordTiles.splice(0)
+    currentRowMin = parseInt(rowIdx)
+    currentRowMax = parseInt(rowIdx)
+    tempWord = ''
+    // crosswords.splice(0)
+
+    // push the row tile, because it'll be included in the crossword, if one exists
+    potentialCrossWordTiles.push(tile)
+
+    // FIRSTLY THE TOP SIDE
+
+    tilesToTop = tilesOnBoard.filter((t) =>
+      ((parseInt(t.dataset.col) === parseInt(tile.dataset.col)) && (parseInt(t.dataset.row) < currentRowMin)))
+    tilesToTop.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
+
+    // now to find any gaps, and stop(break) if we we find one
+    if (tilesToTop.length > 0) {
+      for (let i = 0; i < tilesToTop.length; i++) {
+        if (!(parseInt(tilesToTop[i].dataset.row) === currentRowMin - 1)) { break }
+        potentialCrossWordTiles.unshift(tilesToTop[i])
+        currentRowMin -= 1
+      }
+      // here the other proc sorts the rowTiles (the tilesToLeft here). this seems wrong so I'm not.      
+    }
+    // if (potentialCrossWordTiles.length > 0) {
+    //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+    // }
+    potentialCrossWordTiles.forEach((tile, idx) => {
+      spacelog(`top pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
+    //  tempWord += tile.dataset.letter
+    })
+    // crosswords.push(tempWord)
+
+    //  SECONDLY THE BOTTOM SIDE (the letter from the column(tilesInRange) is already in the cross)
+
+    tilesToBottom = tilesOnBoard.filter((t) =>
+      ((parseInt(t.dataset.col) === parseInt(tile.dataset.col)) && (parseInt(t.dataset.row) > currentRowMax)))
+    tilesToBottom.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
+
+    // now to find any gaps, and stop(break) if we we find one
+    if (tilesToBottom.length > 0) {
+      for (let i = 0; i < tilesToBottom.length; i++) {
+        if (parseInt(tilesToBottom[i].dataset.row) != (parseInt(currentRowMax) + 1)) { 
+          break 
+        }
+        potentialCrossWordTiles.push(tilesToBottom[i])
+        currentRowMax += 1
+      }
+      // here the other proc sorts the rowTiles (the tilesToRight here). this seems wrong so I'm not.      
+    }
+    // if (potentialCrossWordTiles.length > 0) {
+    //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+    // }
+    potentialCrossWordTiles.forEach((tile, idx) => {
+      spacelog(`bottom pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
+     tempWord += tile.dataset.letter
+    })
+    crosswords.push(tempWord)
+
+    if (index === tilesInRange.length - 1) {
+      potentialCrossWordTiles.forEach((t, i) => {
+        currentCrossWordTiles.push(t)
+        let cross = []
+        cross.push(t.dataset.letter)
+        currentCrossWords.push(cross.join(''))
+      })
+      currentCrossWords.forEach(word => {
+        spacelog(word)
+      })
+    }
+    
+    
+    // here endeth the big loop
+  })
+  crosswords.forEach(word => {
+    spacelog(word)
+  })
 
 }
 
@@ -443,7 +556,7 @@ const grepRowBusiness = (row, minCol, maxCol) => {
     // sort the tilesToLeft array backwards ... why? so index 0 is the right-most tile, and moving left up the indexes
     tilesToLeft.sort((a, b) => (parseInt(a.dataset.col) < parseInt(b.dataset.col)) ? 1 : -1)
 
-    // does minCol - 1 etc exist?
+    // does minCol - 1 (etc) exist, up to a gap?
     if (tilesToLeft.length > 0) {
       for (let i = 0; i < tilesToLeft.length; i++) {
         if (!(parseInt(tilesToLeft[i].dataset.col) === minCol - 1)) { break }
@@ -489,6 +602,8 @@ const grepRowBusiness = (row, minCol, maxCol) => {
     }
 
   }
+
+  return rowTiles
 }
 
 /*
@@ -558,6 +673,8 @@ const grepColBusiness = (col, minRow, maxRow) => {
     })
     // spacelog(`currentWord after Bottom: ${currentWord.join('')}`)
   }
+
+  return colTiles
 }
 
 // ==================================================================
@@ -597,7 +714,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
   }
 
   // row or col has already been verified, so comparing two tiles should be sufficient
-  let isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise it's a column
+  let isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise... it's a column
 
 
   if (isRow) {
@@ -641,7 +758,8 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
 
     // spacelog('=======ROWS===========')
 
-    grepRowBusiness(row, minCol, maxCol)
+    const fullWordTiles = grepRowBusiness(row, minCol, maxCol)
+    checkTheCross_r(rowTiles, row)
 
   }// end if (isRow)
 
@@ -686,8 +804,9 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     })
     // spacelog(`currentWord after center portion: ${currentWord.join('')}`)
 
-    grepColBusiness(col, minRow, maxRow)
-    checkTheCross_c(colTiles, col, minRow, maxRow)
+    const fullWordTiles = grepColBusiness(col, minRow, maxRow)
+
+    checkTheCross_c(colTiles, col)
   }
 
   return true
@@ -852,6 +971,7 @@ function handleDrop(e) {
   // spacelog(tilesInPlay.indexOf(srcTile))
   if (tilesInPlay.indexOf(srcTile) < 0) {
     tilesInPlay.push(srcTile)
+    srcTile.setAttribute('data-inplay','true')
   }
 
   // tilesInPlay.forEach(tile => {
