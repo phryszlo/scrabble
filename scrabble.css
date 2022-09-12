@@ -571,6 +571,20 @@ body::before {
 .modal-dialog-scrollable img {
   width: 100%;
 }
+.modal-dialog-scrollable .btn-primary {
+  background-color: #368bc800;
+  border: 2px solid black;
+  color: black;
+  height: 3em;
+  width: 14em;
+}
+.modal-dialog-scrollable .btn-primary:hover {
+  background-color: #368bc888;
+  border: 2px solid black;
+  color: black;
+  height: 3em;
+  width: 14em;
+}
 
 .modal-header {
   display: flex;

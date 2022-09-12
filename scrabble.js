@@ -324,11 +324,11 @@ const ascertainWordiness = () => {
     if (word.indexOf('-') < 0) {
       if (fullWordList.indexOf(word.toLowerCase()) >= 0) {
         wordsInDictionary.push(word.toLowerCase())
-        spacelog(`${word} was found in the fullWordList!`)
+        // spacelog(`${word} was found in the fullWordList!`)
       }
       else {
         wordsNeedingApproval.push(word.toLowerCase())
-        spacelog(`${word} is not in the fullWordList. What to do. ye-Gads.`)
+        // spacelog(`${word} is not in the fullWordList. What to do. ye-Gads.`)
       }
     }
     else { // we have a blank
@@ -341,7 +341,7 @@ const ascertainWordiness = () => {
       finds.forEach(wordle => {
         wordsWithBlanks.push(word.replace('BLANK', '-').replace('blank', '-'))
         possibleBlankCompleters.push(wordle)
-        spacelog(wordle)
+        // spacelog(wordle)
       })
     }
   })
@@ -551,7 +551,7 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
     //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
     // }
     potentialCrossWordTiles.forEach((tile, idx) => {
-      spacelog(`left pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
+      // spacelog(`left pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
       // tempWord += tile.dataset.letter
     })
     // crosswords.push(tempWord)
@@ -582,7 +582,7 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
     //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
     // }
     potentialCrossWordTiles.forEach((tile, idx) => {
-      spacelog(`right pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
+      // spacelog(`right pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
       tempWord += tile.dataset.letter
       tempTiles.push(tile)
 
@@ -610,7 +610,7 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
   crosswords.forEach(word => {
     if (word.length > 1) {
       currentCrossWords.push(word)
-      spacelog(word)
+      // spacelog(word)
     }
   })
   crosswordTiles.forEach(tiles => {
@@ -671,7 +671,7 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
     //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
     // }
     potentialCrossWordTiles.forEach((tile, idx) => {
-      spacelog(`top pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
+      // spacelog(`top pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
       //  tempWord += tile.dataset.letter
     })
     // crosswords.push(tempWord)
@@ -697,7 +697,7 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
     //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
     // }
     potentialCrossWordTiles.forEach((tile, idx) => {
-      spacelog(`bottom pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
+      // spacelog(`bottom pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
       tempWord += tile.dataset.letter
       tempTiles.push(tile)
     })
@@ -724,7 +724,7 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
   crosswords.forEach(word => {
     if (word.length > 1) {
       currentCrossWords.push(word)
-      spacelog(word)
+      // spacelog(word)
     }
   })
   crosswordTiles.forEach(tiles => {

@@ -101,8 +101,44 @@ There might be more, but it's depressing. You can still play. You can still lose
 
 
 ## THE GAME
+#### The player tile trays   
+![tile trays](./images/one-tray.png)   
+
+hold the pieces that players take turns dragging onto   
+
+#### the game board 
+(the colored squares have multipliers...)   
+
+![board](./images/board.png)   
 
 
+...indicated in the legend.   
+
+![legend](./images/legend.png)   
+
+
+Score is tallied automatically (you can view the scoring rules by clicking the scrabble-rules button)   
+
+![rules](./images/daash.png)   
+
+
+### The Game Does Not Enforce All Of The Rules.  
+
+- The game will show you if the words were in the dictionary, but if you hit end turn, we say your opponent let you get away with it. This is Scrabble, my friend, not Chutes and Ladders.   
+
+- The rules say you have to use the center square on your first turn, but if you two decide you don't care about that rule... this game is not your mother, kids.   
+
+- Don't try getting away with any of that playing just one tile business. You know it's a different algorithm don't you? If I can't immediately determine if you are in a row or a column, then I need a whole other function, my friend, and I just don't have the time. So just play two, you baby.
+
+
+
+
+
+
+
+
+
+[scrabbles.netlify.app](https://scrabbles.netlify.app/)
 
 
 
