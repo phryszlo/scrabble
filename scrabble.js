@@ -19,6 +19,8 @@ const lastPlay = document.querySelector('.last-play')
 const p1Score = document.querySelector('.p1-score')
 const p2Score = document.querySelector('.p2-score')
 const lastPoints = document.querySelector('.last-points')
+const wordinessForm = document.getElementById('wordinessForm')
+const chkWordiness = document.querySelector('.chk-wordiness')
 
 
 const bagOfTiles_DOM = document.querySelector('.bag-of-tiles')
@@ -204,6 +206,8 @@ const endTurn_click = (e) => {
       drawTiles(player1Tray, 7 - trayCount)
       points = tallyScore()
       p1TotalScore += points
+      playerUp = 'player2'
+      switchPlayers()
     }
     else {
       // notify of the problem
@@ -218,6 +222,8 @@ const endTurn_click = (e) => {
       drawTiles(player2Tray, 7 - trayCount)
       points = tallyScore()
       p2TotalScore += points
+      playerUp = 'player1'
+      switchPlayers()
     }
     else {
       // notify of the problem
@@ -236,7 +242,7 @@ const endTurn_click = (e) => {
   // ==> update display: move section to new function
   // ///////////////////////////////////////////////////////////////////////
   currentWord.forEach((word, i) => {
-    currentWord[i] = word.replace('BLANK', '__').replace('blank', '-')
+    currentWord[i] = word.replace('BLANK', '__').replace('blank', '__')
   })
   if (p === 1) {
     p1Score.replaceChildren(p1TotalScore.toString().padStart(4, '0'))
@@ -287,7 +293,10 @@ const validatePlay = (firstPlay = false) => {
     goOn = verifyCenterSquareUsed()
   }
   if (goOn) goOn = verifyInline()
-  if (goOn) goOn = determineLinearAdjacency()
+  if (goOn) goOn = determineLinearAdjacency() // aka the-rabbit-hole: beware
+
+  if (goOn) goOn = ascertainWordiness()
+
 
   return goOn
 }
@@ -296,6 +305,133 @@ const verifyCenterSquareUsed = () => {
   return true
 }
 
+/*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+                      ASCERTAIN WORDINESS
+        are all players agreed on the words being submitted?
+            do they match words in the BIG LIST?
+       ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
+const ascertainWordiness = () => {
+  currentWord.forEach((w, i) => {
+    currentWord[i] = w.replace('BLANK', '-').replace('blank', '-')
+  })
+  const ourNiceMaybeWords = [...currentCrossWords, currentWord.join('')]
+  const wordsWithBlanks = []
+  const wordsInDictionary = []
+  const wordsNeedingApproval = []
+  const possibleBlankCompleters = []
+
+  ourNiceMaybeWords.forEach((word, index) => {
+    if (word.indexOf('-') < 0) {
+      if (fullWordList.indexOf(word.toLowerCase()) >= 0) {
+        wordsInDictionary.push(word.toLowerCase())
+        spacelog(`${word} was found in the fullWordList!`)
+      }
+      else {
+        wordsNeedingApproval.push(word.toLowerCase())
+        spacelog(`${word} is not in the fullWordList. What to do. ye-Gads.`)
+      }
+    }
+    else { // we have a blank
+      let firstBit = word.substring(0, word.indexOf('-') - 1)
+      let lastBit = word.substring(word.indexOf('-') + 1)
+      let finds = fullWordList.filter(w => w.startsWith(firstBit) && w.endsWith(lastBit) && w.length === word.length)
+      if (finds.length === 0) {
+        wordsNeedingApproval.push(word)
+      }
+      finds.forEach(wordle => {
+        wordsWithBlanks.push(word.replace('BLANK', '-').replace('blank', '-'))
+        possibleBlankCompleters.push(wordle)
+        spacelog(wordle)
+      })
+    }
+  })
+
+  // launch a modal form to seek approval, or just to announce the excitement and show-off the dictionary cross-referencing capability of our game
+
+
+
+
+
+  // if (wordsNeedingApproval.length > 0) {
+  if (chkWordiness.checked) {
+    const myModal = new bootstrap.Modal(document.getElementById('wordinessForm'))
+
+    const modalContent = wordinessForm.querySelector('.modal-body')
+    const div = document.createElement('div')
+    div.classList.add('weird-div')
+
+    /*
+  const ourNiceMaybeWords = [...currentCrossWords, currentWord.join('')]
+  const wordsWithBlanks = []
+  const wordsInDictionary = []
+  const wordsNeedingApproval = []
+  const possibleBlankCompleters = []
+    */
+    if (wordsWithBlanks.length > 0) {
+      let h2 = document.createElement('h2')
+      h2.innerText = 'words with blanks'
+      const ul = document.createElement('ul')
+
+      let li
+      wordsWithBlanks.forEach(word => {
+        li = document.createElement('li')
+        li.replaceChildren(word)
+        ul.append(li)
+      })
+      div.append(h2, ul)
+    }
+    if (possibleBlankCompleters.length > 0) {
+      let h2 = document.createElement('h2')
+      h2.innerText = 'possible completers for words with blanks'
+      const ul = document.createElement('ul')
+
+      let li
+      possibleBlankCompleters.forEach(word => {
+        li = document.createElement('li')
+        li.replaceChildren(word)
+        ul.append(li)
+      })
+      div.append(h2, ul)
+
+    }
+    if (wordsInDictionary.length > 0) {
+      let h2 = document.createElement('h2')
+      h2.innerText = 'words found in dictionary'
+      const ul = document.createElement('ul')
+
+      let li
+      wordsInDictionary.forEach(word => {
+        li = document.createElement('li')
+        li.replaceChildren(word)
+        ul.append(li)
+      })
+      div.append(h2, ul)
+
+    }
+    if (wordsNeedingApproval.length > 0) {
+      let h2 = document.createElement('h2')
+      h2.innerText = 'words not found in dictionary'
+      const ul = document.createElement('ul')
+
+      let li
+      wordsNeedingApproval.forEach(word => {
+        li = document.createElement('li')
+        li.replaceChildren(word)
+        ul.append(li)
+      })
+      div.append(h2, ul)
+
+    }
+
+
+    modalContent.append(div)
+
+
+    myModal.show()
+
+  }
+  return true
+}
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
                       VERIFY INLINE
       (this version assumes this is not the first play, 
@@ -1170,6 +1306,16 @@ const pickSomeRandomWords = (numWords) => {
   }
 }
 
+const switchPlayers = (nextPlayer = playerUp) => {
+  if (nextPlayer === 'player1') {
+      player2Tray.style.filter = 'contrast(0)'
+      player1Tray.style.filter = ''
+  }
+  else {
+      player1Tray.style.filter = 'contrast(0)'
+      player2Tray.style.filter = ''
+  }
+}
 
 
 // =========== DOM LOADED EVENT ==============
@@ -1207,6 +1353,7 @@ window.addEventListener('DOMContentLoaded', async () => {
   drawTiles(player1Tray, 7)
   drawTiles(player2Tray, 7)
 
+  switchPlayers()
 
 
   btnP1EndTurn.addEventListener('click', endTurn_click)

@@ -58,6 +58,7 @@ body::before {
 }
 
 
+
 .btn-primary {
   background-color: var(--square-color);
   color: var(--dls-color);
@@ -346,6 +347,19 @@ body::before {
   border: .5px solid black;
 }
 
+.wordiness-container {
+  display: flex;
+  align-items: center;
+}
+.wordiness-label {
+  color: var(--dws-color);
+  margin-bottom: .2em;
+}
+.chk-wordiness {
+  height: 1.5em;
+  margin-left: .5em;
+}
+
 .free-words{
   display: flex;
   align-items: center;
@@ -571,7 +585,26 @@ body::before {
 }
 
 
+#wordinessForm .modal-dialog {
+  width: 3vw;
+  margin-left: 33vw;
+  margin-top: 23vh;
+}
+#wordinessForm .modal-content {
+  width: 30vw;
+}
 
+.weird-word {
+  margin-right: 4em;
+}
+.weird-check {
+  position: relative;
+  left: 100px;
+  padding-left: 6em;
+}
+.weird-div h2 {
+  font-size: 14px;
+}
 
 
 
