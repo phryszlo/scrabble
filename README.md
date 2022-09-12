@@ -54,7 +54,7 @@ I don't regret that, by the way.
 -----
 ### the graphics
 
-I'm not a designer, as such, but I want control of where things go, so CSS was the next beast to fight with.  And in that, I am pretty satisfied.
+I'm not a -- I don't call myself a designer, but I want control of where things go, so CSS was the next beast to fight with.  And in that, I am pretty satisfied.
 I discovered some techniques for blending background images, to variously interesting and/or hideous effect, and lost some time in that. Otherwise, flexed my
 flex skills quite a lot, and ended up, to my surprise, with a grid layout for the outer layout wrapper. 
 
@@ -135,6 +135,7 @@ Score is tallied automatically
 - The rules say you have to use the center square on your first turn, but if you two decide you don't care about that rule... this game is not your mother, kids.   
 
 - Don't try getting away with any of that playing just one tile business. You know it's a different algorithm don't you? If I can't immediately determine if you are in a row or a column, then I need a whole other function, my friend, and I just don't have the time. So just play two, you baby.
+  - _**REVISION**_ This note no longer applies. The feature has been added.
 
 - Think there should be a pass option? Or an exchange tiles option? Just because it says so in the rules, you say? Quit whining and play with what you've got. I got deadlines here!
 

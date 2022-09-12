@@ -249,7 +249,7 @@ const endTurn_click = (e) => {
   // else {
   // }
 
-// 😂 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 
+  // 😂 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 
   ////////////////////////////////////////////////////////////////////////
   // ==> update display: move section to new function
   // ///////////////////////////////////////////////////////////////////////
@@ -929,14 +929,25 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
   // maybe we would be reaching a different fn()?
 
   // but until you deal with it, it's messing everything up, so say you're sorry and bail
+  // if (tiles.length === 1) {
+  //   spacelog('terribly sorry, but limitations of the programmer do not allow single tile placement at this time.')
+  //   return false
+
+  //   // OR, send it to both checkTheCross_r and checkTheCross_c as the [tilesInRange] arg
+
+  // }
+
+  let isRow
+
   if (tiles.length === 1) {
-    spacelog('terribly sorry, but limitations of the programmer do not allow single tile placement at this time.')
-    return false
+    checkTheCross_c([...tiles], tiles[0].dataset.col)
+    checkTheCross_r([...tiles], tiles[0].dataset.row)
+    return true
   }
-
+  else {
   // row or col has already been verified, so comparing two tiles should be sufficient
-  let isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise... it's a column
-
+    isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise... it's a column
+  }
 
   if (isRow) {
 
@@ -1089,7 +1100,6 @@ const tallyScore = (tiles = currentWordTiles) => {
 
 
 
-// ** state-of-work vs. state-of-play **
 
 // this is bogus. this is only a first turn problem. length can be up to 15 including on-board tiles.
 //  if (Math.abs(tile.dataset.col - lastPlayed.dataset.col) > 7) {}
@@ -1314,12 +1324,12 @@ const pickSomeRandomWords = (numWords) => {
 
 const switchPlayers = (nextPlayer = playerUp) => {
   if (nextPlayer === 'player1') {
-      player2Tray.style.filter = 'contrast(0)'
-      player1Tray.style.filter = ''
+    player2Tray.style.filter = 'contrast(0)'
+    player1Tray.style.filter = ''
   }
   else {
-      player1Tray.style.filter = 'contrast(0)'
-      player2Tray.style.filter = ''
+    player1Tray.style.filter = 'contrast(0)'
+    player2Tray.style.filter = ''
   }
 }
 
