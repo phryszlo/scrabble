@@ -18,6 +18,7 @@ const lastWord = document.querySelector('.last-word')
 const lastPlay = document.querySelector('.last-play')
 const p1Score = document.querySelector('.p1-score')
 const p2Score = document.querySelector('.p2-score')
+const lastPoints = document.querySelector('.last-points')
 
 
 const bagOfTiles_DOM = document.querySelector('.bag-of-tiles')
@@ -27,7 +28,9 @@ const bagOfTiles_classes = []
 
 // ==== Gameplay variables =====
 let playerUp = 'player1'
-let currentWord = [] //char[] so easy to add letters to beginning. this may be a bad idea.
+let p1TotalScore = 0
+let p2TotalScore = 0
+let currentWord = [] //char[] so easy to add letters to beginning. 
 const currentWordTiles = [] // = tile[] 
 const currentCrossWordTiles = []
 const currentCrossWords = []
@@ -193,11 +196,14 @@ let srcTile = null;
 
 const endTurn_click = (e) => {
   let p = 1
+  let points
   if (e.target === btnP1EndTurn) {
     if (validatePlay()) {
       'p1 valid'
       let trayCount = player1Tray.querySelectorAll('.tile').length
       drawTiles(player1Tray, 7 - trayCount)
+      points = tallyScore()
+      p1TotalScore += points
     }
     else {
       // notify of the problem
@@ -210,6 +216,8 @@ const endTurn_click = (e) => {
       'p2 valid'
       let trayCount = player2Tray.querySelectorAll('.tile').length
       drawTiles(player2Tray, 7 - trayCount)
+      points = tallyScore()
+      p2TotalScore += points
     }
     else {
       // notify of the problem
@@ -217,27 +225,43 @@ const endTurn_click = (e) => {
     }
   }
 
-  const points = tallyScore()
+  lastPoints.replaceChildren(points.toString().padStart(4, '0'))
+  // if (playerUp = 'player1') {
+  // }
+  // else {
+  // }
 
+
+  ////////////////////////////////////////////////////////////////////////
   // ==> update display: move section to new function
-
+  // ///////////////////////////////////////////////////////////////////////
   currentWord.forEach((word, i) => {
     currentWord[i] = word.replace('BLANK', '__').replace('blank', '-')
   })
   if (p === 1) {
-    p1Score.replaceChildren(points.toString().padStart(4, '0'))
+    p1Score.replaceChildren(p1TotalScore.toString().padStart(4, '0'))
   }
   else {
-    p2Score.replaceChildren(points.toString().padStart(4, '0'))
+    p2Score.replaceChildren(p2TotalScore.toString().padStart(4, '0'))
   }
   if (specialsInPlay.length === 0) {
     lastPlay.replaceChildren('no multipliers')
   } else {
     lastPlay.replaceChildren(specialsInPlay.join(', '))
   }
-  lastWord.replaceChildren(` last-word:  ${currentWord.join('')}`)
+
+  let lastWordDisplay = ''
+  lastWordDisplay += currentWord.join('')
+  if (currentCrossWords.length > 0) {
+
+    lastWordDisplay += ',' + currentCrossWords.join(', ')
+  }
+
+  lastWord.replaceChildren(` last-word:  ${lastWordDisplay}`)
   currentWordTiles.splice(0)
   currentWord.splice(0)
+  currentCrossWordTiles.splice(0)
+  currentCrossWords.splice(0)
 
   tilesInPlay.forEach((tile) => {
     // if this ever works, these events/attrs need to go back on when these get put back in the bag
@@ -351,6 +375,9 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
   let potentialCrossWordTiles = []
   let crosswords = []
   let tempWord = ''
+  let tempTiles = []
+  let crosswordTiles = []
+
   tilesInRange.forEach((tile, index) => {
     // big loop
     if (!tile.dataset.inplay) { return }
@@ -379,6 +406,11 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
       }
       // here the other proc sorts the rowTiles (the tilesToLeft here). this seems wrong so I'm not.      
     }
+
+    // currentWordTiles.push(letter)
+
+
+
     // if (potentialCrossWordTiles.length > 0) {
     //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
     // }
@@ -397,41 +429,62 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
     // now to find any gaps, and stop(break) if we we find one
     if (tilesToRight.length > 0) {
       for (let i = 0; i < tilesToRight.length; i++) {
-        if (parseInt(tilesToRight[i].dataset.col) != (parseInt(currentColMax) + 1)) { 
-          break 
+        if (parseInt(tilesToRight[i].dataset.col) != (parseInt(currentColMax) + 1)) {
+          break
         }
         potentialCrossWordTiles.push(tilesToRight[i])
         currentColMax += 1
       }
       // here the other proc sorts the rowTiles (the tilesToRight here). this seems wrong so I'm not.      
     }
+
+    // currentWordTiles.push(letter)
+
+
+
     // if (potentialCrossWordTiles.length > 0) {
     //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
     // }
     potentialCrossWordTiles.forEach((tile, idx) => {
       spacelog(`right pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
       tempWord += tile.dataset.letter
+      tempTiles.push(tile)
+
     })
+
     crosswords.push(tempWord)
+    crosswordTiles.push(tempTiles)
 
     if (index === tilesInRange.length - 1) {
       potentialCrossWordTiles.forEach((t, i) => {
         currentCrossWordTiles.push(t)
         let cross = []
         cross.push(t.dataset.letter)
-        currentCrossWords.push(cross.join(''))
+        // currentCrossWords.push(cross.join(''))
       })
-      currentCrossWords.forEach(word => {
-        spacelog(word)
-      })
+      // currentCrossWords.forEach(word => {
+      //   // spacelog(word)
+      // })
 
     }
 
-    
+
     // here endeth the big loop
   })
   crosswords.forEach(word => {
-    spacelog(word)
+    if (word.length > 1) {
+      currentCrossWords.push(word)
+      spacelog(word)
+    }
+  })
+  crosswordTiles.forEach(tiles => {
+    if (tiles.length > 1) {
+      tiles.forEach(tile => {
+        if (currentWordTiles.indexOf(tile) < 0) {
+          currentWordTiles.push(tile)
+        }
+      })
+    }
   })
 } // end checkTheCross_c
 
@@ -446,6 +499,9 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
   let potentialCrossWordTiles = []
   let crosswords = []
   let tempWord = ''
+  let tempTiles = []
+  let crosswordTiles = []
+
   tilesInRange.forEach((tile, index) => {
     // big loop
     if (!tile.dataset.inplay) { return }
@@ -480,7 +536,7 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
     // }
     potentialCrossWordTiles.forEach((tile, idx) => {
       spacelog(`top pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
-    //  tempWord += tile.dataset.letter
+      //  tempWord += tile.dataset.letter
     })
     // crosswords.push(tempWord)
 
@@ -493,8 +549,8 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
     // now to find any gaps, and stop(break) if we we find one
     if (tilesToBottom.length > 0) {
       for (let i = 0; i < tilesToBottom.length; i++) {
-        if (parseInt(tilesToBottom[i].dataset.row) != (parseInt(currentRowMax) + 1)) { 
-          break 
+        if (parseInt(tilesToBottom[i].dataset.row) != (parseInt(currentRowMax) + 1)) {
+          break
         }
         potentialCrossWordTiles.push(tilesToBottom[i])
         currentRowMax += 1
@@ -506,27 +562,43 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
     // }
     potentialCrossWordTiles.forEach((tile, idx) => {
       spacelog(`bottom pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
-     tempWord += tile.dataset.letter
+      tempWord += tile.dataset.letter
+      tempTiles.push(tile)
     })
+
     crosswords.push(tempWord)
+    crosswordTiles.push(tempTiles)
 
     if (index === tilesInRange.length - 1) {
       potentialCrossWordTiles.forEach((t, i) => {
         currentCrossWordTiles.push(t)
         let cross = []
         cross.push(t.dataset.letter)
-        currentCrossWords.push(cross.join(''))
+        // currentCrossWords.push(cross.join(''))
       })
-      currentCrossWords.forEach(word => {
-        spacelog(word)
-      })
+      // currentCrossWords.forEach(word => {
+      //   // spacelog(word)
+      // })
     }
-    
-    
+
+
     // here endeth the big loop
   })
+
   crosswords.forEach(word => {
-    spacelog(word)
+    if (word.length > 1) {
+      currentCrossWords.push(word)
+      spacelog(word)
+    }
+  })
+  crosswordTiles.forEach(tiles => {
+    if (tiles.length > 1) {
+      tiles.forEach(tile => {
+        if (currentWordTiles.indexOf(tile) < 0) {
+          currentWordTiles.push(tile)
+        }
+      })
+    }
   })
 
 }
@@ -971,7 +1043,7 @@ function handleDrop(e) {
   // spacelog(tilesInPlay.indexOf(srcTile))
   if (tilesInPlay.indexOf(srcTile) < 0) {
     tilesInPlay.push(srcTile)
-    srcTile.setAttribute('data-inplay','true')
+    srcTile.setAttribute('data-inplay', 'true')
   }
 
   // tilesInPlay.forEach(tile => {

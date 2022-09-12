@@ -148,27 +148,42 @@ body::before {
 
 .last-play-section {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  justify-content: flex-start;
   /* border: 2px solid blue; */
   padding-left: 1em;
 }
 
+.last-play-words {
+  display: flex;
+  flex-direction: column;
+}
 .last-word {
   /* position: relative;
   left: -2em; */
   display: block;
   color:rgb(228, 111, 32);
-  font-size: 18px;
+  font-size: 16px;
   font-family: 'Bungee Inline', cursive;
 }
 .last-play {
   /* position: relative;
   left: -2em; */
   display: block;
-  font-size: 14px;
+  font-size: 13px;
   font-family: 'Bungee Inline', cursive;
   color:var(--tls-color)
+}
+
+.last-play-points {
+  display: flex;
+  flex-direction: column;
+}
+.last-points {
+  display: block;
+  font-size: 14px;
+  font-family: 'Bungee Inline', cursive;
+  color:var(--tls-color);
+  margin: .3em 0 0 4em;
 }
 
 .title {
@@ -209,6 +224,8 @@ body::before {
 
 .legend {
   /* grid-area: 1/2/ 4/3; */
+  position: relative;
+  top: -6px;
   user-select: none;
   display: flex;
   justify-content: space-around;
@@ -359,7 +376,8 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: .4px solid greenyellow;
+  border: .2px dotted burlywood;
+  margin-top: .8em;
 }
 
 .player1-tray,
