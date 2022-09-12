@@ -40,6 +40,11 @@ let tilesInPlay = []
 let tilesOnBoard = []
 const specialsInPlay = []
 
+let wordsWithBlanks = []
+let wordsInDictionary = []
+let wordsNeedingApproval = []
+let possibleBlankCompleters = []
+
 let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
 let vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0)
 let vmin = Math.min(vw, vh)
@@ -231,16 +236,24 @@ const endTurn_click = (e) => {
     }
   }
 
-  lastPoints.replaceChildren(points.toString().padStart(4, '0'))
+  const divvo = document.createElement('div')
+  divvo.style.display = 'flex'
+  divvo.style.width = 'fit-content'
+  const para = document.createElement('p')
+  para.style.color = 'greenyellow'
+  para.replaceChildren('last turn: ', points)
+  divvo.replaceChildren(para)
+  lastPoints.replaceChildren(divvo)
   // if (playerUp = 'player1') {
   // }
   // else {
   // }
 
-
+// 😂 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 
   ////////////////////////////////////////////////////////////////////////
   // ==> update display: move section to new function
   // ///////////////////////////////////////////////////////////////////////
+  // 😂 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 
   currentWord.forEach((word, i) => {
     currentWord[i] = word.replace('BLANK', '__').replace('blank', '__')
   })
@@ -315,10 +328,10 @@ const ascertainWordiness = () => {
     currentWord[i] = w.replace('BLANK', '-').replace('blank', '-')
   })
   const ourNiceMaybeWords = [...currentCrossWords, currentWord.join('')]
-  const wordsWithBlanks = []
-  const wordsInDictionary = []
-  const wordsNeedingApproval = []
-  const possibleBlankCompleters = []
+  wordsWithBlanks.splice(0)
+  wordsInDictionary.splice(0)
+  wordsNeedingApproval.splice(0)
+  possibleBlankCompleters.splice(0)
 
   ourNiceMaybeWords.forEach((word, index) => {
     if (word.indexOf('-') < 0) {
@@ -1137,13 +1150,6 @@ function handleDragOver(e) {
     e.preventDefault();
   }
 
-
-  // if(e.target.classList) {
-  //   spacelog('that was a juicy treat')
-  // }
-  // else {
-  //   spacelog('no')
-  // }
 
   e.dataTransfer.dropEffect = 'move';
   return false;
