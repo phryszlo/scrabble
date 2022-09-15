@@ -1,15 +1,23 @@
-**todos**
-- prevent dragging onto other tiles
-- prevent players from moving each others tiles: classname for who placed
-- detect adjacency !
-  - row and col classnames/ attributes: [row=${i}][col=${i}] 🔝⬅️☑️
-- fix broken first-drag issue !
-  - utterly stumped
-- add rules modal
-- show/hide trays by turn?
-  - maybe add alternative tile placement methods?
-    - key shortcuts?  
-- what about tiles on board
-  - mark with attributes? classes?
-  - need to be draggable, but ... to where? how to limit?
+## todos
+- ☑️prevent dragging onto other tiles
+- ☑️[They can't move any. No classname used] prevent players from moving each others tiles: classname for who placed
+- ☑️detect adjacency !
+  - ☑️row and col classnames/ attributes: [row=${i}][col=${i}] 🔝⬅️☑️
+- ☑️fix broken first-drag issue !
+- ☑️add rules modal
+- ☑️show/hide trays by turn?
+------------------
+### new list
+- on single letter placement, remove the col || row empty value
+- fix the dictionary check
+  - make a data-structure
+  - fix stuff
+- get loading spinner doing something that makes sense
+- add straight-up pass option, without swap
+  - should there be a modal for options?
+  - 
+- wordiness popup should say more. just the current, maybe in a sentence, with definition? and score deets etc.
+- last-play element should add (letter) after the t-l-s or whatever
+  - you might consider tinting the tile for the duration
 - 
+

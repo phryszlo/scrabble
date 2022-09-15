@@ -23,6 +23,8 @@ const p2Score = document.querySelector('.p2-score')
 const lastPoints = document.querySelector('.last-points')
 const wordinessForm = document.getElementById('wordinessForm')
 const chkWordiness = document.querySelector('.chk-wordiness')
+const loadSpinner = document.querySelector('.spinner-border')
+const gameboardContainer = document.querySelector('.gameboard-container')
 
 
 const bagOfTiles_DOM = document.querySelector('.bag-of-tiles')
@@ -927,27 +929,20 @@ const isTheInPlayPartCongruent = (isRow, idx, min, max) => {
 // =================== AND THE ONE THAT STARTED IT ALL===============
 // ==================================================================
 const determineLinearAdjacency = (tiles = tilesInPlay) => {
-  // if tiles.length === 1, row or col is determined by something else. I'm not prepared to deal with it yet.
-  // maybe we would be reaching a different fn()?
-
-  // but until you deal with it, it's messing everything up, so say you're sorry and bail
-  // if (tiles.length === 1) {
-  //   spacelog('terribly sorry, but limitations of the programmer do not allow single tile placement at this time.')
-  //   return false
-
-  //   // OR, send it to both checkTheCross_r and checkTheCross_c as the [tilesInRange] arg
-
-  // }
 
   let isRow
 
   if (tiles.length === 1) {
     checkTheCross_c([...tiles], tiles[0].dataset.col)
     checkTheCross_r([...tiles], tiles[0].dataset.row)
+
+    // either one of those will have provided nothing, or we will have dealt with that inside that function.
+    // at the time I wrote this sentence, one was causing a blank entry in the wordiness list
+
     return true
   }
   else {
-  // row or col has already been verified, so comparing two tiles should be sufficient
+    // row or col has already been verified, so comparing two tiles should be sufficient
     isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise... it's a column
   }
 
@@ -962,7 +957,6 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     let maxCol = Math.max(...colNums)
 
     if (!isTheInPlayPartCongruent(true, row, minCol, maxCol)) {
-      // I think an actual error needs to be returned, or else the log/display needs to happen here
       return false
     }
 
@@ -976,10 +970,8 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
       const tilesInRange = document.querySelectorAll(`.tile[data-col="${i}"][data-row="${row}"]`)
       tilesInRange.forEach(s => {
         rowTiles.push(s)
-        // spacelog(`data-col = ${s.classList}`)
       })
     }
-    // spacelog(`rowtiles len = ${rowTiles.length}`)
     if (rowTiles.length > 0) {
       rowTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
     }
@@ -993,6 +985,12 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     // spacelog('=======ROWS===========')
 
     const fullWordTiles = grepRowBusiness(row, minCol, maxCol)
+
+    let fullWord = ''
+    fullWordTiles.forEach(w => {
+      fullWord += w.dataset.letter
+    })
+    spacelog(`fullWord after fullWordTiles parsing = ${fullWord}`)
     checkTheCross_r(rowTiles, row)
 
   }// end if (isRow)
@@ -1040,6 +1038,11 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
 
     const fullWordTiles = grepColBusiness(col, minRow, maxRow)
 
+    let fullWord = ''
+    fullWordTiles.forEach(w => {
+      fullWord += w.dataset.letter
+    })
+    spacelog(`c fullWord after fullWordTiles parsing = ${fullWord}`)
     checkTheCross_c(colTiles, col)
   }
 
@@ -1345,12 +1348,20 @@ window.addEventListener('DOMContentLoaded', async () => {
   //  - or -
   // POP BETTER INSTRUCTIONS MODAL
 
+  gameboardContainer.classList.add('loading');
+  gameboard.classList.add('loading');
 
 
+
+  spacelog('why is nothing happening')
 
   // ======== load the word list ==========
   await wordLists()
     .then(arrWordLists => {
+      setTimeout(async () => {
+        spacelog('4 seconds')
+        gameboard.classList.remove('loading')
+      }, 10000)
 
       // wordLists.js returned an array of the response.json() of each .json file
       arrWordLists.forEach(async (list, idx) => {
@@ -1362,6 +1373,7 @@ window.addEventListener('DOMContentLoaded', async () => {
         })
       })
     })
+
   // spacelog(`'done': fullWordList contains ${fullWordList.length} words. fullWordList[6000] = ${fullWordList[6000]}`)
   // spacelog(`fullWordList[11999] = ${fullWordList[11999]}`)
 
@@ -1370,8 +1382,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   // ======== Generate the board =========
 
 
-// REMOVE SPINNER (i assume)
-spacelog('await done')
+  // REMOVE SPINNER (i assume)
+  spacelog('await done')
+  gameboardContainer.classList.remove('loading')
+  gameboard.classList.remove('loading');
+
 
   loadBoard();
 
@@ -1428,11 +1443,11 @@ spacelog('await done')
   btnP1Swap.addEventListener('click', () => {
     if (playerUp === 'player1' && player2Tray.style.filter === 'contrast(0)') {
       const p1Tiles = [...document.querySelector('.player1-tray').querySelectorAll('.p1-tile')]
-      console.log(typeof(p1Tiles));
+      console.log(typeof (p1Tiles));
       console.log('bot_dom len = ', bagOfTiles_DOM.childNodes.length);
       p1Tiles.forEach(t => {
         bagOfTiles_DOM.append(player1Tray.removeChild(t))
-        
+
       })
       console.log('bot_dom len = ', bagOfTiles_DOM.childNodes.length);
       drawTiles(player1Tray, 7)
@@ -1444,11 +1459,11 @@ spacelog('await done')
   btnP2Swap.addEventListener('click', () => {
     if (playerUp === 'player2' && player1Tray.style.filter === 'contrast(0)') {
       const p2Tiles = [...document.querySelector('.player2-tray').querySelectorAll('.p2-tile')]
-      console.log(typeof(p2Tiles));
+      console.log(typeof (p2Tiles));
       console.log('bot_dom len = ', bagOfTiles_DOM.childNodes.length);
       p2Tiles.forEach(t => {
         bagOfTiles_DOM.append(player2Tray.removeChild(t))
-        
+
       })
       console.log('bot_dom len = ', bagOfTiles_DOM.childNodes.length);
       drawTiles(player2Tray, 7)

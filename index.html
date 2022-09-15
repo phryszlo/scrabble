@@ -17,11 +17,20 @@
   </head>
 
   <body>
+
+
+
     <div class="layout-wrapper">
+
+      <!-- ============= BOARD SECTION ========== -->
+
       <div class="board-section">
         <h1 class="title">scrabble</h1>
 
         <div class="gameboard-container">
+          <div class="spinner-border text-warning" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
           <div class="gameboard"></div>
         </div>
       </div>
@@ -30,16 +39,16 @@
       <div class="dash-section">
         <div class="scoring-section">
           <div class="scores-subsection">
-            <span class="p1-score">0000</span>
-            <span class="p2-score">0000</span>
+            <span class="p1-score">PLAYER1</span>
+            <span class="p2-score">PLAYER2</span>
           </div>
           <div class="last-play-section">
             <div class="last-play-words">
-              <span class="last-word">_______</span>
-              <span class="last-play">_______</span>
+              <span class="last-word"></span>
+              <span class="last-play"></span>
             </div>
             <div class="last-play-points">
-              <span class="last-points">_______</span>
+              <span class="last-points"></span>
             </div>
           </div>
         </div>
@@ -93,7 +102,7 @@
 
           <div class="wordiness-container">
             <span class="wordiness-label">verify wordiness</span>
-            <input type="checkbox" class="chk-wordiness">
+            <input type="checkbox" class="chk-wordiness" checked="true">
           </div>
 
 
@@ -294,6 +303,6 @@
       integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
       crossorigin="anonymous"
     ></script>
-    <script src="./scrabble.js" type="module" defer></script>
+    <script src="./scrabble.js" type="module"  ></script>
   </body>
 </html>

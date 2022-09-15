@@ -264,6 +264,8 @@ body::before {
 .score-label {
   color: white;
 }
+
+
 .gameboard {
   /* grid-area: 1/3/ 8/4; */
   display: flex;
@@ -280,6 +282,24 @@ body::before {
   box-shadow: -2px -2px 5px 5px #9458,
   2px 2px 5px 5px #9458;
 }
+
+ .gameboard.loading {
+  display: none;
+}
+
+.spinner-border {
+  display: none;
+  /* position: absolute; */
+  /* top: 50vh;
+  left: 50vw; */
+  top: 50%;
+  left: 50%;
+  
+}
+.gameboard-container.loading .spinner-border {
+  display: block;
+}
+
 
 /* .dashboard {
 
@@ -435,11 +455,12 @@ body::before {
   border-radius: 2.2px;
   font-family: monospace;
   font-size: .6em;
+  font-weight: normal;
   width: 100%;
   padding: 0 .3em;
 }
 .btn-p:hover {
-  background-color: var(--dws-color);
+  background-color: var(--dls-color);
   color: var(--tws-color);
 }
 

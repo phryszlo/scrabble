@@ -1,6 +1,10 @@
 # scrabble  
 ### it starts with a single letter   
 
+> mods in progress
+
+---
+
 > _tl;dr;_  
 > this is a full accounting of the ordeal  
 > the links and a short game summary are at the bottom
