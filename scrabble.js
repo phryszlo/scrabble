@@ -1341,6 +1341,13 @@ const switchPlayers = (nextPlayer = playerUp) => {
 // =========== DOM LOADED EVENT ==============
 window.addEventListener('DOMContentLoaded', async () => {
 
+  // SHOW SPINNER ON BOARD...
+  //  - or -
+  // POP BETTER INSTRUCTIONS MODAL
+
+
+
+
   // ======== load the word list ==========
   await wordLists()
     .then(arrWordLists => {
@@ -1361,6 +1368,11 @@ window.addEventListener('DOMContentLoaded', async () => {
   // spacelog(`vw=${vw} & vh=${vh} & vmin=${vmin}`)
   // pickSomeRandomWords(100)
   // ======== Generate the board =========
+
+
+// REMOVE SPINNER (i assume)
+spacelog('await done')
+
   loadBoard();
 
   // loadBoard() has called getOneRow() which calls getDiv(), where the .square class is added
