@@ -540,6 +540,11 @@ const verifyInline = (tiles = tilesInPlay) => {
 
 
 
+/*
+👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+👕👕👕👕👕👕👕👕👕👕👕👕            dLA            👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+*/
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
               --->> THE WORST PART OF THE CODE <---
   "DETERMINE LINEAR ADJACENCY" (the original name. it made sense then.)
@@ -547,12 +552,8 @@ const verifyInline = (tiles = tilesInPlay) => {
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-*/
-// ==================================================================
-//    =================== THE CROSS ====================
-// ==================================================================
-
+      =================== THE CROSSES ====================
+👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 */
 const checkTheCross_c = (tilesInRange, colIdx) => {
   let tilesToLeft = []
   let tilesToRight = []
@@ -630,6 +631,12 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
     }
     // here endeth the big loop
   })
+
+  // HAVING THE WORD(S) AND TILES LOCALLY, PUSH THEM TO THE MODULE-LEVEL STORAGE
+  // is currentWordTiles just for scoring
+  // and currentCrosswords just for dictionary purposes?
+
+
   crosswords.forEach(word => {
     if (word.length > 1) {
       currentCrossWords.push(word)
@@ -749,13 +756,10 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
 
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+            =================== THE ROWS ====================
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 */
-// ==================================================================
-//          =================== THE ROWS ====================
-// ==================================================================
-
-const grepRowBusiness = (row, minCol, maxCol) => {
+const theRowOutsiders = (row, minCol, maxCol) => {
 
   let rowTiles = []
   if (tilesOnBoard.length > 0) {
@@ -819,12 +823,10 @@ const grepRowBusiness = (row, minCol, maxCol) => {
 
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+            =================== THE COLUMNS ====================
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 */
-// ==================================================================
-//          =================== THE COLUMNS ====================
-// ==================================================================
-const grepColBusiness = (col, minRow, maxRow) => {
+const theColumnOutsiders = (col, minRow, maxRow) => {
 
   let colTiles = []
   if (tilesOnBoard.length > 0) {
@@ -883,9 +885,7 @@ const grepColBusiness = (col, minRow, maxRow) => {
   return colTiles
 }
 
-// ==================================================================
-// =================== ONE SUPER BONUS FUNCTION! ====================
-// ==================================================================
+// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 const isTheInPlayPartCongruent = (isRow, idx, min, max) => {
   const param1 = isRow ? 'data-row' : 'data-col'
   const param2 = isRow ? 'data-col' : 'data-row'
@@ -899,159 +899,126 @@ const isTheInPlayPartCongruent = (isRow, idx, min, max) => {
 }
 
 
-/*
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕            dLA            👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-*/
 
-// ==================================================================
-// =================== AND THE ONE THAT STARTED IT ALL===============
-// ==================================================================
+// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+// ======= THE CENTER (BETWEEN minCol/Row and maxCol/Row, i.e. inside the newly played tiles) ========
+// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+const theCenter = (rowcol, isRow, min, max) => {
+  let row, col = 0
+  let selector, crossSelector = ''
+  if (isRow) {
+    row = rowcol
+    selector = 'data-row'
+    crossSelector = 'data-col'
+  }
+  else {
+    col = rowcol
+    selector = 'data-col'
+    crossSelector = 'data-row'
+  }
+
+  const tiles = []
+
+  // find all tiles having data-row=${row} and data-col in range minCol -> maxCol and push these tiles to an array
+  for (let i = min; i <= max; i++) {
+    const tilesInRange = document.querySelectorAll(`.tile[${crossSelector}="${i}"][${selector}="${rowcol}"]`)
+    tilesInRange.forEach(t => {
+      tiles.push(t)
+    })
+  }
+  if (tiles.length > 0) {
+    if (isRow) {
+      tiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
+    }
+    else {
+      tiles.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
+    }
+  }
+  tiles.forEach(letter => {
+    currentWordTiles.push(letter)
+    currentWord.push(letter.dataset.letter)
+  })
+
+  // this return has no game function. it could be logged. it is unnecessary.
+  return tiles
+}
+// END theCENTER()
+
+// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+const singleTilePlayed = (tiles = tilesInPlay) => {
+  checkTheCross_c([...tiles], tiles[0].dataset.col)
+  checkTheCross_r([...tiles], tiles[0].dataset.row)
+  return true
+}
+
+// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 const determineLinearAdjacency = (tiles = tilesInPlay) => {
-
   let isRow
+  let row = tiles[0].dataset.row
+  let col = tiles[0].dataset.col
+  let colNums = []
+  let rowNums = []
+  let currWord = ''
 
+  tiles.forEach((tile) => {
+    colNums.push(tile.dataset.col)
+    rowNums.push(tile.dataset.row)
+  })
+  let minCol = Math.min(...colNums)
+  let maxCol = Math.max(...colNums)
+  let minRow = Math.min(...rowNums)
+  let maxRow = Math.max(...rowNums)
+
+  // single-tile play takes a different branch. if other word-storage (etc) branching needs to be done, add here
   if (tiles.length === 1) {
-    checkTheCross_c([...tiles], tiles[0].dataset.col)
-    checkTheCross_r([...tiles], tiles[0].dataset.row)
-
-    // either one of those will have provided nothing, or we will have dealt with it inside that function.
-    // at the time I wrote this sentence, one was causing a blank entry in the wordiness list
-    // >> ON TODO LIST
-
+    singleTilePlayed(tiles)
     return true
   }
   else {
-    // row or col has already been verified, so comparing two tiles should be sufficient
     isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise... it's a column
   }
 
-  if (isRow) {
-
-    let row = tiles[0].dataset.row
-    let colNums = []
-    tiles.forEach((tile) => {
-      colNums.push(tile.dataset.col)
-    })
-    let minCol = Math.min(...colNums)
-    let maxCol = Math.max(...colNums)
-
-    if (!isTheInPlayPartCongruent(true, row, minCol, maxCol)) {
-      return false
-    }
-
-
-    let rowTiles = []
-
-    // ======= THE CENTER (BETWEEN minCol and maxCol, i.e. inside the newly played tiles) ========
-
-    // find all tiles having data-row=${row} and data-col in range minCol -> maxCol and push these tiles to an array
-    for (let i = minCol; i <= maxCol; i++) {
-      const tilesInRange = document.querySelectorAll(`.tile[data-col="${i}"][data-row="${row}"]`)
-      tilesInRange.forEach(t => {
-        rowTiles.push(t)
-      })
-    }
-    if (rowTiles.length > 0) {
-      rowTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-    }
-    rowTiles.forEach(letter => {
-      currentWordTiles.push(letter)
-      currentWord.push(letter.dataset.letter)
-    })
-
-    // 🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖
-    // CALL GREP-ROW-BUSINESS (OR WHATEVER YOU RENAMED IT TO)
-    const fullWordTiles = grepRowBusiness(row, minCol, maxCol)
-
-    let fullWord = ''
-    fullWordTiles.forEach(w => {
-      fullWord += w.dataset.letter
-    })
-    spacelog(`fullWord after center & row business grepped = ${fullWord}`)
-
-    let currWord = ''
-    currentWordTiles.forEach(w => {
-      currWord += w.dataset.letter
-    })
-    spacelog(`c currWord after center & row business grepped = ${currWord}`)
-    checkTheCross_r(rowTiles, row)
-
-  }// end if (isRow)
-
-
-
-  // else (isCol)
-
-  else {
-
-    // spacelog('=======COLUMNS===========')
-    let col = tiles[0].dataset.col
-    let rowNums = []
-    tiles.forEach((tile) => {
-      rowNums.push(tile.dataset.row)
-    })
-    let minRow = Math.min(...rowNums)
-    let maxRow = Math.max(...rowNums)
-
-    if (!isTheInPlayPartCongruent(false, col, minRow, maxRow)) {
-      return false
-    }
-
-
-    let colTiles = []
-
-    // ======= THE CENTER (BETWEEN minRow and maxRow, i.e. inside the newly played tiles) ========
-
-    // find all tiles having data-row=${row} and data-Row in range minRow -> maxRow and push these tiles to an array
-    for (let i = minRow; i <= maxRow; i++) {
-      const tilesInRange = document.querySelectorAll(`.tile[data-row="${i}"][data-col="${col}"]`)
-      tilesInRange.forEach(s => {
-        colTiles.push(s)
-      })
-    }
-    if (colTiles.length > 0) {
-      colTiles.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
-    }
-    colTiles.forEach(letter => {
-      currentWordTiles.push(letter)
-      currentWord.push(letter.dataset.letter)
-    })
-    // 🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖
-    // CALL GREP-COL-BUSINESS (OR WHATEVER YOU RENAMED IT TO)
-    const fullWordTiles = grepColBusiness(col, minRow, maxRow)
-
-    let fullWord = ''
-    fullWordTiles.forEach(w => {
-      fullWord += w.dataset.letter
-    })
-    spacelog(`c fullWord after center & col business grepped = ${fullWord}`)
-
-    let currWord = ''
-    currentWordTiles.forEach(w => {
-      currWord += w.dataset.letter
-    })
-    spacelog(`c currWord after center & col business grepped = ${currWord}`)
-    checkTheCross_c(colTiles, col)
+  if (!isTheInPlayPartCongruent(
+    isRow,
+    isRow ? row : col,
+    isRow ? minCol : minRow,
+    isRow ? maxCol : minRow
+  )) {
+    return false
   }
+
+  // if we reached here, we have a congruent set of tiles in a row or a column
+  // the return from theCenter is unnecessary. theCenter (and theOutsider) writes to currentWordTiles (module-var)
+  let centerTiles = theCenter(isRow ? row : col, isRow, isRow ? minCol : minRow, isRow ? maxCol : maxRow)
+  if (isRow) {
+    theRowOutsiders(row, minCol, maxCol)
+    currentWordTiles.forEach(w => {
+      currWord += w.dataset.letter
+    })
+    checkTheCross_r(centerTiles, row)
+
+  }
+  else {
+    theColumnOutsiders(col, minRow, maxRow)
+    currentWordTiles.forEach(w => {
+      currWord += w.dataset.letter
+    })
+    checkTheCross_c(centerTiles, col)
+  }
+
+  spacelog(`c currWord after center & row/col business grepped = ${currWord}`)
 
   return true
 
-}
+
+} // end dLA
+
+
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕          END OF dLA            👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-
 */
-
-
-
-
-
-
-
 
 
 
@@ -1059,51 +1026,17 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕       DRAG EVENTS              👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-
 */
-
-
-
-
-
-// this is bogus. this is only a first turn problem. length can be up to 15 including on-board tiles.
-//  if (Math.abs(tile.dataset.col - lastPlayed.dataset.col) > 7) {}
-
 // =========== DRAG START EVENT =============
 function dragStartHandler(e) {
-  // spacelog(`drag start on ${e}`)
   this.style.opacity = '0.4';
-
   srcTile = e.target;
-  // console.dir(e.target)
-
-  // const img = new Image();
-  // const m = this.style.backgroundImage
-  // spacelog(m + m.substring(m.lastIndexOf('/'), m.lastIndexOf('.') + 3))
-
-
-
-  // img.src = "./images/tiles" +
-  //   m.substring(m.lastIndexOf('/'), m.length - 2)
-  // img.width = 5
-  // img.height = 5
-
-  // const letter = this.getAttribute('data-letter')
-  // spacelog(letter)
-  // let bgi = document.querySelector(`letter-${letter}`)
-
-  // spacelog(typeof(bgi))
-
-  // e.dataTransfer.setDragImage(bgi, 1, 1)
-
-
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('text/html', this.innerHTML);
 }
 
 function handleDragEnd(e) {
   this.style.opacity = '1';
-
   squares.forEach(function (square) {
     square.classList.remove('over');
   });
@@ -1111,9 +1044,6 @@ function handleDragEnd(e) {
 
 function handleDragEnter(e) {
   this.classList.add('over');
-
-  // grow the target
-  // or maybe just css the .over
 }
 
 function handleDragLeave(e) {
@@ -1124,8 +1054,6 @@ function handleDragOver(e) {
   if (e.preventDefault) {
     e.preventDefault();
   }
-
-
   e.dataTransfer.dropEffect = 'move';
   return false;
 }
@@ -1144,7 +1072,6 @@ function handleDrop(e) {
   // if there's anything in this square, just ... don't
   if (this.childNodes.length > 0) return
 
-
   this.replaceChildren(srcTile) // this seems better
   // this.innerHTML = e.dataTransfer.getData('text/html'); //than this
   // }
@@ -1157,17 +1084,10 @@ function handleDrop(e) {
   srcTile.dataset.row = this.dataset.row
 
   // only add to tilesInPlay if it's being dragged from the tray -- i.e. if it's not already in play
-  // spacelog(tilesInPlay.indexOf(srcTile))
   if (tilesInPlay.indexOf(srcTile) < 0) {
     tilesInPlay.push(srcTile)
     srcTile.setAttribute('data-inplay', 'true')
   }
-
-  // tilesInPlay.forEach(tile => {
-  //   spacelog(`(${tile.dataset.row}, ${tile.dataset.col})`)
-  // })
-  // spacelog(verifyInline())
-
 
   return false;
 }
