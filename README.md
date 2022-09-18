@@ -1,13 +1,22 @@
 # scrabble  
 ### it starts with a single letter   
 
+<img src="images/notbug.png" alt="example" width="600px" />
+
 > mods in progress
 
 ---
+This is a Scrabble game made as the Module 1 final project of the Per Scholas Software Engineering course.  
+
+To get right to the game:  
+[scrabbles.netlify.app](https://scrabbles.netlify.app/)
+
 
 > _tl;dr;_  
-> this is a full accounting of the ordeal  
-> the links and a short game summary are at the bottom
+> what follow is a full accounting of the ordeal  
+> written on the due date.  
+> it has been kept in for posterity. the game has been updated.  
+> additional pics at bottom
 
 
 
@@ -68,7 +77,7 @@ flex skills quite a lot, and ended up, to my surprise, with a grid layout for th
 But, speaking of the grid, one thing I discovered, is that when I tried to switch back to a flex outer layout, it broke my drag-and-drop. I can't figure out why.   
 So I went back.  
 
-And this is maybe the major achievement of this project, in terms of new skills acquired. My tile placement is done with the HTML5 drag-and-drop API. And it works pretty 
+And this is maybe the major achievement of this project [edit: this is _not_ the major achievement of this project], in terms of new skills acquired. My tile placement is done with the HTML5 drag-and-drop API. And it works pretty 
 cleanly. It gave me nightmares, though.  It turned out that somewhere in my code rearrangements I had lost the [draggable="true"] attributes on my tiles, and yet they still 
 were dragging after first failing. It wasn't so much non-functional as just very annoying.  A lucky guess brought me to the answer.
 
@@ -76,8 +85,7 @@ were dragging after first failing. It wasn't so much non-functional as just very
 ### other successes/challenges overcome
 
 The worst/most frustrating period of the development was figuring out how to determine the adjacency of tiles on the board, in particular the adjacency of tiles to the 
-crosswords, that is, to words already laid out which touch the newly laid word and form either new words from part or all of the perpendicular letters.  Also just accounting 
-for gaps, but that's a bit easier.  
+crosswords, that is, to words already laid out which touch the newly laid word and form new words from or merely use a letter from the perpendicular words.  Also just accounting for gaps, but that's a bit easier.  
 
 And you have to check it in all four directions.  
 
@@ -85,20 +93,22 @@ And there are many exceptions. And you can't score anything twice, except the ti
 special data-attribute to indicate they were countable as bases for an adjacent, er, vertex?, and sometimes it was just sorting them and looping in the right order. The debugger
 became a dreaded friend.  
 
-But I do believe I nailed it, in this particular case.  
+But I do believe I nailed it, in this particular case.  [update from the future: not quite.]
 
 Famous last words.  
 
 -------
 ### the disappointment
 
-Here's what I didn't manage that was on my personal I mean to do this list.   
+Here's what I didn't manage that was on my personal I-mean-to-do-this list.   
 - You can't ever play just one letter. I know how stupid that seems, and it is. But I couldn't get to it.
   - _**REVISION**_ This note no longer applies. The feature has been added.
 - You can only play top-down, and left-to-right.
 - You really have to decide between players about word validity. My dictionary efforts are functionally useless to you, if still fun after-the-fact. They will be added in version 2.
+- There is no way to check _my_ dictionary for a word challenge. That's on you and your own dictionaries.
 - I am not enforcing center square on first play. I might add in later this morning, but I'm not sure I really want to.
 - While I have a loop that looks up words that fits the blanks, right now those words are not displaying. I'll try to get that in.
+- Also, when you run out of tiles, it just breaks. At least that should be an easy fix.
 
 There might be more, but it's depressing. You can still play. You can still lose. You can still win. Not officially, but you know, if you have a higher score when you stop...
 
@@ -137,7 +147,7 @@ Score is tallied automatically.
 ![scoring](./images/scoring-eg.png)   
 
 
- You can view the scoring rules, and the tile values and counts by clicking the scrabble-rules button.   
+ You can view the scoring rules, and the tile values and counts, by clicking the scrabble-rules button.   
  It doesn't mean all of these rules apply to _this_ game, but just in case you didn't want to search and wanted to see me pop a modal.     
 
 ![rules](./images/daash.png)   
@@ -155,13 +165,6 @@ Score is tallied automatically.
 - Think there should be a pass option? Or an exchange tiles option? Just because it says so in the rules, you say? Quit whining and play with what you've got. I got deadlines here!
   - _**REVISION**_ This note is only half true now. There _is_ now an exchange tiles option, although it's all or none. None of this, I'll take three please crap. You want an exchange, you gotta commit. And, as pursuant to rule 17, subsection iii.11 of the Fourth Revised Scrabble Rules of Decorum, this will forfeit your current turn. After two seconds to consider your new array of tilings.
   
-
-
-
-
-
-
-
 
 
 
