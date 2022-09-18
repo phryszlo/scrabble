@@ -449,6 +449,43 @@ const ascertainWordiness = () => {
   }
   return true
 }
+
+/*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+                      TALLY SCORE
+       ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
+const tallyScore = (tiles = currentWordTiles) => {
+  let points = 0
+  let wordMultiplier = 1
+  specialsInPlay.splice(0)
+  // this loop only counts the in-play tiles, i.e. not the on-board/re-used tiles
+  tiles.forEach((tile) => {
+    if (tile.parentElement.dataset.ltr_multi) {
+      if (parseInt(tile.parentElement.dataset.ltr_multi) === 2) { specialsInPlay.push('Double-Letter-Score') }
+      else { specialsInPlay.push('Triple-Letter-Score') }
+    }
+    if (tile.parentElement.dataset.word_multi) {
+      if (parseInt(tile.parentElement.dataset.word_multi) === 2) { specialsInPlay.push('Double-Word-Score') }
+      else { specialsInPlay.push('Triple-Word-Score') }
+    }
+    points += tile.parentElement.dataset.ltr_multi ?
+      parseInt(tile.dataset.points) * parseInt(tile.parentElement.dataset.ltr_multi) :
+      parseInt(tile.dataset.points)
+    wordMultiplier *= tile.parentElement.dataset.word_multi ?
+      parseInt(tile.parentElement.dataset.word_multi) : 1
+  })
+  points *= wordMultiplier
+  // spacelog(`tallyScore say: ${points}`)
+  return points
+}
+
+
+
+
+
+
+
+
+
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
                       VERIFY INLINE
       (this version assumes this is not the first play, 
@@ -506,14 +543,10 @@ const verifyInline = (tiles = tilesInPlay) => {
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
               --->> THE WORST PART OF THE CODE <---
   "DETERMINE LINEAR ADJACENCY" (the original name. it made sense then.)
-            NOW SPLIT INTO FOUR CONVENIENT FUNCTIONS!
+            NOW SPLIT INTO ( AT LEAST! ) FOUR CONVENIENT FUNCTIONS!
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
-
-
-
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕                        👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 */
 // ==================================================================
@@ -557,21 +590,7 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
         potentialCrossWordTiles.unshift(tilesToLeft[i])
         currentColMin -= 1
       }
-      // here the other proc sorts the rowTiles (the tilesToLeft here). this seems wrong so I'm not.      
     }
-
-    // currentWordTiles.push(letter)
-
-
-
-    // if (potentialCrossWordTiles.length > 0) {
-    //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-    // }
-    potentialCrossWordTiles.forEach((tile, idx) => {
-      // spacelog(`left pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
-      // tempWord += tile.dataset.letter
-    })
-    // crosswords.push(tempWord)
 
     //  SECONDLY THE RIGHT SIDE (the letter from the column(tilesInRange) is already in the cross)
 
@@ -588,21 +607,15 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
         potentialCrossWordTiles.push(tilesToRight[i])
         currentColMax += 1
       }
-      // here the other proc sorts the rowTiles (the tilesToRight here). this seems wrong so I'm not.      
     }
 
-    // currentWordTiles.push(letter)
 
+    // BOTH SIDES ARE READ. STORE THE WORD.
 
-
-    // if (potentialCrossWordTiles.length > 0) {
-    //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-    // }
     potentialCrossWordTiles.forEach((tile, idx) => {
       // spacelog(`right pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
       tempWord += tile.dataset.letter
       tempTiles.push(tile)
-
     })
 
     crosswords.push(tempWord)
@@ -613,15 +626,8 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
         currentCrossWordTiles.push(t)
         let cross = []
         cross.push(t.dataset.letter)
-        // currentCrossWords.push(cross.join(''))
       })
-      // currentCrossWords.forEach(word => {
-      //   // spacelog(word)
-      // })
-
     }
-
-
     // here endeth the big loop
   })
   crosswords.forEach(word => {
@@ -682,16 +688,7 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
         potentialCrossWordTiles.unshift(tilesToTop[i])
         currentRowMin -= 1
       }
-      // here the other proc sorts the rowTiles (the tilesToLeft here). this seems wrong so I'm not.      
     }
-    // if (potentialCrossWordTiles.length > 0) {
-    //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-    // }
-    potentialCrossWordTiles.forEach((tile, idx) => {
-      // spacelog(`top pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
-      //  tempWord += tile.dataset.letter
-    })
-    // crosswords.push(tempWord)
 
     //  SECONDLY THE BOTTOM SIDE (the letter from the column(tilesInRange) is already in the cross)
 
@@ -708,11 +705,11 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
         potentialCrossWordTiles.push(tilesToBottom[i])
         currentRowMax += 1
       }
-      // here the other proc sorts the rowTiles (the tilesToRight here). this seems wrong so I'm not.      
     }
-    // if (potentialCrossWordTiles.length > 0) {
-    //   potentialCrossWordTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
-    // }
+
+
+    // BOTH SIDES ARE READ. STORE THE WORD.
+
     potentialCrossWordTiles.forEach((tile, idx) => {
       // spacelog(`bottom pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
       tempWord += tile.dataset.letter
@@ -727,14 +724,8 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
         currentCrossWordTiles.push(t)
         let cross = []
         cross.push(t.dataset.letter)
-        // currentCrossWords.push(cross.join(''))
       })
-      // currentCrossWords.forEach(word => {
-      //   // spacelog(word)
-      // })
     }
-
-
     // here endeth the big loop
   })
 
@@ -756,13 +747,8 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
 
 }
 
-
-
-
-
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕                        👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 */
 // ==================================================================
@@ -833,7 +819,6 @@ const grepRowBusiness = (row, minCol, maxCol) => {
 
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕                        👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 */
 // ==================================================================
@@ -873,13 +858,9 @@ const grepColBusiness = (col, minRow, maxRow) => {
   }
 
   // ======= TO THE BOTTOM ========
-  // check on-board pieces to BOTTOM
-  // spacelog('BOTTOM')
   let tilesToBottom = tilesOnBoard.filter((tile) => ((tile.dataset.col === col) && (tile.dataset.row > maxRow)))
-  // sort this array forward
   tilesToBottom.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
   tilesToBottom.forEach((tile, index) => {
-    // spacelog(`Bottom[${index}] = ${tile.dataset.letter}`)
   })
 
   // does maxCol + 1 etc exist?
@@ -918,7 +899,6 @@ const isTheInPlayPartCongruent = (isRow, idx, min, max) => {
 }
 
 
-
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕            dLA            👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
@@ -936,8 +916,9 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     checkTheCross_c([...tiles], tiles[0].dataset.col)
     checkTheCross_r([...tiles], tiles[0].dataset.row)
 
-    // either one of those will have provided nothing, or we will have dealt with that inside that function.
+    // either one of those will have provided nothing, or we will have dealt with it inside that function.
     // at the time I wrote this sentence, one was causing a blank entry in the wordiness list
+    // >> ON TODO LIST
 
     return true
   }
@@ -968,8 +949,8 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     // find all tiles having data-row=${row} and data-col in range minCol -> maxCol and push these tiles to an array
     for (let i = minCol; i <= maxCol; i++) {
       const tilesInRange = document.querySelectorAll(`.tile[data-col="${i}"][data-row="${row}"]`)
-      tilesInRange.forEach(s => {
-        rowTiles.push(s)
+      tilesInRange.forEach(t => {
+        rowTiles.push(t)
       })
     }
     if (rowTiles.length > 0) {
@@ -979,18 +960,22 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
       currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
-    // spacelog(`currentWord after center portion: ${currentWord.join('')}`)
 
-
-    // spacelog('=======ROWS===========')
-
+    // 🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖
+    // CALL GREP-ROW-BUSINESS (OR WHATEVER YOU RENAMED IT TO)
     const fullWordTiles = grepRowBusiness(row, minCol, maxCol)
 
     let fullWord = ''
     fullWordTiles.forEach(w => {
       fullWord += w.dataset.letter
     })
-    spacelog(`fullWord after fullWordTiles parsing = ${fullWord}`)
+    spacelog(`fullWord after center & row business grepped = ${fullWord}`)
+
+    let currWord = ''
+    currentWordTiles.forEach(w => {
+      currWord += w.dataset.letter
+    })
+    spacelog(`c currWord after center & row business grepped = ${currWord}`)
     checkTheCross_r(rowTiles, row)
 
   }// end if (isRow)
@@ -1011,7 +996,6 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
     let maxRow = Math.max(...rowNums)
 
     if (!isTheInPlayPartCongruent(false, col, minRow, maxRow)) {
-      // I think an actual error needs to be returned, or else the log/display needs to happen here
       return false
     }
 
@@ -1034,57 +1018,35 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
       currentWordTiles.push(letter)
       currentWord.push(letter.dataset.letter)
     })
-    // spacelog(`currentWord after center portion: ${currentWord.join('')}`)
-
+    // 🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖🦠🦖
+    // CALL GREP-COL-BUSINESS (OR WHATEVER YOU RENAMED IT TO)
     const fullWordTiles = grepColBusiness(col, minRow, maxRow)
 
     let fullWord = ''
     fullWordTiles.forEach(w => {
       fullWord += w.dataset.letter
     })
-    spacelog(`c fullWord after fullWordTiles parsing = ${fullWord}`)
+    spacelog(`c fullWord after center & col business grepped = ${fullWord}`)
+
+    let currWord = ''
+    currentWordTiles.forEach(w => {
+      currWord += w.dataset.letter
+    })
+    spacelog(`c currWord after center & col business grepped = ${currWord}`)
     checkTheCross_c(colTiles, col)
   }
 
   return true
 
 }
-
-
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕          END OF dLA            👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 
 */
 
 
-const tallyScore = (tiles = currentWordTiles) => {
-  let points = 0
-  let wordMultiplier = 1
-  specialsInPlay.splice(0)
-  // this loop only counts the in-play tiles, i.e. not the on-board/re-used tiles
-  tiles.forEach((tile) => {
-    if (tile.parentElement.dataset.ltr_multi) {
-      if (parseInt(tile.parentElement.dataset.ltr_multi) === 2) { specialsInPlay.push('Double-Letter-Score') }
-      else { specialsInPlay.push('Triple-Letter-Score') }
-    }
-    if (tile.parentElement.dataset.word_multi) {
-      if (parseInt(tile.parentElement.dataset.word_multi) === 2) { specialsInPlay.push('Double-Word-Score') }
-      else { specialsInPlay.push('Triple-Word-Score') }
-    }
-    points += tile.parentElement.dataset.ltr_multi ?
-      parseInt(tile.dataset.points) * parseInt(tile.parentElement.dataset.ltr_multi) :
-      parseInt(tile.dataset.points)
-    wordMultiplier *= tile.parentElement.dataset.word_multi ?
-      parseInt(tile.parentElement.dataset.word_multi) : 1
-  })
-  points *= wordMultiplier
-  // spacelog(`tallyScore say: ${points}`)
-  return points
-}
 
 
 
@@ -1095,9 +1057,7 @@ const tallyScore = (tiles = currentWordTiles) => {
 
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕       DRAG EVENTS              👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 
 */
