@@ -553,6 +553,7 @@ const verifyInline = (tiles = tilesInPlay) => {
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
       =================== THE CROSSES ====================
+           column cross receives a column of tiles
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 */
 const checkTheCross_c = (tilesInRange, colIdx) => {
   let tilesToLeft = []
@@ -611,7 +612,7 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
     }
 
 
-    // BOTH SIDES ARE READ. STORE THE WORD.
+    // BOTH SIDES ARE READ. STORE THE WORD LOCALLY.
 
     potentialCrossWordTiles.forEach((tile, idx) => {
       // spacelog(`right pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
@@ -625,10 +626,9 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
     if (index === tilesInRange.length - 1) {
       potentialCrossWordTiles.forEach((t, i) => {
         currentCrossWordTiles.push(t)
-        let cross = []
-        cross.push(t.dataset.letter)
       })
     }
+
     // here endeth the big loop
   })
 
@@ -636,27 +636,18 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
   // is currentWordTiles just for scoring
   // and currentCrosswords just for dictionary purposes?
 
+  return  [crosswords, crosswordTiles]
 
-  crosswords.forEach(word => {
-    if (word.length > 1) {
-      currentCrossWords.push(word)
-      // spacelog(word)
-    }
-  })
-  crosswordTiles.forEach(tiles => {
-    if (tiles.length > 1) {
-      tiles.forEach(tile => {
-        if (currentWordTiles.indexOf(tile) < 0) {
-          currentWordTiles.push(tile)
-        }
-      })
-    }
-  })
+
+
+
+
 } // end checkTheCross_c
 
 
-// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-
+// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕
+//         row cross receives a row of tiles
+// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕
 const checkTheCross_r = (tilesInRange, rowIdx) => {
   let tilesToTop = []
   let tilesToBottom = []
@@ -668,8 +659,9 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
   let tempTiles = []
   let crosswordTiles = []
 
+
+  // big loop
   tilesInRange.forEach((tile, index) => {
-    // big loop
     if (!tile.dataset.inplay) { return }
 
     // reset the things.
@@ -677,7 +669,6 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
     currentRowMin = parseInt(rowIdx)
     currentRowMax = parseInt(rowIdx)
     tempWord = ''
-    // crosswords.splice(0)
 
     // push the row tile, because it'll be included in the crossword, if one exists
     potentialCrossWordTiles.push(tile)
@@ -697,7 +688,7 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
       }
     }
 
-    //  SECONDLY THE BOTTOM SIDE (the letter from the column(tilesInRange) is already in the cross)
+    //  SECONDLY THE BOTTOM SIDE (the letter from the row(tilesInRange) is already in the cross)
 
     tilesToBottom = tilesOnBoard.filter((t) =>
       ((parseInt(t.dataset.col) === parseInt(tile.dataset.col)) && (parseInt(t.dataset.row) > currentRowMax)))
@@ -715,7 +706,7 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
     }
 
 
-    // BOTH SIDES ARE READ. STORE THE WORD.
+    // BOTH SIDES ARE READ. STORE THE WORD LOCALLY.
 
     potentialCrossWordTiles.forEach((tile, idx) => {
       // spacelog(`bottom pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
@@ -729,28 +720,13 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
     if (index === tilesInRange.length - 1) {
       potentialCrossWordTiles.forEach((t, i) => {
         currentCrossWordTiles.push(t)
-        let cross = []
-        cross.push(t.dataset.letter)
       })
     }
+
     // here endeth the big loop
   })
 
-  crosswords.forEach(word => {
-    if (word.length > 1) {
-      currentCrossWords.push(word)
-      // spacelog(word)
-    }
-  })
-  crosswordTiles.forEach(tiles => {
-    if (tiles.length > 1) {
-      tiles.forEach(tile => {
-        if (currentWordTiles.indexOf(tile) < 0) {
-          currentWordTiles.push(tile)
-        }
-      })
-    }
-  })
+  return [ crosswords, crosswordTiles ]
 
 }
 
@@ -862,8 +838,6 @@ const theColumnOutsiders = (col, minRow, maxRow) => {
   // ======= TO THE BOTTOM ========
   let tilesToBottom = tilesOnBoard.filter((tile) => ((tile.dataset.col === col) && (tile.dataset.row > maxRow)))
   tilesToBottom.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
-  tilesToBottom.forEach((tile, index) => {
-  })
 
   // does maxCol + 1 etc exist?
   if (tilesToBottom.length > 0) {
@@ -959,6 +933,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
   let colNums = []
   let rowNums = []
   let currWord = ''
+  let crosswords, crosswordTiles, vals
 
   tiles.forEach((tile) => {
     colNums.push(tile.dataset.col)
@@ -971,42 +946,118 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
 
   // single-tile play takes a different branch. if other word-storage (etc) branching needs to be done, add here
   if (tiles.length === 1) {
-    singleTilePlayed(tiles)
-    return true
+
+    // if (!crosswords || !crosswordTiles || crosswords.length === 0 || crosswordTiles.length === 0) {
+      vals = checkTheCross_r([...tiles], tiles[0].dataset.row)
+      crosswords = vals[0]
+      crosswordTiles = vals[1]
+    // }
+
+    // if (!crosswords || !crosswordTiles || crosswords.length === 0 || crosswordTiles.length === 0) {
+      vals = checkTheCross_c([...tiles], tiles[0].dataset.col)
+      crosswords = vals[0]
+      crosswordTiles = vals[1]
+    // }
+
+    // singleTilePlayed(tiles)
+    // return true
   }
   else {
     isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise... it's a column
-  }
 
-  if (!isTheInPlayPartCongruent(
-    isRow,
-    isRow ? row : col,
-    isRow ? minCol : minRow,
-    isRow ? maxCol : minRow
-  )) {
-    return false
-  }
+    if (!isTheInPlayPartCongruent(
+      isRow,
+      isRow ? row : col,
+      isRow ? minCol : minRow,
+      isRow ? maxCol : minRow
+    )) {
+      return false
+    }
 
-  // if we reached here, we have a congruent set of tiles in a row or a column
-  // the return from theCenter is unnecessary. theCenter (and theOutsider) writes to currentWordTiles (module-var)
-  let centerTiles = theCenter(isRow ? row : col, isRow, isRow ? minCol : minRow, isRow ? maxCol : maxRow)
-  if (isRow) {
-    theRowOutsiders(row, minCol, maxCol)
-    currentWordTiles.forEach(w => {
-      currWord += w.dataset.letter
+    // if we reached here, we have a congruent set of tiles in a row or a column
+    // the return from theCenter is unnecessary. theCenter (and theOutsider) writes to currentWordTiles (module-var)
+    let centerTiles = theCenter(isRow ? row : col, isRow, isRow ? minCol : minRow, isRow ? maxCol : maxRow)
+    if (isRow) {
+      theRowOutsiders(row, minCol, maxCol)
+      currentWordTiles.forEach(w => {
+        currWord += w.dataset.letter
+      })
+
+      vals = checkTheCross_r(centerTiles, row)
+      crosswords = vals[0]
+      crosswordTiles = vals[1]
+
+    }
+    else {
+      theColumnOutsiders(col, minRow, maxRow)
+      currentWordTiles.forEach(w => {
+        currWord += w.dataset.letter
+      })
+      vals = checkTheCross_c(centerTiles, col)
+      crosswords = vals[0]
+      crosswordTiles = vals[1]
+    }
+  } // end if(tiles length === 1)
+
+  spacelog(`dla currWord after ctr, outside, & cross = ${currWord}`)
+
+  // cut from checkTheCross_c, now use return to do this
+
+  // HAVING THE WORD(S) AND TILES LOCALLY, PUSH THEM TO THE MODULE-LEVEL STORAGE
+  // is currentWordTiles just for scoring
+  // and currentCrosswords just for dictionary purposes?
+
+  // if (potentialCrossWordTiles && potentialCrossWordTiles.length > 0) {
+  //   potentialCrossWordTiles.forEach((t, i) => {
+  //     currentCrossWordTiles.push(t)
+  //   })
+  // }
+  if (crosswords && crosswords.length > 0) {
+    crosswords.forEach(word => {
+      if (word.length > 1) {
+        currentCrossWords.push(word)
+          spacelog(`dla end game crosswords: ${word}`)
+      }
     })
-    checkTheCross_r(centerTiles, row)
-
   }
-  else {
-    theColumnOutsiders(col, minRow, maxRow)
-    currentWordTiles.forEach(w => {
-      currWord += w.dataset.letter
+  if (crosswordTiles && crosswordTiles.length > 0) {
+    crosswordTiles.forEach(tiles => {
+      if (tiles.length > 1) {
+        tiles.forEach(tile => {
+          if (currentWordTiles.indexOf(tile) < 0) {
+            currentWordTiles.push(tile)
+          }
+        })
+      }
     })
-    checkTheCross_c(centerTiles, col)
   }
 
-  spacelog(`c currWord after center & row/col business grepped = ${currWord}`)
+
+  /*
+    // HAVING THE WORD(S) AND TILES LOCALLY, PUSH THEM TO THE MODULE-LEVEL STORAGE
+  // is currentWordTiles just for scoring
+  // and currentCrosswords just for dictionary purposes?
+
+  potentialCrossWordTiles.forEach((t, i) => {
+    currentCrossWordTiles.push(t)
+  })
+  crosswords.forEach(word => {
+    if (word.length > 1) {
+      currentCrossWords.push(word)
+      spacelog(word)
+    }
+  })
+  crosswordTiles.forEach(tiles => {
+    if (tiles.length > 1) {
+      tiles.forEach(tile => {
+        if (currentWordTiles.indexOf(tile) < 0) {
+          currentWordTiles.push(tile)
+        }
+      })
+    }
+  })
+  */
+
 
   return true
 
