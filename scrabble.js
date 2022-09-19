@@ -651,12 +651,19 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
 const checkTheCross_r = (tilesInRange, rowIdx) => {
   let tilesToTop = []
   let tilesToBottom = []
+
+  // the misleading names here mean: when looping the top, the row idx of the col cross tile will
+  // track acc. to being < the min(--). & the opposite applies for the bottom, where col-cross-row# > max(++).
   let currentRowMin = 0
   let currentRowMax = 0
+
+  // potentialCrosswordTiles is an intermediary, used to stock the tempWord/Tiles
   let potentialCrossWordTiles = []
-  let crosswords = []
   let tempWord = ''
   let tempTiles = []
+
+  // these two are returned to the caller
+  let crosswords = []
   let crosswordTiles = []
 
 
@@ -926,6 +933,8 @@ const singleTilePlayed = (tiles = tilesInPlay) => {
 }
 
 // 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+//              MASTER TILE PLAY PARSING CONTROL FUNCTION (better name pending)
+// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
 const determineLinearAdjacency = (tiles = tilesInPlay) => {
   let isRow
   let row = tiles[0].dataset.row
@@ -1007,11 +1016,7 @@ const determineLinearAdjacency = (tiles = tilesInPlay) => {
   // is currentWordTiles just for scoring
   // and currentCrosswords just for dictionary purposes?
 
-  // if (potentialCrossWordTiles && potentialCrossWordTiles.length > 0) {
-  //   potentialCrossWordTiles.forEach((t, i) => {
-  //     currentCrossWordTiles.push(t)
-  //   })
-  // }
+
   if (crosswords && crosswords.length > 0) {
     crosswords.forEach(word => {
       if (word.length > 1) {
