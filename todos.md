@@ -22,4 +22,10 @@
 - scoring history log
   - and previous total field under last-play-value field
 - split out player tile trays from console area for responsivity. don't want tile trays wrapping below the board on 4:3.
+- consisti-fy thy lower and upper casings.
+
+
+---------------------
+### lower priority
+- gameboard goes wonky at just one particular screen width. changing gameboard width and --square-width change the particular broken width, but not its recurrence.
 

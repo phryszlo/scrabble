@@ -17,11 +17,7 @@
   </head>
 
   <body>
-
-
-
     <div class="layout-wrapper">
-
       <!-- ============= BOARD SECTION ========== -->
 
       <div class="board-section">
@@ -37,6 +33,8 @@
 
       <!-- ============= DASH SECTION ========== -->
       <div class="dash-section">
+
+        <!-- scoring-section -->
         <div class="scoring-section">
           <div class="scores-subsection">
             <span class="p1-score">PLAYER1</span>
@@ -47,100 +45,97 @@
               <span class="last-word"></span>
               <span class="last-play"></span>
             </div>
+            <!-- <div class="spacer"></div> -->
             <div class="last-play-points">
               <span class="last-points"></span>
             </div>
           </div>
         </div>
 
-      <!-- game-container (trays, legend) (leftover name)-->
-      <div class="game-container">
-        <div class="tray-legend-container">
-
-
-          <div class="trays-container">
-            <div class="p1-tray-container">
-              <button class="btn-p btn-p1-swap">swap all</button>
-              <button class="btn-p btn-p1-toggle">show/hide</button>
-              <div class="player1-tray"></div>
-              <button class="btn-p btn-p1-end">end turn</button>
+        <!-- game-container (trays, legend) (leftover name)-->
+        <div class="game-container">
+          <div class="tray-legend-container">
+            <div class="trays-container">
+              <div class="p1-tray-container">
+                <button class="btn-p btn-p1-swap">swap all</button>
+                <button class="btn-p btn-p1-toggle">show/hide</button>
+                <div class="player1-tray"></div>
+                <button class="btn-p btn-p1-end">end turn</button>
+              </div>
+              <div class="p2-tray-container">
+                <button class="btn-p btn-p2-swap">swap all</button>
+                <button class="btn-p btn-p2-toggle">show/hide</button>
+                <div class="player2-tray"></div>
+                <button class="btn-p btn-p2-end">end turn</button>
+              </div>
             </div>
-            <div class="p2-tray-container">
-              <button class="btn-p btn-p2-swap">swap all</button>
-              <button class="btn-p btn-p2-toggle">show/hide</button>
-              <div class="player2-tray"></div>
-              <button class="btn-p btn-p2-end">end turn</button>
+
+            <div class="legend">
+              <div class="color-line">
+                <div class="color-swatch tws-color"></div>
+                <p class="color-text">Triple Word Score</p>
+              </div>
+
+              <div class="color-line">
+                <div class="color-swatch dws-color"></div>
+                <p class="color-text">Double Word Score</p>
+              </div>
+
+              <div class="color-line">
+                <div class="color-swatch tls-color"></div>
+                <p class="color-text">Triple Letter Score</p>
+              </div>
+
+              <div class="color-line">
+                <div class="color-swatch dls-color"></div>
+                <p class="color-text">Double Letter Score</p>
+              </div>
             </div>
+            <!-- end of legend -->
           </div>
+          <!-- and trays-legend-container-->
 
-          <div class="legend">
-            <div class="color-line">
-              <div class="color-swatch tws-color"></div>
-              <p class="color-text">Triple Word Score</p>
+          <div class="console-section">
+            <div class="wordiness-container">
+              <span class="wordiness-label">verify wordiness</span>
+              <input type="checkbox" class="chk-wordiness" checked="true" />
             </div>
 
-            <div class="color-line">
-              <div class="color-swatch dws-color"></div>
-              <p class="color-text">Double Word Score</p>
+            <div class="free-words">
+              <input
+                type="number"
+                class="free-word-count"
+                max="1000"
+                step="5"
+                value="100"
+                width="50px"
+              />
+              <button class="btn-free-words">load</button>
+              <button class="btn-clear-console">clear</button>
             </div>
-
-            <div class="color-line">
-              <div class="color-swatch tls-color"></div>
-              <p class="color-text">Triple Letter Score</p>
-            </div>
-
-            <div class="color-line">
-              <div class="color-swatch dls-color"></div>
-              <p class="color-text">Double Letter Score</p>
-            </div>
+            <div class="console"></div>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm btn-mine"
+              data-bs-toggle="modal"
+              data-bs-target="#modalTilesDistro"
+            >
+              tile-distribution
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm btn-mine"
+              data-bs-toggle="modal"
+              data-bs-target="#modal-gameplay"
+            >
+              scrabble-rules
+            </button>
           </div>
-          <!-- end of legend -->
+          <!-- end console-section -->
         </div>
-        <!-- and trays-legend-container-->
-
-        <div class="dashboard">
-
-          <div class="wordiness-container">
-            <span class="wordiness-label">verify wordiness</span>
-            <input type="checkbox" class="chk-wordiness" checked="true">
-          </div>
-
-
-          <div class="free-words">
-            <input
-              type="number"
-              class="free-word-count"
-              max="1000"
-              step="5"
-              value="100"
-              width="50px"
-            />
-            <button class="btn-free-words">load</button>
-            <button class="btn-clear-console">clear</button>
-          </div>
-          <div class="console"></div>
-          <button
-            type="button"
-            class="btn btn-primary btn-sm btn-mine"
-            data-bs-toggle="modal"
-            data-bs-target="#modalTilesDistro"
-          >
-            tile-distribution
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary btn-sm btn-mine"
-            data-bs-toggle="modal"
-            data-bs-target="#modal-gameplay"
-          >
-            scrabble-rules
-          </button>
-        </div> <!-- end dashboard -->
-
-      </div> <!-- end of game-container -->
-    </div> <!-- end of dash-section -->
-
-      
+        <!-- end of game-container -->
+      </div>
+      <!-- end of dash-section -->
 
       <!-- holders -- no display
        -->
@@ -303,6 +298,6 @@
       integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
       crossorigin="anonymous"
     ></script>
-    <script src="./scrabble.js" type="module"  ></script>
+    <script src="./scrabble.js" type="module"></script>
   </body>
 </html>

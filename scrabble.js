@@ -36,8 +36,8 @@ const bagOfTiles_classes = []
 let playerUp = 'player1'
 let p1TotalScore = 0
 let p2TotalScore = 0
-let currentWord = [] //char[] so easy to add letters to beginning. 
-const currentWordTiles = [] // = tile[] 
+const currentWord = [] //char[] so easy to add letters to beginning. 
+const scoringTiles = [] // = tile[] 
 const currentCrossWordTiles = []
 const currentCrossWords = []
 let tilesInPlay = []
@@ -46,7 +46,7 @@ const specialsInPlay = []
 
 let wordsWithBlanks = []
 let wordsInDictionary = []
-let wordsNeedingApproval = []
+let wordsNotInDictionary = []
 let possibleBlankCompleters = []
 
 let vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)
@@ -93,7 +93,7 @@ W-2, X-1, Y-2, Z-1 and blank-2.
 
 
 const tileDistribution = [
-  ['2.blank'],
+  ['29.blank'],
   ['9.A', '12.E', '9.I', '8.O', '4.U', '4.L', '6.N', '4.S', '6.T', '6.R'],
   ['4.D', '3.G'],
   ['2.B', '2.C', '2.M', '2.P'],
@@ -179,7 +179,6 @@ const drawTiles = (playerTray, numTiles) => {
     p = playerTray === player1Tray ? 'p1-' : 'p2-'
     letter = t.classList.value.split(' ').find(c => c.startsWith('letter-'))
     letter = letter.substring(letter.indexOf('-') + 1)
-    console.log(letter)
     t.classList.add(`${p}tile`, `${p}${letter}`)
 
 
@@ -248,56 +247,59 @@ const endTurn_click = (e) => {
   para.replaceChildren('last turn: ', points)
   divvo.replaceChildren(para)
   lastPoints.replaceChildren(divvo)
-  // if (playerUp = 'player1') {
-  // }
-  // else {
-  // }
 
-  // 😂 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 
+
+  updateDisplay(currentWord)
+
+ 
+}
+
+ // 😂 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 
   ////////////////////////////////////////////////////////////////////////
   // ==> update display: move section to new function
   // ///////////////////////////////////////////////////////////////////////
   // 😂 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 👺 
-  currentWord.forEach((word, i) => {
-    currentWord[i] = word.replace('BLANK', '__').replace('blank', '__')
-  })
-  if (p === 1) {
-    p1Score.replaceChildren(p1TotalScore.toString().padStart(4, '0'))
+  const updateDisplay = (currentWord = currentWord) => {
+    currentWord.forEach((word, i) => {
+      currentWord[i] = word.replace('BLANK', '-').replace('blank', '-')
+    })
+    // i think p was created because playerUp has already switched to the other and now this is backwards.
+    // if (p === 1) {
+    if (playerUp === 'player2') {
+      p1Score.replaceChildren(p1TotalScore.toString().padStart(4, '0'))
+    }
+    else {
+      p2Score.replaceChildren(p2TotalScore.toString().padStart(4, '0'))
+    }
+    if (specialsInPlay.length === 0) {
+      lastPlay.replaceChildren('no multipliers')
+    } else {
+      lastPlay.replaceChildren(specialsInPlay.join(', '))
+    }
+
+    let lastWordDisplay = ''
+    lastWordDisplay += currentWord.join('')
+    if (currentCrossWords.length > 0) {
+
+      lastWordDisplay += ',' + currentCrossWords.join(', ')
+    }
+
+    lastWord.replaceChildren(` last-word:  ${lastWordDisplay}`)
+    scoringTiles.splice(0)
+    currentWord.splice(0)
+    currentCrossWordTiles.splice(0)
+    currentCrossWords.splice(0)
+
+    tilesInPlay.forEach((tile) => {
+      // if this ever works, these events/attrs need to go back on when these get put back in the bag
+      tile.setAttribute('draggable', 'false')
+      tile.removeAttribute('data-inplay')
+      tile.removeEventListener('dragstart', dragStartHandler)
+    })
+
+    tilesOnBoard.push(...tilesInPlay.splice(0))
+
   }
-  else {
-    p2Score.replaceChildren(p2TotalScore.toString().padStart(4, '0'))
-  }
-  if (specialsInPlay.length === 0) {
-    lastPlay.replaceChildren('no multipliers')
-  } else {
-    lastPlay.replaceChildren(specialsInPlay.join(', '))
-  }
-
-  let lastWordDisplay = ''
-  lastWordDisplay += currentWord.join('')
-  if (currentCrossWords.length > 0) {
-
-    lastWordDisplay += ',' + currentCrossWords.join(', ')
-  }
-
-  lastWord.replaceChildren(` last-word:  ${lastWordDisplay}`)
-  currentWordTiles.splice(0)
-  currentWord.splice(0)
-  currentCrossWordTiles.splice(0)
-  currentCrossWords.splice(0)
-
-  tilesInPlay.forEach((tile) => {
-    // if this ever works, these events/attrs need to go back on when these get put back in the bag
-    tile.setAttribute('draggable', 'false')
-    tile.removeAttribute('data-inplay')
-    tile.removeEventListener('dragstart', dragStartHandler)
-  })
-
-  tilesOnBoard.push(...tilesInPlay.splice(0))
-
-}
-
-
 
 
 
@@ -334,7 +336,7 @@ const ascertainWordiness = () => {
   const ourNiceMaybeWords = [...currentCrossWords, currentWord.join('')]
   wordsWithBlanks.splice(0)
   wordsInDictionary.splice(0)
-  wordsNeedingApproval.splice(0)
+  wordsNotInDictionary.splice(0)
   possibleBlankCompleters.splice(0)
 
   ourNiceMaybeWords.forEach((word, index) => {
@@ -344,19 +346,19 @@ const ascertainWordiness = () => {
         // spacelog(`${word} was found in the fullWordList!`)
       }
       else {
-        wordsNeedingApproval.push(word.toLowerCase())
+        wordsNotInDictionary.push(word.toLowerCase())
         // spacelog(`${word} is not in the fullWordList. What to do. ye-Gads.`)
       }
     }
     else { // we have a blank
-      let firstBit = word.substring(0, word.indexOf('-') - 1)
+      wordsWithBlanks.push(word.replace('BLANK', '-').replace('blank', '-'))
+      let firstBit = word.substring(0, word.indexOf('-'))
       let lastBit = word.substring(word.indexOf('-') + 1)
-      let finds = fullWordList.filter(w => w.startsWith(firstBit) && w.endsWith(lastBit) && w.length === word.length)
+      let finds = fullWordList.filter(w => w.startsWith(firstBit.toLowerCase()) && w.endsWith(lastBit.toLowerCase()) && w.length === word.length)
       if (finds.length === 0) {
-        wordsNeedingApproval.push(word)
+        wordsNotInDictionary.push(word)
       }
       finds.forEach(wordle => {
-        wordsWithBlanks.push(word.replace('BLANK', '-').replace('blank', '-'))
         possibleBlankCompleters.push(wordle)
         // spacelog(wordle)
       })
@@ -388,7 +390,6 @@ const ascertainWordiness = () => {
       let h2 = document.createElement('h2')
       h2.innerText = 'words with blanks'
       const ul = document.createElement('ul')
-
       let li
       wordsWithBlanks.forEach(word => {
         li = document.createElement('li')
@@ -397,11 +398,11 @@ const ascertainWordiness = () => {
       })
       div.append(h2, ul)
     }
+
     if (possibleBlankCompleters.length > 0) {
       let h2 = document.createElement('h2')
       h2.innerText = 'possible completers for words with blanks'
       const ul = document.createElement('ul')
-
       let li
       possibleBlankCompleters.forEach(word => {
         li = document.createElement('li')
@@ -409,13 +410,12 @@ const ascertainWordiness = () => {
         ul.append(li)
       })
       div.append(h2, ul)
-
     }
+
     if (wordsInDictionary.length > 0) {
       let h2 = document.createElement('h2')
       h2.innerText = 'words found in dictionary'
       const ul = document.createElement('ul')
-
       let li
       wordsInDictionary.forEach(word => {
         li = document.createElement('li')
@@ -423,24 +423,22 @@ const ascertainWordiness = () => {
         ul.append(li)
       })
       div.append(h2, ul)
-
     }
-    if (wordsNeedingApproval.length > 0) {
-      let h2 = document.createElement('h2')
-      h2.innerText = 'words needing approval, or possible blank completers'
-      const ul = document.createElement('ul')
 
+    if (wordsNotInDictionary.length > 0) {
+      let h2 = document.createElement('h2')
+      h2.innerText = 'words NOT in dictionary'
+      const ul = document.createElement('ul')
       let li
-      wordsNeedingApproval.forEach(word => {
+      wordsNotInDictionary.forEach(word => {
         li = document.createElement('li')
         li.replaceChildren(word)
         ul.append(li)
       })
       div.append(h2, ul)
-
     }
 
-
+    modalContent.replaceChildren('')
     modalContent.append(div)
 
 
@@ -453,7 +451,7 @@ const ascertainWordiness = () => {
 /*     ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
                       TALLY SCORE
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
-const tallyScore = (tiles = currentWordTiles) => {
+const tallyScore = (tiles = scoringTiles) => {
   let points = 0
   let wordMultiplier = 1
   specialsInPlay.splice(0)
@@ -550,6 +548,122 @@ const verifyInline = (tiles = tilesInPlay) => {
   "DETERMINE LINEAR ADJACENCY" (the original name. it made sense then.)
             NOW SPLIT INTO ( AT LEAST! ) FOUR CONVENIENT FUNCTIONS!
        ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      */
+
+       
+// 👕👕👕👕👕👕👕👕👕👕👕👕🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+//              MASTER TILE PLAY PARSING CONTROL FUNCTION (better name pending)
+// 👕👕👕👕👕👕👕👕👕👕👕👕🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸🔸👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+const determineLinearAdjacency = (tiles = tilesInPlay) => {
+  let isRow
+  let row = tiles[0].dataset.row
+  let col = tiles[0].dataset.col
+  let colNums = []
+  let rowNums = []
+  let currWord = ''
+  let crosswords, crosswordTiles, vals
+
+  tiles.forEach((tile) => {
+    colNums.push(tile.dataset.col)
+    rowNums.push(tile.dataset.row)
+  })
+  let minCol = Math.min(...colNums)
+  let maxCol = Math.max(...colNums)
+  let minRow = Math.min(...rowNums)
+  let maxRow = Math.max(...rowNums)
+
+
+  // 🐌🦋🪰🐌🦋🪰🐌🦋🪰🐌🦋🪰
+  // SINGLE-TILE : play takes a different branch. 
+  if (tiles.length === 1) {
+
+    vals = checkTheCross_r([...tiles], tiles[0].dataset.row)
+    crosswords = vals[0]
+    crosswordTiles = vals[1]
+
+    if (crosswords.length === 1) { crosswords.splice(0) }
+    if (crosswordTiles.length === 1) { crosswordTiles.splice(0) }
+
+    vals = checkTheCross_c([...tiles], tiles[0].dataset.col)
+    crosswords = vals[0]
+    crosswordTiles = vals[1]
+
+  }
+  else {
+    isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise... it's a column
+
+    if (!isTheInPlayPartCongruent(
+      isRow,
+      isRow ? row : col,
+      isRow ? minCol : minRow,
+      isRow ? maxCol : minRow
+    )) {
+      return false
+    }
+
+    // if we reached here, we have a congruent set of tiles in a row or a column
+    // theCenter (and theOutsider) writes to currentWordTiles (module-var)
+    let centerTiles = theCenter(isRow ? row : col, isRow, isRow ? minCol : minRow, isRow ? maxCol : maxRow)
+    if (isRow) {
+      theRowOutsiders(row, minCol, maxCol)
+      // currWord is just a debug logger
+      scoringTiles.forEach(w => {
+        currWord += w.dataset.letter.replace('BLANK', '-').replace('blank', '-')
+      })
+
+      // I'm not sure we couldn't have just passed tiles instead of centerTiles to checkTheCross
+      vals = checkTheCross_r(centerTiles, row)
+      crosswords = vals[0]
+      crosswordTiles = vals[1]
+      if (crosswords.length === 1) { crosswords.splice(0) }
+      if (crosswordTiles.length === 1) { crosswordTiles.splice(0) }
+
+    }
+    else {
+      theColumnOutsiders(col, minRow, maxRow)
+      // currWord is just a debug logger
+      scoringTiles.forEach(w => {
+        currWord += w.dataset.letter.replace('BLANK', '-').replace('blank', '-')
+      })
+      vals = checkTheCross_c(centerTiles, col)
+      crosswords = vals[0]
+      crosswordTiles = vals[1]
+      if (crosswords.length === 1) { crosswords.splice(0) }
+      if (crosswordTiles.length === 1) { crosswordTiles.splice(0) }
+    }
+  } // end if(tiles length === 1)
+
+  spacelog(`dla currWord after ctr, outside, & cross = ${currWord}`)
+
+  // cut from checkTheCross_c, now use return to do this
+
+  // is currentWordTiles just for scoring
+  // and currentCrosswords just for dictionary purposes?
+
+
+  if (crosswords && crosswords.length > 0) {
+    crosswords.forEach(word => {
+      if ([...word].length > 1) {
+        currentCrossWords.push(word)
+        spacelog(`dla end game crosswords: ${word}`)
+      }
+    })
+  }
+  if (crosswordTiles && crosswordTiles.length > 0) {
+    crosswordTiles.forEach(tiles => {
+      if ([...tiles].length > 1) {
+        tiles.forEach(tile => {
+          if (scoringTiles.indexOf(tile) < 0) {
+            scoringTiles.push(tile)
+          }
+        })
+      }
+    })
+  }
+
+  return true
+
+
+} // end dLA
 /*
 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
       =================== THE CROSSES ====================
@@ -616,18 +730,12 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
 
     potentialCrossWordTiles.forEach((tile, idx) => {
       // spacelog(`right pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
-      tempWord += tile.dataset.letter
+      tempWord += tile.dataset.letter.replace('BLANK', '-').replace('blank', '-')
       tempTiles.push(tile)
     })
 
     crosswords.push(tempWord)
     crosswordTiles.push(tempTiles)
-
-    if (index === tilesInRange.length - 1) {
-      potentialCrossWordTiles.forEach((t, i) => {
-        currentCrossWordTiles.push(t)
-      })
-    }
 
     // here endeth the big loop
   })
@@ -636,11 +744,11 @@ const checkTheCross_c = (tilesInRange, colIdx) => {
   // is currentWordTiles just for scoring
   // and currentCrosswords just for dictionary purposes?
 
-  return  [crosswords, crosswordTiles]
+  // remove single-letter 'words'
+  // crosswords = crosswords.filter(t => t.length > 1)
+  // crosswordTiles = crosswordTiles.filter(t => t.length > 1)
 
-
-
-
+  return [crosswords, crosswordTiles]
 
 } // end checkTheCross_c
 
@@ -712,35 +820,33 @@ const checkTheCross_r = (tilesInRange, rowIdx) => {
       }
     }
 
-
     // BOTH SIDES ARE READ. STORE THE WORD LOCALLY.
 
     potentialCrossWordTiles.forEach((tile, idx) => {
       // spacelog(`bottom pass ${index}: tile[${idx}] = ${tile.dataset.letter}`)
-      tempWord += tile.dataset.letter
+      tempWord += tile.dataset.letter.replace('BLANK', '-').replace('blank', '-')
       tempTiles.push(tile)
     })
 
     crosswords.push(tempWord)
     crosswordTiles.push(tempTiles)
 
-    if (index === tilesInRange.length - 1) {
-      potentialCrossWordTiles.forEach((t, i) => {
-        currentCrossWordTiles.push(t)
-      })
-    }
-
     // here endeth the big loop
   })
 
-  return [ crosswords, crosswordTiles ]
+  // remove single-letter 'words'
+  // crosswords = crosswords.filter(t => t.length > 1)
+  // crosswordTiles = crosswordTiles.filter(t => t.length > 1)
+
+  return [crosswords, crosswordTiles]
 
 }
 
 /*
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-            =================== THE ROWS ====================
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕
+            =================== THE Row Outsiders ====================
+                  Gets the congruent tiles outside the played center
+👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕
 */
 const theRowOutsiders = (row, minCol, maxCol) => {
 
@@ -766,8 +872,8 @@ const theRowOutsiders = (row, minCol, maxCol) => {
       }
 
       rowTiles.forEach(letter => {
-        currentWordTiles.unshift(letter)
-        currentWord.unshift(letter.dataset.letter)
+        scoringTiles.unshift(letter)
+        currentWord.unshift(letter.dataset.letter.replace('BLANK', '-').replace('blank', '-'))
       })
       // spacelog(`currentWord after left: ${currentWord.join('')}`)
 
@@ -793,8 +899,8 @@ const theRowOutsiders = (row, minCol, maxCol) => {
         rowTiles.sort((a, b) => (parseInt(a.dataset.col) > parseInt(b.dataset.col)) ? 1 : -1)
       }
       rowTiles.forEach(letter => {
-        currentWordTiles.push(letter)
-        currentWord.push(letter.dataset.letter)
+        scoringTiles.push(letter)
+        currentWord.push(letter.dataset.letter.replace('BLANK', '-').replace('blank', '-'))
       })
       // spacelog(`currentWord after right: ${currentWord.join('')}`)
     }
@@ -805,9 +911,10 @@ const theRowOutsiders = (row, minCol, maxCol) => {
 }
 
 /*
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-            =================== THE COLUMNS ====================
-👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
+👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕
+            =================== THE Column Outsiders ====================
+                  Gets the congruent tiles outside the played center
+👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕
 */
 const theColumnOutsiders = (col, minRow, maxRow) => {
 
@@ -833,8 +940,8 @@ const theColumnOutsiders = (col, minRow, maxRow) => {
         colTiles.sort((a, b) => (parseInt(a.dataset.row) < parseInt(b.dataset.row)) ? 1 : -1)
       }
       colTiles.forEach(letter => {
-        currentWordTiles.unshift(letter)
-        currentWord.unshift(letter.dataset.letter)
+        scoringTiles.unshift(letter)
+        currentWord.unshift(letter.dataset.letter.replace('BLANK', '-').replace('blank', '-'))
       })
       // spacelog(`currentWord after Top: ${currentWord.join('')}`)
 
@@ -857,8 +964,8 @@ const theColumnOutsiders = (col, minRow, maxRow) => {
       colTiles.sort((a, b) => (parseInt(a.dataset.row) > parseInt(b.dataset.row)) ? 1 : -1)
     }
     colTiles.forEach(letter => {
-      currentWordTiles.push(letter)
-      currentWord.push(letter.dataset.letter)
+      scoringTiles.push(letter)
+      currentWord.push(letter.dataset.letter.replace('BLANK', '-').replace('blank', '-'))
     })
     // spacelog(`currentWord after Bottom: ${currentWord.join('')}`)
   }
@@ -916,8 +1023,8 @@ const theCenter = (rowcol, isRow, min, max) => {
     }
   }
   tiles.forEach(letter => {
-    currentWordTiles.push(letter)
-    currentWord.push(letter.dataset.letter)
+    scoringTiles.push(letter)
+    currentWord.push(letter.dataset.letter.replace('BLANK', '-').replace('blank', '-'))
   })
 
   // this return has no game function. it could be logged. it is unnecessary.
@@ -932,142 +1039,6 @@ const singleTilePlayed = (tiles = tilesInPlay) => {
   return true
 }
 
-// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-//              MASTER TILE PLAY PARSING CONTROL FUNCTION (better name pending)
-// 👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕👕 
-const determineLinearAdjacency = (tiles = tilesInPlay) => {
-  let isRow
-  let row = tiles[0].dataset.row
-  let col = tiles[0].dataset.col
-  let colNums = []
-  let rowNums = []
-  let currWord = ''
-  let crosswords, crosswordTiles, vals
-
-  tiles.forEach((tile) => {
-    colNums.push(tile.dataset.col)
-    rowNums.push(tile.dataset.row)
-  })
-  let minCol = Math.min(...colNums)
-  let maxCol = Math.max(...colNums)
-  let minRow = Math.min(...rowNums)
-  let maxRow = Math.max(...rowNums)
-
-  // single-tile play takes a different branch. if other word-storage (etc) branching needs to be done, add here
-  if (tiles.length === 1) {
-
-    // if (!crosswords || !crosswordTiles || crosswords.length === 0 || crosswordTiles.length === 0) {
-      vals = checkTheCross_r([...tiles], tiles[0].dataset.row)
-      crosswords = vals[0]
-      crosswordTiles = vals[1]
-    // }
-
-    // if (!crosswords || !crosswordTiles || crosswords.length === 0 || crosswordTiles.length === 0) {
-      vals = checkTheCross_c([...tiles], tiles[0].dataset.col)
-      crosswords = vals[0]
-      crosswordTiles = vals[1]
-    // }
-
-    // singleTilePlayed(tiles)
-    // return true
-  }
-  else {
-    isRow = tiles[0].dataset.row === tiles[1].dataset.row ? true : false //otherwise... it's a column
-
-    if (!isTheInPlayPartCongruent(
-      isRow,
-      isRow ? row : col,
-      isRow ? minCol : minRow,
-      isRow ? maxCol : minRow
-    )) {
-      return false
-    }
-
-    // if we reached here, we have a congruent set of tiles in a row or a column
-    // the return from theCenter is unnecessary. theCenter (and theOutsider) writes to currentWordTiles (module-var)
-    let centerTiles = theCenter(isRow ? row : col, isRow, isRow ? minCol : minRow, isRow ? maxCol : maxRow)
-    if (isRow) {
-      theRowOutsiders(row, minCol, maxCol)
-      currentWordTiles.forEach(w => {
-        currWord += w.dataset.letter
-      })
-
-      vals = checkTheCross_r(centerTiles, row)
-      crosswords = vals[0]
-      crosswordTiles = vals[1]
-
-    }
-    else {
-      theColumnOutsiders(col, minRow, maxRow)
-      currentWordTiles.forEach(w => {
-        currWord += w.dataset.letter
-      })
-      vals = checkTheCross_c(centerTiles, col)
-      crosswords = vals[0]
-      crosswordTiles = vals[1]
-    }
-  } // end if(tiles length === 1)
-
-  spacelog(`dla currWord after ctr, outside, & cross = ${currWord}`)
-
-  // cut from checkTheCross_c, now use return to do this
-
-  // HAVING THE WORD(S) AND TILES LOCALLY, PUSH THEM TO THE MODULE-LEVEL STORAGE
-  // is currentWordTiles just for scoring
-  // and currentCrosswords just for dictionary purposes?
-
-
-  if (crosswords && crosswords.length > 0) {
-    crosswords.forEach(word => {
-      if (word.length > 1) {
-        currentCrossWords.push(word)
-          spacelog(`dla end game crosswords: ${word}`)
-      }
-    })
-  }
-  if (crosswordTiles && crosswordTiles.length > 0) {
-    crosswordTiles.forEach(tiles => {
-      if (tiles.length > 1) {
-        tiles.forEach(tile => {
-          if (currentWordTiles.indexOf(tile) < 0) {
-            currentWordTiles.push(tile)
-          }
-        })
-      }
-    })
-  }
-
-
-  /*
-    // HAVING THE WORD(S) AND TILES LOCALLY, PUSH THEM TO THE MODULE-LEVEL STORAGE
-  // is currentWordTiles just for scoring
-  // and currentCrosswords just for dictionary purposes?
-
-  potentialCrossWordTiles.forEach((t, i) => {
-    currentCrossWordTiles.push(t)
-  })
-  crosswords.forEach(word => {
-    if (word.length > 1) {
-      currentCrossWords.push(word)
-      spacelog(word)
-    }
-  })
-  crosswordTiles.forEach(tiles => {
-    if (tiles.length > 1) {
-      tiles.forEach(tile => {
-        if (currentWordTiles.indexOf(tile) < 0) {
-          currentWordTiles.push(tile)
-        }
-      })
-    }
-  })
-  */
-
-
-  return true
-
-
-} // end dLA
 
 
 /*
@@ -1398,7 +1369,13 @@ window.addEventListener('DOMContentLoaded', async () => {
       console.log(typeof (p2Tiles));
       console.log('bot_dom len = ', bagOfTiles_DOM.childNodes.length);
       p2Tiles.forEach(t => {
+
+        // if we have changed the data-letter attr for a blank tile
+        // we need to change it back to blank
+
+
         bagOfTiles_DOM.append(player2Tray.removeChild(t))
+
 
       })
       console.log('bot_dom len = ', bagOfTiles_DOM.childNodes.length);
