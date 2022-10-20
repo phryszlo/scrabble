@@ -116,7 +116,7 @@ body::before {
   grid-template-rows: 1fr 4fr;
   width: 36vw;
   width: fit-content;
-  border: 2px solid fuchsia;
+  /* border: 2px solid fuchsia; */
 }
 
 .scoring-section {
@@ -301,9 +301,9 @@ body::before {
   display: grid;
   grid-template-columns: 1fr 1fr;
   justify-content: center;
-  border: 2px solid blue;
   width: 90%;
   padding-left: 1em;
+  /* border: 2px solid blue; */
 }
 
 .last-play-words {
@@ -311,18 +311,14 @@ body::before {
   flex-direction: column;
 }
 .last-word {
-  /* position: relative;
-  left: -2em; */
   display: block;
   color:rgb(228, 111, 32);
-  font-size: 16px;
+  font-size: 1.9vmin;
   font-family: 'Bungee Inline', cursive;
 }
 .last-play {
-  /* position: relative;
-  left: -2em; */
   display: block;
-  font-size: 13px;
+  font-size: 1.6vmin;
   font-family: 'Bungee Inline', cursive;
   color:var(--tls-color)
 }
